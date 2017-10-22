@@ -7,22 +7,30 @@ using HqDownloadManager.Helpers;
 using System.Windows.Controls;
 using HqDownloadManager.ViewModels;
 using System.Threading;
+using HqDownloadManager.Views;
+using HqDownloadManager.Core;
 
 namespace HqDownloadManager.Controllers {
     public class MainWindowController : Controller {
+        private PaneViewModel _pane;
 
-        public MainWindowController(ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper) : base(controlsHelper, navigationHelper, clickHelper) {
+        public MainWindowController(ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager) : 
+            base(controlsHelper, navigationHelper, clickHelper, sourceManager) {
+        }
+
+        public override void Init() {
+            base.Init();
+            _pane = controlsHelper.FindResource<PaneViewModel>("Pane");
         }
 
         public void OpenCloseMenu() {
-            var pane = controlsHelper.FindResource<PaneViewModel>("Pane");
-            var actualWidthOfMenu = pane.Width;
+            var actualWidthOfMenu = _pane.Width;
             switch (actualWidthOfMenu) {
                 case 34:
-                    pane.Width = 300;
+                    _pane.Width = 300;
                     break;
                 case 300:
-                    pane.Width = 34;
+                    _pane.Width = 34;
                     break;
             }
         }
@@ -39,7 +47,7 @@ namespace HqDownloadManager.Controllers {
                 menuBtns.IsMyLibrary = false;
                 menuBtns.IsDownloadPage = false;
                 menuBtns.IsSettings = false;
-                //_navigationHelper.Navigate<HqUpdatesPage>();
+                navigationHelper.Navigate<HqUpdatesPage>();
             }
             if (clicked == "allHqs" || clicked == "allHqsLabel") {
                 pageTitle.PageTitle = "Todos os Mangas";

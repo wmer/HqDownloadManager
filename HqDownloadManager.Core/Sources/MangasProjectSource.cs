@@ -9,6 +9,7 @@ using AngleSharp.Dom;
 using System.Threading;
 using HqDownloadManager.Core.CustomEventArgs;
 using MSHTML;
+using HqDownloadManager.Core.Database;
 
 namespace HqDownloadManager.Core.Sources {
     internal class MangasProjectSource : HqSource {
@@ -25,7 +26,7 @@ namespace HqDownloadManager.Core.Sources {
         private object lock8 = new object();
         private object lock9 = new object();
 
-        public MangasProjectSource(HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) {
+        public MangasProjectSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext) {
             this.htmlHelper = htmlHelper;
             this.browserHelper = browserHelper;
         }
@@ -200,7 +201,7 @@ namespace HqDownloadManager.Core.Sources {
             }
         }
 
-        private List<Chapter> GetListChapters(String link) {
+        public List<Chapter> GetListChapters(String link) {
             lock (lock5) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando capitulos"));
                 var chapterList = new List<Chapter>();
@@ -224,7 +225,7 @@ namespace HqDownloadManager.Core.Sources {
             }
         }
 
-        private List<Page> GetPageList(HTMLDocument document) {
+        public List<Page> GetPageList(HTMLDocument document) {
             lock (lock6) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando páginas"));
                 IDocument leitor = htmlHelper.GetSourceCodeFromHtml(document.body.outerHTML);

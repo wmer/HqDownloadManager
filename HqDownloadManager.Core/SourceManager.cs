@@ -7,50 +7,98 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DependencyInjectionResolver;
+using HqDownloadManager.Core.Database;
+using Newtonsoft.Json;
+using Cache = HqDownloadManager.Core.Models.Cache;
 
 namespace HqDownloadManager.Core {
     public class SourceManager {
-        private SiteHelper siteHelper;
-        private Object lockThis = new Object();
-        private Object lockThis2 = new Object();
-        private Object lockThis3 = new Object();
-        private Object lockThis4 = new Object();
-        private Object lockThis5 = new Object();
-        private Object lockThis6 = new Object();
-        private Object lockThis7 = new Object();
+        private DependencyInjection _dependencyInjection;
+        private readonly SiteHelper _siteHelper;
+        private readonly LibraryContext _libraryContext;
+
+        private readonly Object _lockThis = new Object();
+        private readonly Object _lockThus2 = new Object();
+        private readonly Object _lockThis3 = new Object();
+        private readonly Object _lockThis4 = new Object();
+        private readonly Object _lockThis5 = new Object();
+        private readonly Object _lockThis6 = new Object();
+        private readonly Object _lockThis7 = new Object();
 
         public event ProcessingEventHandler ProcessingProgress;
 
-        public SourceManager(SiteHelper siteHelper) {
-            this.siteHelper = siteHelper;
+        public SourceManager(DependencyInjection dependencyInjection) {
+            _dependencyInjection = dependencyInjection;
+            _siteHelper = _dependencyInjection.Resolve<SiteHelper>();
+            _libraryContext = _dependencyInjection
+                                    .DefineConstructorSignature<LibraryContext>(Type.EmptyTypes)
+                                    .Resolve<LibraryContext>();
         }
 
         public ModelBase GetInfo(string url) {
-            lock (lockThis) {
+            lock (_lockThis7) {
                 var model = new ModelBase();
-                if (siteHelper.IsSupported(url)) {
-                    var source = siteHelper.GetHqSourceFromUrl(url);
-                    source.ProcessingProgress += Source_ProcessingProgress;
-                    if (siteHelper.IsHqPage(url)) {
-                        var hq = new Hq();
-                        hq = source.GetHqInfo(url);
-                        model = hq;
+                if (_siteHelper.IsSupported(url)) {
+                    if (_siteHelper.IsHqPage(url)) {
+                        model = CacheManagement(url, GetInfoFromSite<Hq>, 72);
                     }
-                    if (siteHelper.IsChapterReader(url)) {
-                        var chapter = new Chapter();
-                        chapter = source.GetChapterInfo(url);
-                        model = chapter;
+                    if (_siteHelper.IsChapterReader(url)) {
+                        model = CacheManagement(url, GetInfoFromSite<Chapter>, 999999999);
                     }
                 }
                 return model;
             }
         }
 
-        public LibraryPage GetLibrary(string url) {
-            lock (lockThis2) {
+        public LibraryPage GetLibrary(string url) => CacheManagement(url, GetLibraryFromSite, 168);
+
+        public List<Hq> GetUpdates(string url) => CacheManagement(url, GetUpdatesFromSite, 1);
+
+        private T CacheManagement<T>(string url, Func<String, T> action, int timeCache) {
+            lock (_lockThis6) {
+                var model = default(T);
+                if (_siteHelper.IsSupported(url)) {
+                    if (_libraryContext.Cache.FindOne(url) is Cache cache) {
+                        if ((DateTime.Now - cache.Date).Hours < timeCache) {
+                            model = JsonConvert.DeserializeObject<T>(Encoding.ASCII.GetString(cache.ModelsCache));
+                        } else {
+                            model = action.Invoke(url);
+                            _libraryContext.Cache.Update(x => new { x.ModelsCache, x.Date }, 
+                                Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(model)), DateTime.Now)
+                                .Where(x => x.Link == url).Execute();
+                        }
+                    } else {
+                        model = action.Invoke(url);
+                        var updt = new Cache { Link = url, Date = DateTime.Now, ModelsCache = 
+                            Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(model)) };
+                        _libraryContext.Cache.Save(updt);
+                    }
+                }
+                return model;
+            }
+        }
+
+        private T GetInfoFromSite<T>(string url) where T:ModelBase {
+            lock (_lockThis) {
+                var model = default(T);
+                var source = _siteHelper.GetHqSourceFromUrl(url);
+                source.ProcessingProgress += Source_ProcessingProgress;
+                if (typeof(T).IsAssignableFrom(typeof(Hq))) {
+                    model = source.GetHqInfo(url) as T;
+                }
+                if (typeof(T).IsAssignableFrom(typeof(Chapter))) {
+                    model = source.GetChapterInfo(url) as T;
+                }
+                return model;
+            }
+        }
+
+        private LibraryPage GetLibraryFromSite(string url) {
+            lock (_lockThus2) {
                 var library = new LibraryPage();
-                if (siteHelper.IsSupported(url)) {
-                    var source = siteHelper.GetHqSourceFromUrl(url);
+                if (_siteHelper.IsSupported(url)) {
+                    var source = _siteHelper.GetHqSourceFromUrl(url);
                     source.ProcessingProgress += Source_ProcessingProgress;
                     library = source.GetLibrary(url);
                 }
@@ -59,26 +107,23 @@ namespace HqDownloadManager.Core {
             }
         }
 
-        public List<Hq> GetUpdates(string url) {
-            lock (lockThis3) {
-                var updates = new List<Hq>();
-                if (siteHelper.IsSupported(url)) {
-                    var source = siteHelper.GetHqSourceFromUrl(url);
-                    source.ProcessingProgress += Source_ProcessingProgress;
-                    updates = source.GetUpdates(url);
-                }
+        private List<Hq> GetUpdatesFromSite(string url) {
+            lock (_lockThis5) {
+                var source = _siteHelper.GetHqSourceFromUrl(url);
+                source.ProcessingProgress += Source_ProcessingProgress;
+                var updates = source.GetUpdates(url);
                 return updates;
             }
         }
 
         private void Source_ProcessingProgress(object sender, ProcessingEventArgs ev) {
-            lock (lockThis6) {
+            lock (_lockThis3) {
                 OnProcessingProgress(ev);
             }
         }
 
         protected void OnProcessingProgress(ProcessingEventArgs e) {
-            lock (lockThis7) {
+            lock (_lockThis4) {
                 ProcessingProgress?.Invoke(this, e);
             }
         }

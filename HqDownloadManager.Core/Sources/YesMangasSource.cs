@@ -9,11 +9,13 @@ using AngleSharp.Dom;
 using System.Threading;
 using HqDownloadManager.Core.CustomEventArgs;
 using MSHTML;
+using HqDownloadManager.Core.Database;
 
 namespace HqDownloadManager.Core.Sources {
     internal class YesMangasSource : HqSource {
         public HtmlSourceHelper htmlHelper;
         public BrowserHelper browserHelper;
+
         private bool usingIe;
         private object lock1 = new object();
         private object lock2 = new object();
@@ -23,7 +25,7 @@ namespace HqDownloadManager.Core.Sources {
         private object lock6 = new object();
         private object lock7 = new object();
 
-        public YesMangasSource(HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) {
+        public YesMangasSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext) {
             this.htmlHelper = htmlHelper;
             this.browserHelper = browserHelper;
         }
@@ -146,7 +148,7 @@ namespace HqDownloadManager.Core.Sources {
             }
         }
 
-        private List<Chapter> GetListChapters(IDocument hqSource) {
+        public List<Chapter> GetListChapters(IDocument hqSource) {
             lock (lock3) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando capitulos"));
                 var chapterList = new List<Chapter>();
@@ -181,7 +183,7 @@ namespace HqDownloadManager.Core.Sources {
             }
         }
 
-        public IDocument GetPageListFromScript(IDocument source) {
+        private IDocument GetPageListFromScript(IDocument source) {
             lock (lock5) {
                 var element = "";
                 var imageElement = source.QuerySelector(".content-slideshow a");

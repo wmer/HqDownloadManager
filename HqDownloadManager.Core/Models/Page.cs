@@ -8,9 +8,7 @@ using Repository.Attributes;
 namespace HqDownloadManager.Core.Models {
     public class Page {
         public int Number { get; set; }
-        [PrimaryKey]
         public String Source { get; set; }
         public String LocalSource { get; set; }
-        public virtual Chapter Chapter { get; set; }
     }
 }

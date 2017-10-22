@@ -6,42 +6,73 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace HqDownloadManager.Helpers {
     public class ControlsHelper {
-        private readonly Window _mainWindow = Application.Current.MainWindow;
+        private readonly Window _mainWindow;
+        private readonly Dispatcher _dispatcher;
+
+        public ControlsHelper() {
+            _mainWindow = Application.Current.MainWindow;
+            _dispatcher = _mainWindow.Dispatcher;
+        }
 
         public T Find<T>(string name) where T : DependencyObject {
             T element = null;
-            if (FindInWindow<T>(name) != null) {
-                element = FindInWindow<T>(name);
-            } else if (GetCurrentPage() != null) {
-                element = GetCurrentPage().FindName(name) as T;
+            if (FindInWindow<T>(name) is T elW) {
+                element = elW;
+            } else if (FindInPage<T>(name) is T elP) {
+                element = elP;
             }
-
             return element;
         }
 
         public T FindResource<T>(string key) {
             T resource = default(T);
-            if (_mainWindow.FindResource(key) != null) {
-                resource = (T) _mainWindow.FindResource(key);
-            }else if (GetCurrentPage() != null) {
-                resource = (T) GetCurrentPage().FindResource(key);
-            }
+            _dispatcher.Invoke(() => {
+                try {
+                    if (_mainWindow.FindResource(key) is T rs) {
+                        resource = rs;
+                    } else if (GetCurrentPage() is Page page) {
+                        resource = (T)page.FindResource(key);
+                    }
+                } catch (Exception) {
+                    if (GetCurrentPage() is Page page) {
+                        resource = (T)page.FindResource(key);
+                    }
+                }
+            });
 
             return resource;
         }
 
         private T FindInWindow<T>(string name) where T : DependencyObject {
             T element = null;
-            element = _mainWindow.FindName(name) as T;
+            _dispatcher.Invoke(() => {
+                element = _mainWindow.FindName(name) as T;
+            });
+            return element;
+        }
+
+        private T FindInPage<T>(string name) where T : DependencyObject {
+            T element = null;
+            _dispatcher.Invoke(() => {
+                if (GetCurrentPage() is Page page) {
+                    element = page.FindName(name) as T;
+                }
+            });
             return element;
         }
 
         public Page GetCurrentPage() {
-            var frame = FindInWindow<DockPanel>("Content").Children[0] as Frame;
-            return frame.Content as Page;
+            Page page = null;
+            _dispatcher.Invoke(() => {
+                if (FindInWindow<DockPanel>("Content").Children[0] is Frame frame) {
+                    page = frame.Content as Page;
+                }
+            });
+            return page;
         }
     }
 }

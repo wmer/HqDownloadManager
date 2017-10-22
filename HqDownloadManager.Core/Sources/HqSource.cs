@@ -5,9 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using HqDownloadManager.Core.CustomEventArgs;
 using HqDownloadManager.Core.Models;
+using HqDownloadManager.Core.Database;
 
 namespace HqDownloadManager.Core.Sources {
-    public abstract class HqSource : IHqSource {
+    internal abstract class HqSource : IHqSource {
+        public LibraryContext _libraryContext;
+
+        public HqSource(LibraryContext libraryContext) {
+            _libraryContext = libraryContext;
+        }
+
         public event ProcessingEventHandler ProcessingProgress;
         protected object lockEvent1 = new object();
         protected bool lockedEvent;

@@ -8,6 +8,7 @@ using HqDownloadManager.Core.Models;
 using AngleSharp.Dom;
 using HqDownloadManager.Core.CustomEventArgs;
 using MSHTML;
+using HqDownloadManager.Core.Database;
 
 namespace HqDownloadManager.Core.Sources {
     internal class MangaHostSource : HqSource {
@@ -22,7 +23,7 @@ namespace HqDownloadManager.Core.Sources {
         private object lock6 = new object();
         private object lock7 = new object();
 
-        public MangaHostSource(HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) {
+        public MangaHostSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext) {
             this.htmlHelper = htmlHelper;
             this.browserHelper = browserHelper;
         }
@@ -92,6 +93,7 @@ namespace HqDownloadManager.Core.Sources {
 
         public override Hq GetHqInfo(string link) {
             lock (lock1) {
+                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando em DB"));
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                 var source = htmlHelper.GetSourceCodeFromUrl(link);
                 var hqInfo = new Hq();
@@ -112,7 +114,9 @@ namespace HqDownloadManager.Core.Sources {
                     hqInfo.Chapters = GetListChapters(source).Reverse<Chapter>().ToList();
 
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto!"));
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Salvo em DB"));
                     return hqInfo;
+
                 }
                 throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
             }
@@ -147,7 +151,7 @@ namespace HqDownloadManager.Core.Sources {
             throw new NotImplementedException();
         }
 
-        private List<Chapter> GetListChapters(IDocument hqSource) {
+        public List<Chapter> GetListChapters(IDocument hqSource) {
             lock (lock3) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando capitulos"));
                 var chapterList = new List<Chapter>();
@@ -157,7 +161,8 @@ namespace HqDownloadManager.Core.Sources {
                         var chapterLink = chapter.GetAttribute("href");
                         var chapterTitle = $"{chapter.TextContent}";
                         OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Adicionando {chapterTitle}"));
-                        chapterList.Add(new Chapter { Link = chapterLink, Title = chapterTitle });
+                        var chap = new Chapter { Link = chapterLink, Title = chapterTitle };
+                        chapterList.Add(chap);
                     }
                 } else {
                     chapters = hqSource.QuerySelectorAll(".list_chapters a");
@@ -168,7 +173,8 @@ namespace HqDownloadManager.Core.Sources {
                             var chapterLink = linkEl?.GetAttribute("href");
                             var chapterTitle = $"Capitulo - {chapterEl.TextContent}";
                             OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Adicionando {chapterTitle}"));
-                            chapterList.Add(new Chapter { Link = chapterLink, Title = chapterTitle });
+                            var chap = new Chapter { Link = chapterLink, Title = chapterTitle };
+                            chapterList.Add(chap);
                         }
                     }
                 }
@@ -186,7 +192,8 @@ namespace HqDownloadManager.Core.Sources {
                     var num = 1;
                     foreach (var img in MangaPages) {
                         OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Adicionando página {num}"));
-                        pageList.Add(new Page { Number = num, Source = img.GetAttribute("src") });
+                        var page = new Page { Number = num, Source = img.GetAttribute("src") };
+                        pageList.Add(page);
                         num++;
                     }
                 }
@@ -194,7 +201,7 @@ namespace HqDownloadManager.Core.Sources {
             }
         }
 
-        public IDocument GetPageListFromScript(IDocument source) {
+        private IDocument GetPageListFromScript(IDocument source) {
             lock (lock5) {
                 var element = "";
                 var imageElement = source.QuerySelector(".read-slideshow a");

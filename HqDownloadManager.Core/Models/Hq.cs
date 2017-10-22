@@ -9,7 +9,7 @@ namespace HqDownloadManager.Core.Models {
         public string CoverSource { get; set; }
         public string Author { get; set; }
         public string Synopsis { get; set; }
-        public virtual List<Chapter> Chapters { get; set; }
+        public List<Chapter> Chapters { get; set; }
 
         public int CompareTo(Hq other) {
             return Chapters.Count().CompareTo(other.Chapters.Count());

@@ -96,12 +96,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DatabaseContext.cs" />
-    <Compile Include="Resources\ListBoxItemTemplateSizes.cs" />
+    <Compile Include="Controllers\HqUpdatesController.cs" />
+    <Compile Include="Database\UserLibraryContext.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserDownload.cs" />
+    <Compile Include="Models\UserFavorite.cs" />
+    <Compile Include="Models\UserPreferences.cs" />
+    <Compile Include="Models\UserReading.cs" />
+    <Compile Include="ViewModels\HqListViewModel.cs" />
+    <Compile Include="ViewModels\ListBoxItemViewModel.cs" />
     <Compile Include="ViewModels\MenuButtonsViewModel.cs" />
+    <Compile Include="ViewModels\NotificationViewModel.cs" />
     <Compile Include="ViewModels\PageTitleViewModel.cs" />
     <Compile Include="ViewModels\PaneViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\HqUpdatesPage.xaml.cs">
+      <DependentUpon>HqUpdatesPage.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -115,11 +126,14 @@
     <Compile Include="Helpers\ClickHelper.cs" />
     <Compile Include="Helpers\ControlsHelper.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
-    <Compile Include="Helpers\Teste.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\HqUpdatesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -178,9 +192,7 @@
       <Name>HqDownloadManager.Utils</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.7\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.7\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

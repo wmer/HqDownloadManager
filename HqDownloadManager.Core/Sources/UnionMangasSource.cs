@@ -7,6 +7,7 @@ using HqDownloadManager.Core.Models;
 using HqDownloadManager.Core.Helpers;
 using AngleSharp.Dom;
 using HqDownloadManager.Core.CustomEventArgs;
+using HqDownloadManager.Core.Database;
 
 namespace HqDownloadManager.Core.Sources {
     internal class UnionMangasSource : HqSource {
@@ -18,7 +19,7 @@ namespace HqDownloadManager.Core.Sources {
         private object lock5 = new object();
         private object lock6 = new object();
 
-        public UnionMangasSource(HtmlSourceHelper htmlHelper) {
+        public UnionMangasSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper) : base(libraryContext) {
             this.htmlHelper = htmlHelper;
         }
 
@@ -86,7 +87,7 @@ namespace HqDownloadManager.Core.Sources {
             }
         }
 
-        private List<Chapter> GetListChapters(IDocument hqSource) {
+        public List<Chapter> GetListChapters(IDocument hqSource) {
             lock (lock3) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando capitulos"));
                 var chapterList = new List<Chapter>();

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace HqDownloadManager.Core.Helpers {
-    public class SiteHelper {
+    internal class SiteHelper {
         private List<String> SupportedSites;
         private Object lockThis = new Object();
         private Object lockThis2 = new Object();

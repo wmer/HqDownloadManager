@@ -35,9 +35,9 @@ namespace HqDownloadManager {
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             Content.Children.Add(_frame);
-            new Teste().AddInDB();
             _mainWindowController = _dependency.Resolve<MainWindowController>();
             _navigationHelper = _dependency.Resolve<NavigationHelper>();
+            _mainWindowController.Init();
             Header.Content = "Atualizações";
         }
 
