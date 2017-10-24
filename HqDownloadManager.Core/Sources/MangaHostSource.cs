@@ -93,7 +93,6 @@ namespace HqDownloadManager.Core.Sources {
 
         public override Hq GetHqInfo(string link) {
             lock (lock1) {
-                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando em DB"));
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                 var source = htmlHelper.GetSourceCodeFromUrl(link);
                 var hqInfo = new Hq();

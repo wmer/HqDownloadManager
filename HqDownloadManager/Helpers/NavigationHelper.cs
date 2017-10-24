@@ -24,9 +24,9 @@ namespace HqDownloadManager.Helpers {
         }
 
         public void Navigate<T>(object data) where T : Page {
-
             _mainFrame.Navigate(CreatePage<T>(
-                Configuration().DefineDependency<T>(0, data)));
+                Configuration().DefineDependency<T>(0, data)
+                .DefineLifeTimeOptions<T>(InstanceOptions.DiferentInstances)));
         }
 
         private Page CreatePage<T>(DependencyInjection configuration = null) where T : Page {

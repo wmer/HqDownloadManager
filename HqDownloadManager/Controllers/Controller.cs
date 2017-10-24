@@ -21,14 +21,14 @@ namespace HqDownloadManager.Controllers {
         protected readonly Dispatcher dispatcher;
         protected NotificationViewModel notification;
 
-        public Controller(ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager) {
+        protected Controller(ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager) {
             this.controlsHelper = controlsHelper;
             this.navigationHelper = navigationHelper;
             this.clickHelper = clickHelper;
             this.sourceManager = sourceManager;
             this.sourceManager.ProcessingProgress += SourceManager_ProcessingProgress;
 
-            dispatcher = Application.Current.MainWindow.Dispatcher;
+            dispatcher = Application.Current.MainWindow?.Dispatcher;
             notification = controlsHelper.FindResource<NotificationViewModel>("Notification");
         }
 
@@ -41,7 +41,7 @@ namespace HqDownloadManager.Controllers {
             var link = "";
             switch (sourceSelected) {
                 case "MangaHost":
-                    link = "https://mangahost.org";
+                    link = "https://mangashost.com/";
                     break;
                 case "YesMangas":
                     link = "https://yesmangas.org/";

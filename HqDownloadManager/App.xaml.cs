@@ -27,17 +27,6 @@ namespace HqDownloadManager {
                 window.hqUpdates.IsChecked = true;
             }
             window.Show();
-            window.Loaded += WindowOnLoaded;
-        }
-
-        private void WindowOnLoaded(object sender, RoutedEventArgs routedEventArgs) {
-            GetButtonBack().Click += OnClick;
-        }
-
-        private void OnClick(object sender, RoutedEventArgs routedEventArgs) {
-            if (_rootFrame.CanGoBack) {
-                _rootFrame.GoBack();
-            }
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs navigatingCancelEventArgs) {
@@ -45,21 +34,12 @@ namespace HqDownloadManager {
         }
 
         private void OnNavigated(object sender, NavigationEventArgs navigationEventArgs) {
-            if (((Frame)sender).CanGoBack) {
-                GetButtonBack().Visibility = Visibility.Visible;
-                GetButtonBack().Width = 40;
-            } else {
-                GetButtonBack().Visibility = Visibility.Hidden;
-                GetButtonBack().Width = 0;
-            }
+
         }
 
         private void OnNavigationFailed(object sender, NavigationFailedEventArgs e) {
             throw new Exception("Failed to load Page " + e.Uri);
         }
 
-        private Button GetButtonBack() {
-            return Current.MainWindow.FindName("NavigationBack") as Button;
-        }
     }
 }

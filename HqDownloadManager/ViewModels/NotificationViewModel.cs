@@ -11,7 +11,7 @@ namespace HqDownloadManager.ViewModels {
         private string _message;
 
         public string Message {
-            get { return _message; }
+            get => _message;
             set { _message = value;
                 OnPropertyChanged("Message");
             }
@@ -19,7 +19,7 @@ namespace HqDownloadManager.ViewModels {
 
 
         public Visibility Visibility {
-            get { return _visibility; }
+            get => _visibility;
             set { _visibility = value;
                 OnPropertyChanged("Visibility");
             }

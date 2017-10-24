@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 using System.Threading;
+using HqDownloadManager.Views;
 
 namespace HqDownloadManager.Controllers {
     public class HqUpdatesController : Controller {
@@ -28,15 +29,19 @@ namespace HqDownloadManager.Controllers {
         }
 
         public void ShowHqUpdates() {
-            var listResult = Task<List<Hq>>.Factory.StartNew(() => {
+            Task<List<Hq>>.Factory.StartNew(() => {
+                dispatcher.Invoke(() => {
+                    _hqList.Clear();
+                    notification.Visibility = Visibility.Visible;
+                });
                 var link = GetLinkForUpdates();
                 var updates = new List<Hq>();
-                if (!String.IsNullOrEmpty(link)) {
+                if (!string.IsNullOrEmpty(link)) {
                     updates = sourceManager.GetUpdates(link);
                 }
                 return updates;
-            });
-            listResult.ContinueWith((list) => {
+            })
+            .ContinueWith((list) => {
                 foreach (var hq in list.Result) {
                     if (!String.IsNullOrEmpty(hq.Link)) {
                         dispatcher.Invoke(() => {
@@ -44,7 +49,39 @@ namespace HqDownloadManager.Controllers {
                         });
                     }
                 }
+                dispatcher.Invoke(() => {
+                    notification.Visibility = Visibility.Hidden;
+                });
             });
+        }
+
+        public void OpenHqDetails() {
+            Task<Hq>.Factory.StartNew(GetSelectedHq)
+                .ContinueWith((hqResult) => {
+                if (hqResult.Result is Hq hq) {
+                    dispatcher.Invoke(() => {
+                        navigationHelper.Navigate<HqDetailsPage>(hq);
+                    });
+                }
+            });
+        }
+
+        private Hq GetSelectedHq() {
+            Hq hq = null;
+            Hq selectedHq = null;
+            var hqList = controlsHelper.Find<ListBox>("HqList");
+            dispatcher.Invoke(() => {
+                selectedHq = hqList.SelectedItem as Hq;
+                notification.Visibility = Visibility.Visible;
+            });
+
+            hq = sourceManager.GetInfo(selectedHq?.Link) as Hq;
+
+            dispatcher.Invoke(() => {
+                notification.Visibility = Visibility.Hidden;
+            });
+
+            return hq;
         }
 
         public void ActualizeItemSizeAndCollumns() {

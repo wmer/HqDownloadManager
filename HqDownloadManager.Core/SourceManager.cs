@@ -55,21 +55,28 @@ namespace HqDownloadManager.Core {
 
         public List<Hq> GetUpdates(string url) => CacheManagement(url, GetUpdatesFromSite, 1);
 
-        private T CacheManagement<T>(string url, Func<String, T> action, int timeCache) {
-            lock (_lockThis6) {
+        private T CacheManagement<T>(string url, Func<String, T> method, int timeCache) {
+            lock (_lockThis6)
+            {
                 var model = default(T);
                 if (_siteHelper.IsSupported(url)) {
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando em DB"));
                     if (_libraryContext.Cache.FindOne(url) is Cache cache) {
+                        OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Encontrado!"));
                         if ((DateTime.Now - cache.Date).Hours < timeCache) {
                             model = JsonConvert.DeserializeObject<T>(Encoding.ASCII.GetString(cache.ModelsCache));
                         } else {
-                            model = action.Invoke(url);
+                            OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Cache Vencido"));
+                            OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Atualizando..."));
+                            model = method.Invoke(url);
                             _libraryContext.Cache.Update(x => new { x.ModelsCache, x.Date }, 
                                 Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(model)), DateTime.Now)
                                 .Where(x => x.Link == url).Execute();
                         }
                     } else {
-                        model = action.Invoke(url);
+                        OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Não encontrado!"));
+                        model = method.Invoke(url);
+                        OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Criando Cache"));
                         var updt = new Cache { Link = url, Date = DateTime.Now, ModelsCache = 
                             Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(model)) };
                         _libraryContext.Cache.Save(updt);
