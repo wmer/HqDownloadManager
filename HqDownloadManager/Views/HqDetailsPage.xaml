@@ -7,7 +7,6 @@
       xmlns:models="clr-namespace:HqDownloadManager.Core.Models;assembly=HqDownloadManager.Core"
       xmlns:viewModels="clr-namespace:HqDownloadManager.ViewModels"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
       Title="HqDetailsPage">
     <Page.Resources>
         <viewModels:HqDetailsViewModel x:Key="Hq" />
@@ -43,8 +42,9 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="AddAll" Content="Adicionar tudo" HorizontalAlignment="Left" Margin="10,285,0,0" VerticalAlignment="Top" Width="135" Height="25" Grid.ColumnSpan="2" Grid.Column="0" />
-        <Button x:Name="AddSelected" Content="Adicionar Selecionado" Margin="46,285,0,0" VerticalAlignment="Top" Height="25" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Left" Width="136"/>
-        <Button x:Name="FollowHq" Content="Seguir" Margin="83,285,0,0" VerticalAlignment="Top" Height="25" Grid.ColumnSpan="3" Grid.Column="2" HorizontalAlignment="Left" Width="135" />
+        <Button x:Name="AddAll" Content="Adicionar tudo" HorizontalAlignment="Left" Margin="10,285,0,0" VerticalAlignment="Top" Width="135" Height="25" Grid.ColumnSpan="2" Grid.Column="0" Click="AddAll_Click" />
+        <Button x:Name="AddSelected" Content="Adicionar Selecionado" Margin="46,285,0,0" VerticalAlignment="Top" Height="25" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Left" Width="136" Click="AddSelected_Click"/>
+        <Button x:Name="FollowHq" Content="Seguir" Margin="83,285,0,0" VerticalAlignment="Top" Height="25" Grid.ColumnSpan="3" Grid.Column="2" HorizontalAlignment="Left" Width="135" Click="FollowHq_Click" />
+        <Button x:Name="ReadManga" Content="Ler Agora" Margin="119,285,0,0" VerticalAlignment="Top" Height="25" Grid.ColumnSpan="3" Grid.Column="3" HorizontalAlignment="Left" Width="135" Click="ReadManga_Click" />
     </Grid>
 </Page>

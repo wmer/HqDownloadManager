@@ -10,6 +10,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using DependencyInjectionResolver;
+using HqDownloadManager.Database;
+using HqDownloadManager.Download;
 
 namespace HqDownloadManager.Controllers {
     public abstract class Controller {
@@ -17,14 +20,20 @@ namespace HqDownloadManager.Controllers {
         protected NavigationHelper navigationHelper;
         protected ClickHelper clickHelper;
         protected SourceManager sourceManager;
+        protected DependencyInjection dependencyInjection;
+        protected UserLibraryContext userLibrary;
+        protected DownloadManager downloadManager;
 
         protected readonly Dispatcher dispatcher;
         protected NotificationViewModel notification;
 
-        protected Controller(ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager) {
+        protected Controller(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager) {
+            this.dependencyInjection = dependencyInjection;
             this.controlsHelper = controlsHelper;
             this.navigationHelper = navigationHelper;
             this.clickHelper = clickHelper;
+            this.userLibrary = userLibrary;
+            this.downloadManager = downloadManager;
             this.sourceManager = sourceManager;
             this.sourceManager.ProcessingProgress += SourceManager_ProcessingProgress;
 
@@ -32,7 +41,7 @@ namespace HqDownloadManager.Controllers {
             notification = controlsHelper.FindResource<NotificationViewModel>("Notification");
         }
 
-        public virtual void Init() {
+        public virtual void Init(params object[] values) {
 
         }
 
@@ -44,7 +53,7 @@ namespace HqDownloadManager.Controllers {
                     link = "https://mangashost.com/";
                     break;
                 case "YesMangas":
-                    link = "https://yesmangas.org/";
+                    link = "https://ymangas.com/";
                     break;
                 case "UnionMangas":
                     link = "http://unionmangas.net";
@@ -57,7 +66,11 @@ namespace HqDownloadManager.Controllers {
         }
 
         protected string GetSourceSelectedFromComboBox() {
-            ComboBox _souceSelector = controlsHelper.Find<ComboBox>("SourceHq");
+            ComboBox _souceSelector = null;
+            dispatcher.Invoke(() => {
+                _souceSelector = controlsHelper.Find<ComboBox>("SourceHq");
+            });
+
             ComboBoxItem itemSelected = null;
             String itemSelectedontent = null;
             dispatcher.Invoke(() => {

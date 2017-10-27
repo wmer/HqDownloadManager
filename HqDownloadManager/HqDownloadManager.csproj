@@ -96,14 +96,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controllers\HqDetailsController.cs" />
+    <Compile Include="Controllers\HqReaderController.cs" />
     <Compile Include="Controllers\HqUpdatesController.cs" />
     <Compile Include="Database\UserLibraryContext.cs" />
-    <Compile Include="Models\UserDownload.cs" />
     <Compile Include="Models\UserFavorite.cs" />
     <Compile Include="Models\UserPreferences.cs" />
     <Compile Include="Models\UserReading.cs" />
     <Compile Include="ViewModels\HqDetailsViewModel.cs" />
     <Compile Include="ViewModels\HqListViewModel.cs" />
+    <Compile Include="ViewModels\HqReaderViewModel.cs" />
     <Compile Include="ViewModels\ListBoxItemViewModel.cs" />
     <Compile Include="ViewModels\MenuButtonsViewModel.cs" />
     <Compile Include="ViewModels\NotificationViewModel.cs" />
@@ -112,6 +114,9 @@
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\HqDetailsPage.xaml.cs">
       <DependentUpon>HqDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HqReaderWindow.xaml.cs">
+      <DependentUpon>HqReaderWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HqUpdatesPage.xaml.cs">
       <DependentUpon>HqUpdatesPage.xaml</DependentUpon>
@@ -134,6 +139,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\HqDetailsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HqReaderWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

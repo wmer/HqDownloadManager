@@ -7,18 +7,20 @@ using HqDownloadManager.Helpers;
 using System.Windows.Controls;
 using HqDownloadManager.ViewModels;
 using System.Threading;
+using DependencyInjectionResolver;
 using HqDownloadManager.Views;
 using HqDownloadManager.Core;
+using HqDownloadManager.Database;
+using HqDownloadManager.Download;
 
 namespace HqDownloadManager.Controllers {
     public class MainWindowController : Controller {
         private PaneViewModel _pane;
 
-        public MainWindowController(ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager) : 
-            base(controlsHelper, navigationHelper, clickHelper, sourceManager) {
+        public MainWindowController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager) {
         }
 
-        public override void Init() {
+        public override void Init(params object[] values) {
             base.Init();
             _pane = controlsHelper.FindResource<PaneViewModel>("Pane");
         }

@@ -9,12 +9,11 @@ using System.Threading.Tasks;
 
 namespace HqDownloadManager.Database {
     public class UserLibraryContext : DBContext {
-        public UserLibraryContext() : base($"{AppDomain.CurrentDomain.BaseDirectory}/databases", "userLibrary.db") { }
+        public UserLibraryContext() : base($"{AppDomain.CurrentDomain.BaseDirectory}\\databases", "userLibrary.db") { }
         
         public Repository<UserPreferences> UserPreferences { get; set; }
         public Repository<UserReading> UserReadings { get; set; }
         public Repository<UserFavorite> UserFavorites { get; set; }
-        public Repository<UserDownload> UserDownloads { get; set; }
     }
 }
 

@@ -154,8 +154,8 @@ namespace HqDownloadManager.Core.Sources {
                     hqInfo.CoverSource = img?.GetAttribute("src");
                     hqInfo.Synopsis = synopsis.Replace("\n", "").Trim();
                     hqInfo.Link = link;
-                    var Lastchapter = source.QuerySelector(".list-of-chapters li a");
-                    hqInfo.Chapters = GetListChapters($"{BaseAdress}{Lastchapter?.GetAttribute("href")}").Reverse<Chapter>().ToList();
+                    var lastchapter = source.QuerySelector("ul.list-of-chapters li a");
+                    hqInfo.Chapters = GetListChapters($"{BaseAdress}{lastchapter?.GetAttribute("href")}").Reverse<Chapter>().ToList();
 
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto!"));
                     return hqInfo;

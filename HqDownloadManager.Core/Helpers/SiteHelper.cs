@@ -17,7 +17,7 @@ namespace HqDownloadManager.Core.Helpers {
         private Object lockThis4 = new Object();
 
         public SiteHelper() {
-            SupportedSites = new List<String> { "yesmangas", "mangashost", "mangahost", "unionmangas", "mangas", "mangastream",
+            SupportedSites = new List<String> { "ymangas", "yesmangas", "mangashost", "mangahost", "unionmangas", "mangas", "mangastream",
                 "kissmanga", "readms", "mangafox" };
         }
 
@@ -34,6 +34,9 @@ namespace HqDownloadManager.Core.Helpers {
                     }
                     if (host == "mangashost") {
                         host = "mangahost";
+                    }
+                    if (host == "ymangas") {
+                        host = "yesmangas";
                     }
                     var type = AssemblyHelper.GetType(typeof(IHqSource).GetTypeInfo().Assembly, $"{host}source");
                     return new DependencyInjection()

@@ -13,17 +13,19 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 using System.Threading;
+using DependencyInjectionResolver;
+using HqDownloadManager.Database;
+using HqDownloadManager.Download;
 using HqDownloadManager.Views;
 
 namespace HqDownloadManager.Controllers {
     public class HqUpdatesController : Controller {
         private ObservableCollection<Hq> _hqList;
 
-        public HqUpdatesController(ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager) :
-            base(controlsHelper, navigationHelper, clickHelper, sourceManager) {
+        public HqUpdatesController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager) {
         }
 
-        public override void Init() {
+        public override void Init(params object[] values) {
             base.Init();
             _hqList = controlsHelper.FindResource<HqListViewModel>("HqList")?.Hqs;
         }
@@ -58,18 +60,22 @@ namespace HqDownloadManager.Controllers {
         public void OpenHqDetails() {
             Task<Hq>.Factory.StartNew(GetSelectedHq)
                 .ContinueWith((hqResult) => {
-                if (hqResult.Result is Hq hq) {
-                    dispatcher.Invoke(() => {
-                        navigationHelper.Navigate<HqDetailsPage>(hq);
-                    });
-                }
-            });
+                    if (hqResult.Result is Hq hq) {
+                        dispatcher.Invoke(() => {
+                            navigationHelper.Navigate<HqDetailsPage>(hq);
+                        });
+                    }
+                });
         }
 
         private Hq GetSelectedHq() {
             Hq hq = null;
             Hq selectedHq = null;
-            var hqList = controlsHelper.Find<ListBox>("HqList");
+            ListBox hqList = null;
+            dispatcher.Invoke(() => {
+                hqList = controlsHelper.Find<ListBox>("HqList");
+            });
+
             dispatcher.Invoke(() => {
                 selectedHq = hqList.SelectedItem as Hq;
                 notification.Visibility = Visibility.Visible;
