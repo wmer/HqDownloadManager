@@ -17,7 +17,7 @@ namespace HqDownloadManager.Controllers {
     public class MainWindowController : Controller {
         private PaneViewModel _pane;
 
-        public MainWindowController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager) {
+        public MainWindowController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper) {
         }
 
         public override void Init(params object[] values) {
@@ -43,7 +43,7 @@ namespace HqDownloadManager.Controllers {
             var pageTitle = controlsHelper.FindResource<PageTitleViewModel>("PageTitle");
             var clicked = (sender as TObjectHandled)?.Name;
             if (clicked == "hqUpdates" || clicked == "hqUpdatesLabel") {
-                pageTitle.PageTitle = "Atualizações";
+                pageTitle.Title = "Atualizações";
                 menuBtns.IsHqUpdates = true;
                 menuBtns.IsAllHqs = false;
                 menuBtns.IsMyLibrary = false;
@@ -52,36 +52,40 @@ namespace HqDownloadManager.Controllers {
                 navigationHelper.Navigate<HqUpdatesPage>();
             }
             if (clicked == "allHqs" || clicked == "allHqsLabel") {
-                pageTitle.PageTitle = "Todos os Mangas";
+                pageTitle.Title = "Todos os Mangas";
                 menuBtns.IsAllHqs = true;
                 menuBtns.IsHqUpdates = false;
                 menuBtns.IsMyLibrary = false;
                 menuBtns.IsDownloadPage = false;
                 menuBtns.IsSettings = false;
+                navigationHelper.Navigate<SourceLibraryPage>();
             }
             if (clicked == "myLibrary" || clicked == "myLibraryLabel") {
-                pageTitle.PageTitle = "Meus Downloads";
+                pageTitle.Title = "Minha Biblioteca";
                 menuBtns.IsMyLibrary = true;
                 menuBtns.IsHqUpdates = false;
                 menuBtns.IsAllHqs = false;
                 menuBtns.IsDownloadPage = false;
                 menuBtns.IsSettings = false;
+                navigationHelper.Navigate<MyLibraryPage>();
             }
             if (clicked == "downloadPage" || clicked == "downloadPageLabel") {
-                pageTitle.PageTitle = "Página de Download";
+                pageTitle.Title = "Página de Download";
                 menuBtns.IsDownloadPage = true;
                 menuBtns.IsHqUpdates = false;
                 menuBtns.IsAllHqs = false;
                 menuBtns.IsMyLibrary = false;
                 menuBtns.IsSettings = false;
+                navigationHelper.Navigate<DownloadPage>();
             }
             if (clicked == "settings" || clicked == "settingsLabel") {
-                pageTitle.PageTitle = "Configurações";
+                pageTitle.Title = "Configurações";
                 menuBtns.IsSettings = true;
                 menuBtns.IsHqUpdates = false;
                 menuBtns.IsAllHqs = false;
                 menuBtns.IsMyLibrary = false;
                 menuBtns.IsDownloadPage = false;
+                navigationHelper.Navigate<ConfigurationPage>();
             }
         }
     }

@@ -23,17 +23,19 @@ namespace HqDownloadManager.Controllers {
         protected DependencyInjection dependencyInjection;
         protected UserLibraryContext userLibrary;
         protected DownloadManager downloadManager;
+        protected NotificationHelper notificationHelper;
 
         protected readonly Dispatcher dispatcher;
         protected NotificationViewModel notification;
 
-        protected Controller(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager) {
+        protected Controller(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper) {
             this.dependencyInjection = dependencyInjection;
             this.controlsHelper = controlsHelper;
             this.navigationHelper = navigationHelper;
             this.clickHelper = clickHelper;
             this.userLibrary = userLibrary;
             this.downloadManager = downloadManager;
+            this.notificationHelper = notificationHelper;
             this.sourceManager = sourceManager;
             this.sourceManager.ProcessingProgress += SourceManager_ProcessingProgress;
 

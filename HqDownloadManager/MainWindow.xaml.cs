@@ -22,7 +22,6 @@ using HqDownloadManager.Controllers;
 namespace HqDownloadManager {
     public partial class MainWindow : Window {
         private Frame _frame;
-        private NavigationHelper _navigationHelper;
         private MainWindowController _mainWindowController;
         private readonly DependencyInjection _dependency;
 
@@ -36,9 +35,9 @@ namespace HqDownloadManager {
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             Content.Children.Add(_frame);
             _mainWindowController = _dependency.Resolve<MainWindowController>();
-            _navigationHelper = _dependency.Resolve<NavigationHelper>();
             _mainWindowController.Init();
-            Header.Content = "Atualizações";
+            var pageTitle = Resources["PageTitle"] as PageTitleViewModel;
+            pageTitle.Title = "Atualizações";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {

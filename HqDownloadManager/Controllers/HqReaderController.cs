@@ -24,7 +24,7 @@ namespace HqDownloadManager.Controllers {
         private int hqSize;
         private int actualChapter = 0;
 
-        public HqReaderController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager) {
+        public HqReaderController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper) {
         }
 
         public override void Init(params object[] values) {
@@ -55,18 +55,21 @@ namespace HqDownloadManager.Controllers {
 
         }
 
-        public void LoadActualChapter() {
-            if (_hq.Chapters[actualChapter].Pages == null || _hq.Chapters[actualChapter].Pages.Count == 0) {
+        public void LoadActualChapter()
+        {
+            var index = actualChapter;
+            if (_hq.Chapters[index].Pages == null || _hq.Chapters[index].Pages.Count == 0) {
                 Task<Chapter>.Factory.StartNew(() => {
                     dispatcher.Invoke(() => {
                         notification.Visibility = Visibility.Visible;
                     });
-                    return sourceManager.GetInfo(_hq.Chapters[actualChapter].Link) as Chapter;
+                    var chap = sourceManager.GetInfo(_hq.Chapters[index].Link) as Chapter;
+                    return chap;
                 }).
                     ContinueWith((chapResult) => {
                         dispatcher.Invoke(() => {
                             _hqReader.ActualChapter = chapResult.Result;
-                            _hq.Chapters[actualChapter] = chapResult.Result;
+                            _hq.Chapters[index] = chapResult.Result;
                             notification.Visibility = Visibility.Hidden;
                             _collectionView = controlsHelper.FindResource<CollectionViewSource>("Reader").View;
                             _collectionView.CurrentChanged += CollectionViewOnCurrentChanged;

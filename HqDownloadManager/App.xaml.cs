@@ -23,7 +23,6 @@ namespace HqDownloadManager {
             Current.MainWindow = window;
             if (_rootFrame.Content == null) {
                 _rootFrame.Navigate(dependencyInjection.Resolve<HqUpdatesPage>());
-                window.Header.Content = "Atualizações";
                 window.hqUpdates.IsChecked = true;
             }
             window.Show();

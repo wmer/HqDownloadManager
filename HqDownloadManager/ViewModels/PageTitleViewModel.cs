@@ -8,13 +8,11 @@ namespace HqDownloadManager.ViewModels {
     public class PageTitleViewModel : ViewModelBase {
         private string _pageTitle;
 
-        public string PageTitle {
-            get {
-                return _pageTitle;
-            }
+        public string Title {
+            get => _pageTitle;
             set {
                 _pageTitle = value;
-                OnPropertyChanged("PageTitle");
+                OnPropertyChanged("Title");
             }
         }
     }
