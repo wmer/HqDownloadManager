@@ -20,12 +20,12 @@ namespace HqDownloadManager.ViewModels {
             get { return hqs; }
             set {
                 hqs = value;
-                OnPropertyChanged("hqs");
+                OnPropertyChanged("Hqs");
             }
         }
 
         private void Hqs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            OnPropertyChanged("hqs");
+            OnPropertyChanged("Hqs");
         }
     }
 }

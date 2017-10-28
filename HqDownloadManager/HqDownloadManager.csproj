@@ -98,6 +98,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controllers\ConfigurationController.cs" />
+    <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\DownloadHistoryController.cs" />
     <Compile Include="Controllers\HqDetailsController.cs" />
     <Compile Include="Controllers\HqReaderController.cs" />
@@ -106,13 +107,17 @@
     <Compile Include="Controllers\SourceLibraryController.cs" />
     <Compile Include="Database\UserLibraryContext.cs" />
     <Compile Include="Helpers\NotificationHelper.cs" />
+    <Compile Include="Models\DownloadListItem.cs" />
     <Compile Include="Models\UserFavorite.cs" />
     <Compile Include="Models\UserPreferences.cs" />
     <Compile Include="Models\UserReading.cs" />
     <Compile Include="ViewModels\HqDetailsViewModel.cs" />
+    <Compile Include="ViewModels\HqDownloadingViewModel.cs" />
+    <Compile Include="ViewModels\HqDownloadListView.cs" />
     <Compile Include="ViewModels\HqListViewModel.cs" />
     <Compile Include="ViewModels\HqReaderViewModel.cs" />
     <Compile Include="ViewModels\ListBoxItemViewModel.cs" />
+    <Compile Include="ViewModels\LogViewModel.cs" />
     <Compile Include="ViewModels\MenuButtonsViewModel.cs" />
     <Compile Include="ViewModels\NotificationViewModel.cs" />
     <Compile Include="ViewModels\PageTitleViewModel.cs" />

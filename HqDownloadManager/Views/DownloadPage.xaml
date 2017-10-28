@@ -4,11 +4,60 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HqDownloadManager.Views"
+      xmlns:viewModels="clr-namespace:HqDownloadManager.ViewModels"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="600" d:DesignWidth="900"
       Title="DownloadPage">
+    <Page.Resources>
+        <viewModels:HqDownloadListView x:Key="HqList" />
+        <viewModels:HqDownloadingViewModel x:Key="DownloadingHq" />
+        <viewModels:LogViewModel x:Key="Log" />
+    </Page.Resources>
 
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ListView x:Name="HqChapters" ItemsSource="{Binding Source={StaticResource HqList}, Path=Hqs}" Grid.ColumnSpan="12" Grid.Column="0" ScrollViewer.CanContentScroll="True" FontSize="16" Height="134" VerticalAlignment="Top">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="Erase" Header="Excluir da Lista" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Titulo" Width="1100" DisplayMemberBinding="{Binding Hq.Title}" />
+                    <GridViewColumn Header="Status" Width="200" DisplayMemberBinding="{Binding Status}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Image Grid.ColumnSpan="3" Source="{Binding Source={StaticResource DownloadingHq}, Path=Hq.CoverSource}" Margin="10,139,47,244"/>
+        <TextBlock Text="{Binding Source={StaticResource DownloadingHq}, Path=Hq.Title}" TextWrapping="Wrap"  Grid.Column="2" Margin="33,139,0,0" VerticalAlignment="Top" Grid.ColumnSpan="9" Height="58" Width="600" FontSize="20" HorizontalAlignment="Left"/>
+        <TextBlock Grid.Column="2" HorizontalAlignment="Left" Margin="33,202,0,0" TextWrapping="Wrap" Text="{Binding Source={StaticResource DownloadingHq}, Path=Hq.Author}" VerticalAlignment="Top" Grid.ColumnSpan="5" Height="34" Width="290" FontSize="16"/>
+        <TextBlock Grid.Column="2" HorizontalAlignment="Left" Margin="33,241,0,0" TextWrapping="Wrap" Text="{Binding Source={StaticResource DownloadingHq}, Path=Chapter.Title}" VerticalAlignment="Top" Height="54" Width="440" FontSize="18" Grid.ColumnSpan="7"/>
+        <ProgressBar Grid.ColumnSpan="8" Grid.Column="3" Maximum="{Binding Source={StaticResource DownloadingHq}, Path=Hq.Chapters.Count}" Value="{Binding Source={StaticResource DownloadingHq}, Path=ActualChapter}" Height="21" Margin="31,300,0,0" VerticalAlignment="Top"/>
+        <TextBlock Grid.Column="2" HorizontalAlignment="Left" Margin="33,300,0,0" TextWrapping="Wrap" Text="{Binding Source={StaticResource DownloadingHq}, Path=ActualChapter}" VerticalAlignment="Top" FontSize="16"/>
+        <TextBlock Grid.Column="2" Margin="47,300,0,0" TextWrapping="Wrap" Text="de" VerticalAlignment="Top" FontSize="16" HorizontalAlignment="Left" Width="18"/>
+        <TextBlock Grid.Column="2" Margin="66,300,0,0" TextWrapping="Wrap" Text="{Binding Source={StaticResource DownloadingHq}, Path=Hq.Chapters.Count}" VerticalAlignment="Top" FontSize="16" HorizontalAlignment="Left" Width="35" Grid.ColumnSpan="2"/>
+        <TextBlock Grid.Column="11" Margin="0,300,0,0" TextWrapping="Wrap" Text="Capitulos" VerticalAlignment="Top" FontSize="16" HorizontalAlignment="Left" Width="70"/>
+        <ProgressBar Grid.ColumnSpan="8" Grid.Column="3" Maximum="{Binding Source={StaticResource DownloadingHq}, Path=Chapter.Pages.Count}" Value="{Binding Source={StaticResource DownloadingHq}, Path=ActualPage}" Height="21" Margin="31,335,0,0" VerticalAlignment="Top"/>
+        <TextBlock Grid.Column="2" HorizontalAlignment="Left" Margin="33,335,0,0" TextWrapping="Wrap" Text="{Binding Source={StaticResource DownloadingHq}, Path=ActualPage}" VerticalAlignment="Top" FontSize="16"/>
+        <TextBlock Grid.Column="2" Margin="47,335,0,0" TextWrapping="Wrap" Text="de" VerticalAlignment="Top" FontSize="16" HorizontalAlignment="Left" Width="18"/>
+        <TextBlock Grid.Column="2" Margin="66,335,0,0" TextWrapping="Wrap" Text="{Binding Source={StaticResource DownloadingHq}, Path=Chapter.Pages.Count}" VerticalAlignment="Top" FontSize="16" HorizontalAlignment="Left" Width="35" Grid.ColumnSpan="2"/>
+        <TextBlock Grid.Column="11" Margin="0,335,0,0" TextWrapping="Wrap" Text="Páginas" VerticalAlignment="Top" FontSize="16" HorizontalAlignment="Left" Width="70"/>
+        <ScrollViewer Grid.ColumnSpan="12" Margin="0,384,0,0">
+            <TextBlock TextWrapping="Wrap" Text="{Binding Source={StaticResource Log}, Path=Log}"/>
+        </ScrollViewer>
     </Grid>
 </Page>
