@@ -49,6 +49,8 @@ namespace HqDownloadManager.Controllers {
                 menuBtns.IsMyLibrary = false;
                 menuBtns.IsDownloadPage = false;
                 menuBtns.IsSettings = false;
+                menuBtns.IsReadingHistory = false;
+                menuBtns.IsDownloadHistory = false;
                 navigationHelper.Navigate<HqUpdatesPage>();
             }
             if (clicked == "allHqs" || clicked == "allHqsLabel") {
@@ -58,6 +60,8 @@ namespace HqDownloadManager.Controllers {
                 menuBtns.IsMyLibrary = false;
                 menuBtns.IsDownloadPage = false;
                 menuBtns.IsSettings = false;
+                menuBtns.IsReadingHistory = false;
+                menuBtns.IsDownloadHistory = false;
                 navigationHelper.Navigate<SourceLibraryPage>();
             }
             if (clicked == "myLibrary" || clicked == "myLibraryLabel") {
@@ -67,7 +71,31 @@ namespace HqDownloadManager.Controllers {
                 menuBtns.IsAllHqs = false;
                 menuBtns.IsDownloadPage = false;
                 menuBtns.IsSettings = false;
+                menuBtns.IsReadingHistory = false;
+                menuBtns.IsDownloadHistory = false;
                 navigationHelper.Navigate<MyLibraryPage>();
+            }
+            if (clicked == "readingHistory" || clicked == "readingHistoryLabel") {
+                pageTitle.Title = "Histórico de Leitura";
+                menuBtns.IsMyLibrary = false;
+                menuBtns.IsHqUpdates = false;
+                menuBtns.IsAllHqs = false;
+                menuBtns.IsDownloadPage = false;
+                menuBtns.IsSettings = false;
+                menuBtns.IsReadingHistory = true;
+                menuBtns.IsDownloadHistory = false;
+               navigationHelper.Navigate<ReadingHistoryPage>();
+            }
+            if (clicked == "downloadHistory" || clicked == "downloadHistoryLabel") {
+                pageTitle.Title = "Histórico de Download";
+                menuBtns.IsMyLibrary = false;
+                menuBtns.IsHqUpdates = false;
+                menuBtns.IsAllHqs = false;
+                menuBtns.IsDownloadPage = false;
+                menuBtns.IsSettings = false;
+                menuBtns.IsReadingHistory = false;
+                menuBtns.IsDownloadHistory = true;
+               navigationHelper.Navigate<DownloadHistoryPage>();
             }
             if (clicked == "downloadPage" || clicked == "downloadPageLabel") {
                 pageTitle.Title = "Página de Download";
@@ -76,6 +104,8 @@ namespace HqDownloadManager.Controllers {
                 menuBtns.IsAllHqs = false;
                 menuBtns.IsMyLibrary = false;
                 menuBtns.IsSettings = false;
+                menuBtns.IsReadingHistory = false;
+                menuBtns.IsDownloadHistory = false;
                 navigationHelper.Navigate<DownloadPage>();
             }
             if (clicked == "settings" || clicked == "settingsLabel") {
@@ -85,6 +115,8 @@ namespace HqDownloadManager.Controllers {
                 menuBtns.IsAllHqs = false;
                 menuBtns.IsMyLibrary = false;
                 menuBtns.IsDownloadPage = false;
+                menuBtns.IsReadingHistory = false;
+                menuBtns.IsDownloadHistory = false;
                 navigationHelper.Navigate<ConfigurationPage>();
             }
         }

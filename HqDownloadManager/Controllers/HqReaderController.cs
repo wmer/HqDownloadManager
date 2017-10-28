@@ -55,8 +55,7 @@ namespace HqDownloadManager.Controllers {
 
         }
 
-        public void LoadActualChapter()
-        {
+        public void LoadActualChapter() {
             var index = actualChapter;
             if (_hq.Chapters[index].Pages == null || _hq.Chapters[index].Pages.Count == 0) {
                 Task<Chapter>.Factory.StartNew(() => {
@@ -80,7 +79,7 @@ namespace HqDownloadManager.Controllers {
                             userLibrary.UserReadings.Save(userReading);
                         });
                     });
-                
+
                 LoadNextChapter();
             }
         }

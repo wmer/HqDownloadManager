@@ -11,6 +11,24 @@ namespace HqDownloadManager.ViewModels {
         private bool _isMyLibrary;
         private bool _isDownloadPage;
         private bool _isSettings;
+        private bool _isReadingHistory;
+        private bool _isDownloadHistory;
+
+        public bool IsDownloadHistory {
+            get { return _isDownloadHistory; }
+            set { _isDownloadHistory = value;
+                OnPropertyChanged("IsDownloadHistory");
+            }
+        }
+
+
+        public bool IsReadingHistory {
+            get { return _isReadingHistory; }
+            set { _isReadingHistory = value;
+                OnPropertyChanged("IsReadingHistory");
+            }
+        }
+
 
         public bool IsHqUpdates {
             get {

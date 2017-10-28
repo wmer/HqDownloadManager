@@ -4,11 +4,88 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HqDownloadManager.Views"
+      xmlns:viewModels="clr-namespace:HqDownloadManager.ViewModels"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
-      Title="SourceLibraryPage">
-
+      Title="SourceLibraryPage" SizeChanged="Page_SizeChanged">
+    <Page.Resources>
+        <viewModels:NotificationViewModel x:Key="Notification" Visibility="Hidden" />
+        <viewModels:HqListViewModel x:Key="HqList" />
+        <viewModels:ListBoxItemViewModel x:Key="ListBoxItem" Width="153.2" Height="230" Collums="7" />
+    </Page.Resources>
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="MenuOptions" Grid.ZIndex="3" Grid.ColumnSpan="12" Height="30" Background="White" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ComboBox x:Name="SourceHq" Grid.ColumnSpan="2" Grid.Column="10" Margin="0,0,20,0" VerticalAlignment="Center" SelectionChanged="SourceHq_SelectionChanged">
+                <ComboBoxItem IsSelected="True">MangaHost</ComboBoxItem>
+                <ComboBoxItem>YesMangas</ComboBoxItem>
+                <ComboBoxItem>MangasProject</ComboBoxItem>
+            </ComboBox>
+            <CheckBox x:Name="CheckboxOnlyFinalized" Grid.ColumnSpan="5" Content="Somente Finalizados" Margin="10,4,0,0" Width="224" Checked="CheckboxOnlyFinalized_OnChecked" Unchecked="CheckboxOnlyFinalized_OnUnchecked" FontSize="18" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        </Grid>
+        <ListBox x:Name="HqList" ItemsSource="{Binding Source={StaticResource HqList}, Path=Hqs}"  Grid.ColumnSpan="12" Margin="0,30,0,0" SelectionMode="Single" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.ScrollChanged="HqList_OnScrollChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="{Binding Source={StaticResource ListBoxItem}, Path=Width}" Height="{Binding Source={StaticResource ListBoxItem}, Path=Height}" ToolTip="{Binding Path=Title}" MouseDown="Grid_MouseDown" MouseUp="Grid_MouseUp" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.Background>
+                            <ImageBrush ImageSource="{Binding Path=CoverSource}" Stretch="Fill" />
+                        </Grid.Background>
+                        <TextBox Visibility="Hidden" Grid.Row="1" IsReadOnly="True" Text="{Binding Path=Title}" TextWrapping="Wrap" Height="50" VerticalAlignment="Bottom" BorderBrush="{x:Null}" Foreground="White" FontSize="16" MouseDown="Grid_MouseDown" MouseUp="Grid_MouseUp">
+                            <TextBox.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#B2FFFFFF" Offset="0"/>
+                                    <GradientStop Color="#CC000000" Offset="0.277"/>
+                                </LinearGradientBrush>
+                            </TextBox.Background>
+                        </TextBox>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate >
+                    <UniformGrid Columns="{Binding Source={StaticResource ListBoxItem}, Path=Collums}" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+        <StackPanel Name="Transition" Visibility="{Binding Source={StaticResource Notification}, Path=Visibility}" Grid.ZIndex="3" Grid.ColumnSpan="6" Grid.Column="3" Height="225" Grid.Row="6" Grid.RowSpan="6" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#CC000000" Offset="1"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </StackPanel.Background>
+            <TextBox IsReadOnly="True"  Text="Aguarde..." FontSize="130" Background="{x:Null}" Foreground="White" VerticalAlignment="Center" Height="181" BorderBrush="{x:Null}"/>
+            <TextBox x:Name="MessageProgress" IsReadOnly="True"  Text="{Binding Source={StaticResource Notification}, Path=Message}" FontSize="20" Background="{x:Null}" Foreground="White" VerticalAlignment="Center" Height="39" VerticalContentAlignment="Bottom" BorderBrush="{x:Null}"/>
+        </StackPanel>
     </Grid>
 </Page>

@@ -98,9 +98,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controllers\ConfigurationController.cs" />
+    <Compile Include="Controllers\DownloadHistoryController.cs" />
     <Compile Include="Controllers\HqDetailsController.cs" />
     <Compile Include="Controllers\HqReaderController.cs" />
     <Compile Include="Controllers\HqUpdatesController.cs" />
+    <Compile Include="Controllers\ReadingHistoryController.cs" />
+    <Compile Include="Controllers\SourceLibraryController.cs" />
     <Compile Include="Database\UserLibraryContext.cs" />
     <Compile Include="Helpers\NotificationHelper.cs" />
     <Compile Include="Models\UserFavorite.cs" />
@@ -118,6 +121,9 @@
     <Compile Include="Views\ConfigurationPage.xaml.cs">
       <DependentUpon>ConfigurationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DownloadHistoryPage.xaml.cs">
+      <DependentUpon>DownloadHistoryPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DownloadPage.xaml.cs">
       <DependentUpon>DownloadPage.xaml</DependentUpon>
     </Compile>
@@ -132,6 +138,9 @@
     </Compile>
     <Compile Include="Views\MyLibraryPage.xaml.cs">
       <DependentUpon>MyLibraryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReadingHistoryPage.xaml.cs">
+      <DependentUpon>ReadingHistoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SourceLibraryPage.xaml.cs">
       <DependentUpon>SourceLibraryPage.xaml</DependentUpon>
@@ -157,6 +166,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\DownloadHistoryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\DownloadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -174,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MyLibraryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReadingHistoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

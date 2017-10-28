@@ -34,6 +34,14 @@
                     <Label x:Name="myLibraryLabel" DockPanel.Dock="Right" Height="30" Content="Minha Biblioteca" FontSize="18" VerticalAlignment="Center" Width="Auto" Foreground="White" MouseDown="Label_MouseDown" MouseUp="Label_MouseUp" />
                 </DockPanel>
                 <DockPanel Height="32" VerticalAlignment="Top">
+                    <ToggleButton x:Name="readingHistory" DockPanel.Dock="Left" Content="{iconpacks:PackIconMaterial history}" IsChecked="{Binding Source={StaticResource MenuButtons}, Path=IsReadingHistory}" Height="30" Width="30" Margin="2,1,2,0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Button_Click" />
+                    <Label x:Name="readingHistoryLabel" DockPanel.Dock="Right" Height="30" Content="Histórico de Leitura" FontSize="18" VerticalAlignment="Center" Width="Auto" Foreground="White" MouseDown="Label_MouseDown" MouseUp="Label_MouseUp" />
+                </DockPanel>
+                <DockPanel Height="32" VerticalAlignment="Top">
+                    <ToggleButton x:Name="downloadHistory" DockPanel.Dock="Left" Content="{iconpacks:PackIconMaterial history}" IsChecked="{Binding Source={StaticResource MenuButtons}, Path=IsDownloadHistory}" Height="30" Width="30" Margin="2,1,2,0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Button_Click" />
+                    <Label x:Name="downloadHistoryLabel" DockPanel.Dock="Right" Height="30" Content="Histórico de Download" FontSize="18" VerticalAlignment="Center" Width="Auto" Foreground="White" MouseDown="Label_MouseDown" MouseUp="Label_MouseUp" />
+                </DockPanel>
+                <DockPanel Height="32" VerticalAlignment="Top">
                     <ToggleButton x:Name="downloadPage" DockPanel.Dock="Left" Content="{iconpacks:PackIconMaterial download}" IsChecked="{Binding Source={StaticResource MenuButtons}, Path=IsDownloadPage}" Height="30" Width="30" Margin="2,1,2,0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Button_Click" />
                     <Label x:Name="downloadPageLabel" DockPanel.Dock="Right" Height="30" Content="Página de Downloads" FontSize="18" VerticalAlignment="Center" Width="Auto" Foreground="White" MouseDown="Label_MouseDown" MouseUp="Label_MouseUp" />
                 </DockPanel>

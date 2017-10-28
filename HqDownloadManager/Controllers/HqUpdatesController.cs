@@ -42,8 +42,7 @@ namespace HqDownloadManager.Controllers {
                     updates = sourceManager.GetUpdates(link);
                 }
                 return updates;
-            })
-            .ContinueWith((list) => {
+            }).ContinueWith((list) => {
                 foreach (var hq in list.Result) {
                     if (!String.IsNullOrEmpty(hq.Link)) {
                         dispatcher.Invoke(() => {
@@ -55,52 +54,6 @@ namespace HqDownloadManager.Controllers {
                     notification.Visibility = Visibility.Hidden;
                 });
             });
-        }
-
-        public void OpenHqDetails() {
-            Task<Hq>.Factory.StartNew(GetSelectedHq)
-                .ContinueWith((hqResult) => {
-                    if (hqResult.Result is Hq hq) {
-                        dispatcher.Invoke(() => {
-                            navigationHelper.Navigate<HqDetailsPage>(hq);
-                        });
-                    }
-                });
-        }
-
-        private Hq GetSelectedHq() {
-            Hq hq = null;
-            Hq selectedHq = null;
-            ListBox hqList = null;
-            dispatcher.Invoke(() => {
-                hqList = controlsHelper.Find<ListBox>("HqList");
-            });
-
-            dispatcher.Invoke(() => {
-                selectedHq = hqList.SelectedItem as Hq;
-                notification.Visibility = Visibility.Visible;
-            });
-
-            hq = sourceManager.GetInfo(selectedHq?.Link) as Hq;
-
-            dispatcher.Invoke(() => {
-                notification.Visibility = Visibility.Hidden;
-            });
-
-            return hq;
-        }
-
-        public void ActualizeItemSizeAndCollumns() {
-            var itemResource = controlsHelper.FindResource<ListBoxItemViewModel>("ListBoxItem");
-            var page = controlsHelper.GetCurrentPage();
-            var collumns = Convert.ToInt32(page.ActualWidth / 200);
-            var width = (page.ActualWidth - 90) / collumns;
-            var heigth = width + 75;
-
-            if (itemResource == null) return;
-            itemResource.Collums = collumns;
-            itemResource.Width = width;
-            itemResource.Height = heigth;
         }
     }
 }
