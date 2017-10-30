@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using HqDownloadManager.Core.Models;
 
 namespace HqDownloadManager.ViewModels {
@@ -11,6 +12,16 @@ namespace HqDownloadManager.ViewModels {
         private Chapter _chapter;
         private int _actualChapter;
         private int _actualPage;
+        private Visibility _visibility;
+
+        public Visibility Visibility {
+            get => _visibility;
+            set {
+                _visibility = value;
+                OnPropertyChanged("Visibility");
+            }
+        }
+
 
         public int ActualPage {
             get => _actualPage;

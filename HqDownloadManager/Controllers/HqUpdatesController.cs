@@ -14,15 +14,16 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Threading;
 using DependencyInjectionResolver;
+using HqDownloadManager.Compression;
 using HqDownloadManager.Database;
 using HqDownloadManager.Download;
 using HqDownloadManager.Views;
 
 namespace HqDownloadManager.Controllers {
-    public class HqUpdatesController : Controller {
+    public class HqUpdatesController : ListHqControllerBase {
         private ObservableCollection<Hq> _hqList;
 
-        public HqUpdatesController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper) {
+        public HqUpdatesController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper, ZipManager zipManager) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper, zipManager) {
         }
 
         public override void Init(params object[] values) {

@@ -21,6 +21,7 @@ namespace HqDownloadManager.Core.Helpers {
 
         public void CreateCache(Hq hq) {
             lock (_lock1) {
+                if(string.IsNullOrEmpty(hq.CoverSource)) return;
                 using (var webClient = new WebClient()) {
                     var pageSource = $"{directory}\\{StringHelper.RemoveSpecialCharacters(hq.Title)}{FormatPage(hq.CoverSource)}";
                     if (!File.Exists(pageSource)) {

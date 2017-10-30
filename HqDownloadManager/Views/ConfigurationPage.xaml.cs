@@ -19,24 +19,19 @@ namespace HqDownloadManager.Views {
     /// <summary>
     /// Interação lógica para ConfigurationPage.xam
     /// </summary>
-    public partial class ConfigurationPage : Page { 
-        private readonly DependencyInjection _dependency;
-        private ConfigurationController _configurationController;
+    public partial class ConfigurationPage : PageControllerBase<ConfigurationController> { 
 
-        public ConfigurationPage(DependencyInjection dependencyInjection) {
+        public ConfigurationPage(DependencyInjection dependencyInjection) : base(dependencyInjection) {
             InitializeComponent();
-            _dependency = dependencyInjection;
-            Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs) {
-            _configurationController = _dependency.Resolve<ConfigurationController>();
-            _configurationController.Init();
+        protected override void OnLoaded(object sender, RoutedEventArgs routedEventArgs) {
+            base.OnLoaded(sender, routedEventArgs);
         }
 
         [STAThread]
-        private void btnAlterLocDownload_Click(object sender, RoutedEventArgs e) => _configurationController.SetDefaultPath();
+        private void btnAlterLocDownload_Click(object sender, RoutedEventArgs e) => Controller.SetDefaultPath();
 
-        private void saveConfigs_Click(object sender, RoutedEventArgs e) => _configurationController.SaveConfiguration();
+        private void saveConfigs_Click(object sender, RoutedEventArgs e) => Controller.SaveConfiguration();
     }
 }

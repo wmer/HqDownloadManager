@@ -12,13 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DependencyInjectionResolver;
+using HqDownloadManager.Controllers;
 
 namespace HqDownloadManager.Views {
     /// <summary>
     /// Interação lógica para ReadingHistoryPage.xam
     /// </summary>
-    public partial class ReadingHistoryPage : Page {
-        public ReadingHistoryPage() {
+    public partial class ReadingHistoryPage : PageControllerBase<ReadingHistoryController> {
+        public ReadingHistoryPage(DependencyInjection dependency) : base(dependency) {
             InitializeComponent();
         }
     }

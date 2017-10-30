@@ -23,6 +23,7 @@ namespace HqDownloadManager.Download.Helpers {
         public void SaveHqDownloadInfo(Hq hq, string path, DateTime time) {
             lock (_lock) {
                 var dInfo = new HqDownloadInfo {
+                    Link = hq.Link,
                     SavedIn = path, Time = time,
                     HqDownloaded = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(hq))
                 };

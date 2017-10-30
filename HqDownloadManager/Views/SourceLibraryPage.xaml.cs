@@ -16,47 +16,39 @@ using DependencyInjectionResolver;
 using HqDownloadManager.Controllers;
 
 namespace HqDownloadManager.Views {
-    /// <summary>
-    /// Interação lógica para SourceLibraryPage.xam
-    /// </summary>
-    public partial class SourceLibraryPage : Page {
-        private readonly DependencyInjection _dependency;
-        private SourceLibraryController _sourceLibraryController;
-        private bool isFinalized = false;
+    public partial class SourceLibraryPage : PageControllerBase<SourceLibraryController> {
+        private bool _isFinalized = false;
 
-        public SourceLibraryPage(DependencyInjection dependencyInjection) {
+        public SourceLibraryPage(DependencyInjection dependencyInjection) : base(dependencyInjection) {
             InitializeComponent();
-            _dependency = dependencyInjection;
-            Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e) {
-            _sourceLibraryController = _dependency.Resolve<SourceLibraryController>();
-            _sourceLibraryController.Init();
+        protected override void OnLoaded(object sender, RoutedEventArgs e) {
+            base.OnLoaded(sender, e);
             if ((bool)CheckboxOnlyFinalized.IsChecked) {
-                _sourceLibraryController?.ShowOnlyFinalized();
+                Controller?.ShowOnlyFinalized();
             } else {
-                _sourceLibraryController.ShowSourceLibrary();
+                Controller.ShowSourceLibrary();
             }
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e) =>
-            _sourceLibraryController?.ActualizeItemSizeAndCollumns();
+            Controller?.ActualizeItemSizeAndCollumns();
 
         private void SourceHq_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            _sourceLibraryController?.ShowSourceLibrary();
-            if (isFinalized) {
-                _sourceLibraryController?.ShowOnlyFinalized();
-             }
+            Controller?.ShowSourceLibrary();
+            if (_isFinalized) {
+                Controller?.ShowOnlyFinalized();
+            }
         }
 
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e) =>
-            _sourceLibraryController.SetTimesOfClick(sender, e);
+            Controller.SetTimesOfClick(sender, e);
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e) =>
-            _sourceLibraryController.Click(sender, e, () => {
-                _sourceLibraryController.OpenHqDetails(isFinalized);
+            Controller.Click(sender, e, () => {
+                Controller.OpenHqDetails(_isFinalized);
             });
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e) {
@@ -76,21 +68,23 @@ namespace HqDownloadManager.Views {
                 var scrollViewer = (ScrollViewer)e.OriginalSource;
                 if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight) {
                     Task.Run(() => {
-                        _sourceLibraryController.ShowNextPage();
+                        Controller.ShowNextPage();
                     });
                 }
             }
         }
 
         private void CheckboxOnlyFinalized_OnChecked(object sender, RoutedEventArgs e) {
-            isFinalized = true;
-            _sourceLibraryController?.ShowOnlyFinalized();
+            _isFinalized = true;
+            Controller?.ShowOnlyFinalized();
         }
 
 
         private void CheckboxOnlyFinalized_OnUnchecked(object sender, RoutedEventArgs e) {
-            isFinalized = false;
-            _sourceLibraryController?.ShowSourceLibrary();
+            _isFinalized = false;
+            Controller?.ShowSourceLibrary();
         }
+
+        private void AddToDownload_OnClick(object sender, RoutedEventArgs e) => Controller.AddInDownloadList(_isFinalized);
     }
 }

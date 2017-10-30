@@ -137,6 +137,7 @@ namespace HqDownloadManager.Core.Sources {
 
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Abrindo Internet Explorer"));
                 var Ie = browserHelper.GetInternetExplorer(link);
+                Task.Delay(5000).Wait();
                 var doc = Ie.Document as HTMLDocument;
                 IDocument source = htmlHelper.GetSourceCodeFromHtml(doc.body.outerHTML);
                 var hqInfo = new Hq();
@@ -154,7 +155,7 @@ namespace HqDownloadManager.Core.Sources {
                     hqInfo.CoverSource = img?.GetAttribute("src");
                     hqInfo.Synopsis = synopsis.Replace("\n", "").Trim();
                     hqInfo.Link = link;
-                    var lastchapter = source.QuerySelector("ul.list-of-chapters li a");
+                    var lastchapter = source.QuerySelector("#chapter-list .list-of-chapters li a");
                     hqInfo.Chapters = GetListChapters($"{BaseAdress}{lastchapter?.GetAttribute("href")}").Reverse<Chapter>().ToList();
 
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto!"));

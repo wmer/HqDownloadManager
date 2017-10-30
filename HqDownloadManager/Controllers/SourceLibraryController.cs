@@ -12,17 +12,19 @@ using HqDownloadManager.Download;
 using HqDownloadManager.Helpers;
 using HqDownloadManager.ViewModels;
 using System.Windows;
+using HqDownloadManager.Compression;
 
 namespace HqDownloadManager.Controllers {
-    public class SourceLibraryController : Controller {
+    public class SourceLibraryController : ListHqControllerBase {
         private ObservableCollection<Hq> _hqList;
         private string nextPageLink;
         private string finalizedPage;
 
-        public SourceLibraryController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper) {
+        public SourceLibraryController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper, ZipManager zipManager) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper, zipManager) {
         }
 
         public override void Init(params object[] values) {
+            base.Init();
             _hqList = controlsHelper.FindResource<HqListViewModel>("HqList")?.Hqs;
         }
 

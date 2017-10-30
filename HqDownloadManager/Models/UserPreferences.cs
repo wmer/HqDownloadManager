@@ -12,6 +12,8 @@ namespace HqDownloadManager.Models {
         private bool _compress;
         private bool _eraseFolder;
         private string _downloadPath;
+        private bool _shutdown;
+
 
         [PrimaryKey]
         public int Id {
@@ -45,6 +47,14 @@ namespace HqDownloadManager.Models {
             set {
                 _compress = value;
                 OnPropertyChanged("Compress");
+            }
+        }
+
+        public bool Shutdown {
+            get => _shutdown;
+            set {
+                _shutdown = value;
+                OnPropertyChanged("Shutdown");
             }
         }
     }

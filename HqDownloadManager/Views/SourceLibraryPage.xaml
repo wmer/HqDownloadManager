@@ -1,10 +1,11 @@
-﻿<Page x:Class="HqDownloadManager.Views.SourceLibraryPage"
+﻿<local:PageControllerBase x:TypeArguments="controllers:SourceLibraryController" x:Class="HqDownloadManager.Views.SourceLibraryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HqDownloadManager.Views"
       xmlns:viewModels="clr-namespace:HqDownloadManager.ViewModels"
+      xmlns:controllers="clr-namespace:HqDownloadManager.Controllers"
       mc:Ignorable="d" 
       Title="SourceLibraryPage" SizeChanged="Page_SizeChanged">
     <Page.Resources>
@@ -50,6 +51,11 @@
             <CheckBox x:Name="CheckboxOnlyFinalized" Grid.ColumnSpan="5" Content="Somente Finalizados" Margin="10,4,0,0" Width="224" Checked="CheckboxOnlyFinalized_OnChecked" Unchecked="CheckboxOnlyFinalized_OnUnchecked" FontSize="18" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         </Grid>
         <ListBox x:Name="HqList" ItemsSource="{Binding Source={StaticResource HqList}, Path=Hqs}"  Grid.ColumnSpan="12" Margin="0,30,0,0" SelectionMode="Single" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.ScrollChanged="HqList_OnScrollChanged">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="AddToDownload" Header="Adcionar a Lista de Download" Click="AddToDownload_OnClick" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Width="{Binding Source={StaticResource ListBoxItem}, Path=Width}" Height="{Binding Source={StaticResource ListBoxItem}, Path=Height}" ToolTip="{Binding Path=Title}" MouseDown="Grid_MouseDown" MouseUp="Grid_MouseUp" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
@@ -88,4 +94,5 @@
             <TextBox x:Name="MessageProgress" IsReadOnly="True"  Text="{Binding Source={StaticResource Notification}, Path=Message}" FontSize="20" Background="{x:Null}" Foreground="White" VerticalAlignment="Center" Height="39" VerticalContentAlignment="Bottom" BorderBrush="{x:Null}"/>
         </StackPanel>
     </Grid>
-</Page>
+</local:PageControllerBase>
+

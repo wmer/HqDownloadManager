@@ -12,12 +12,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HqDownloadManager.Controllers;
 
 namespace HqDownloadManager.Views {
     /// <summary>
     /// Interação lógica para DownloadHistoryPage.xam
     /// </summary>
-    public partial class DownloadHistoryPage : Page {
+    public partial class DownloadHistoryPage : PageControllerBase<DownloadHistoryController> {
         public DownloadHistoryPage() {
             InitializeComponent();
         }

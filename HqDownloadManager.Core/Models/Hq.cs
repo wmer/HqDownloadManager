@@ -12,7 +12,7 @@ namespace HqDownloadManager.Core.Models {
         public List<Chapter> Chapters { get; set; }
 
         public int CompareTo(Hq other) {
-            return Chapters.Count().CompareTo(other.Chapters.Count());
+            return String.Compare(Link, other.Link, StringComparison.Ordinal);
         }
     }
 }

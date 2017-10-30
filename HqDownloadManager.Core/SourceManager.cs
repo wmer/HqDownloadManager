@@ -118,6 +118,7 @@ namespace HqDownloadManager.Core {
                     source.ProcessingProgress += Source_ProcessingProgress;
                     library = source.GetLibrary(url);
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Criando cache de Capa..."));
+                    
                     foreach (var hq in library.Hqs) {
                         _coveCacheHelper.CreateCache(hq);
                     }

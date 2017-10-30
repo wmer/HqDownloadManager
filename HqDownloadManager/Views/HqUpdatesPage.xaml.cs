@@ -17,34 +17,29 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace HqDownloadManager.Views {
-    public partial class HqUpdatesPage : Page {
-        private readonly DependencyInjection _dependency;
-        private HqUpdatesController _hqUpdatesController;
+    public partial class HqUpdatesPage : PageControllerBase<HqUpdatesController> {
 
-        public HqUpdatesPage(DependencyInjection dependency) {
-            _dependency = dependency;
+        public HqUpdatesPage(DependencyInjection dependency) : base(dependency) {
             InitializeComponent();
-            this.Loaded += HqUpdatesPage_Loaded;
-        } 
+        }
 
-        private void HqUpdatesPage_Loaded(object sender, RoutedEventArgs e) {
-            _hqUpdatesController = _dependency.Resolve<HqUpdatesController>();
-            _hqUpdatesController.Init();
-            _hqUpdatesController.ShowHqUpdates();
+        protected override void OnLoaded(object sender, RoutedEventArgs e) {
+            base.OnLoaded(sender, e);
+            Controller.ShowHqUpdates();
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e) =>
-            _hqUpdatesController?.ActualizeItemSizeAndCollumns();
+            Controller?.ActualizeItemSizeAndCollumns();
 
         private void SourceHq_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
-            _hqUpdatesController?.ShowHqUpdates();
+            Controller?.ShowHqUpdates();
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e) =>
-            _hqUpdatesController.SetTimesOfClick(sender, e);
+            Controller.SetTimesOfClick(sender, e);
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e) =>
-            _hqUpdatesController.Click(sender, e, () => {
-                _hqUpdatesController.OpenHqDetails();
+            Controller.Click(sender, e, () => {
+                Controller.OpenHqDetails();
             });
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e) {
@@ -58,5 +53,7 @@ namespace HqDownloadManager.Views {
                 txtBox.Visibility = Visibility.Hidden;
             }
         }
+
+        private void AddToDownload_OnClick(object sender, RoutedEventArgs e) => Controller.AddInDownloadList();
     }
 }

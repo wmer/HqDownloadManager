@@ -9,13 +9,13 @@ using HqDownloadManager.Database;
 using HqDownloadManager.Download;
 using HqDownloadManager.Helpers;
 using System.Windows.Forms;
+using HqDownloadManager.Compression;
 using HqDownloadManager.Models;
 
 namespace HqDownloadManager.Controllers {
     public class ConfigurationController : Controller {
-        UserPreferences userPreferences;
 
-        public ConfigurationController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper) {
+        public ConfigurationController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper, ZipManager zipManager) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper, zipManager) {
         }
 
         public override void Init(params object[] values) {
@@ -24,12 +24,8 @@ namespace HqDownloadManager.Controllers {
                 userPreferences.Compress = userP.Compress;
                 userPreferences.EraseFolder = userP.EraseFolder;
                 userPreferences.DownloadPath = userP.DownloadPath;
+                userPreferences.Shutdown = userP.Shutdown;
                 userPreferences.Id = userP.Id;
-            }else {
-                userPreferences.Compress = false;
-                userPreferences.EraseFolder = false;
-                userPreferences.DownloadPath = $"{AppDomain.CurrentDomain.BaseDirectory}\\Downloads\\Mangas";
-                userLibrary.UserPreferences.Save(userPreferences);
             }
         }
 

@@ -9,10 +9,10 @@ using HqDownloadManager.Core.Models;
 using HqDownloadManager.Models;
 
 namespace HqDownloadManager.ViewModels {
-    public class HqDownloadListView : ViewModelBase {
+    public class DownloadListViewModel : ViewModelBase {
         private ObservableCollection<DownloadListItem> _hqs;
 
-        public HqDownloadListView() {
+        public DownloadListViewModel() {
             _hqs = new ObservableCollection<DownloadListItem>();
             _hqs.CollectionChanged += Hqs_CollectionChanged;
         }

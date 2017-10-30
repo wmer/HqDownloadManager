@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using DependencyInjectionResolver;
+using HqDownloadManager.Compression;
 using HqDownloadManager.Core;
 using HqDownloadManager.Core.Models;
 using HqDownloadManager.Database;
@@ -24,10 +25,11 @@ namespace HqDownloadManager.Controllers {
         private int hqSize;
         private int actualChapter = 0;
 
-        public HqReaderController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper) {
+        public HqReaderController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper, ZipManager zipManager) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper, zipManager) {
         }
 
         public override void Init(params object[] values) {
+            base.Init();
             if (values[0] is Hq hq) {
                 _hq = hq;
                 hqSize = _hq.Chapters.Count;

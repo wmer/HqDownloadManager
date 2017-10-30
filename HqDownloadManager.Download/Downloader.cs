@@ -72,7 +72,7 @@ namespace HqDownloadManager.Download {
                             if (chapter.Pages == null || chapter.Pages.Count == 0) {
                                 if (!_processing) {
                                     Task.Run(() => {
-                                        AddPagesInChapters(hqInfo);
+                                        AddPagesInChapters(ref hqInfo);
                                     });
                                 }
 
@@ -105,34 +105,35 @@ namespace HqDownloadManager.Download {
                     var pageAtual = 1;
                     var totalPages = chapter.Pages.Count();
                     DownloadProgress(this, new ProgressEventArgs(chapter, 0, totalPages));
+                    var downloads = new Task[chapter.Pages.Count];
+                    var i = 0;
                     foreach (var page in chapter.Pages) {
                         if (_paused) {
                             DownloadPause(this, new ProgressEventArgs(DateTime.Now, chapter, pageAtual, totalPages));
                             while (_paused) ;
                             DownloadResume(this, new ProgressEventArgs(DateTime.Now, chapter, pageAtual, totalPages));
                         }
-                        DownloadPage(page, chapterDirectory);
+                        try {
+                            var pageSource = $"{chapterDirectory}\\{page.Number.ToString().PadLeft(3, '0')}{FormatPage(page.Source)}";
+                            if (!File.Exists(pageSource)) {
+                                using (var webClient = new WebClient()) {
+                                    downloads[i] = webClient.DownloadFileTaskAsync(new Uri(page.Source), pageSource);
+                                    page.Source = pageSource;
+                                }
+                            }
+                        } catch (Exception e) {
+                            DownloadError(this, new DownloadErrorEventArgs(null, e, DateTime.Now));
+                        }
+
                         DownloadProgress(this, new ProgressEventArgs(chapter, pageAtual, totalPages));
                         pageAtual++;
+                        i++;
                     }
+                    Task.WaitAll(downloads);
                 });
 
                 DownloadEnd(this, new DownloadEventArgs(chapter, new DirectoryInfo(chapterDirectory),
                    startChapterDownload, DateTime.Now, downloadChapterTime));
-            }
-        }
-
-        public void DownloadPage(Page page, string directory) {
-            lock (_lock8) {
-                try {
-                    using (var webClient = new WebClient()) {
-                        var pageSource = $"{directory}\\{page.Number.ToString().PadLeft(3, '0')}{FormatPage(page.Source)}";
-                        webClient.DownloadFile(page.Source, pageSource);
-                        page.Source = pageSource;
-                    }
-                } catch (Exception e) {
-                    DownloadError(this, new DownloadErrorEventArgs(null, e, DateTime.Now));
-                }
             }
         }
 
@@ -211,7 +212,7 @@ namespace HqDownloadManager.Download {
             }
         }
 
-        private void AddPagesInChapters(Hq hq) {
+        private void AddPagesInChapters(ref Hq hq) {
             lock (_lock5) {
                 _processing = true;
                 foreach (var chapter in hq.Chapters) {

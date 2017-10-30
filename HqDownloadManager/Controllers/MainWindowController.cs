@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using HqDownloadManager.ViewModels;
 using System.Threading;
 using DependencyInjectionResolver;
+using HqDownloadManager.Compression;
 using HqDownloadManager.Views;
 using HqDownloadManager.Core;
 using HqDownloadManager.Database;
@@ -17,7 +18,7 @@ namespace HqDownloadManager.Controllers {
     public class MainWindowController : Controller {
         private PaneViewModel _pane;
 
-        public MainWindowController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper) {
+        public MainWindowController(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper, ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager, NotificationHelper notificationHelper, ZipManager zipManager) : base(dependencyInjection, controlsHelper, navigationHelper, clickHelper, sourceManager, userLibrary, downloadManager, notificationHelper, zipManager) {
         }
 
         public override void Init(params object[] values) {

@@ -1,9 +1,10 @@
-﻿<Page x:Class="HqDownloadManager.Views.ReadingHistoryPage"
+﻿<local:PageControllerBase x:TypeArguments="controllers:ReadingHistoryController" x:Class="HqDownloadManager.Views.ReadingHistoryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HqDownloadManager.Views"
+      xmlns:controllers="clr-namespace:HqDownloadManager.Controllers"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ReadingHistoryPage">
@@ -11,4 +12,5 @@
     <Grid>
         
     </Grid>
-</Page>
+</local:PageControllerBase>
+

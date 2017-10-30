@@ -12,13 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DependencyInjectionResolver;
+using HqDownloadManager.Controllers;
 
 namespace HqDownloadManager.Views {
     /// <summary>
     /// Interação lógica para MyLibraryPage.xam
     /// </summary>
-    public partial class MyLibraryPage : Page {
-        public MyLibraryPage() {
+    public partial class MyLibraryPage : PageControllerBase<MyLibraryController> {
+        public MyLibraryPage(DependencyInjection dependency) : base(dependency) {
             InitializeComponent();
         }
     }

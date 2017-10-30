@@ -99,10 +99,13 @@
     </ApplicationDefinition>
     <Compile Include="Controllers\ConfigurationController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\DownloadEventController.cs" />
     <Compile Include="Controllers\DownloadHistoryController.cs" />
     <Compile Include="Controllers\HqDetailsController.cs" />
     <Compile Include="Controllers\HqReaderController.cs" />
     <Compile Include="Controllers\HqUpdatesController.cs" />
+    <Compile Include="Controllers\ListHqControllerBase.cs" />
+    <Compile Include="Controllers\MyLibraryController.cs" />
     <Compile Include="Controllers\ReadingHistoryController.cs" />
     <Compile Include="Controllers\SourceLibraryController.cs" />
     <Compile Include="Database\UserLibraryContext.cs" />
@@ -113,7 +116,7 @@
     <Compile Include="Models\UserReading.cs" />
     <Compile Include="ViewModels\HqDetailsViewModel.cs" />
     <Compile Include="ViewModels\HqDownloadingViewModel.cs" />
-    <Compile Include="ViewModels\HqDownloadListView.cs" />
+    <Compile Include="ViewModels\DownloadListViewModel.cs" />
     <Compile Include="ViewModels\HqListViewModel.cs" />
     <Compile Include="ViewModels\HqReaderViewModel.cs" />
     <Compile Include="ViewModels\ListBoxItemViewModel.cs" />
@@ -144,6 +147,7 @@
     <Compile Include="Views\MyLibraryPage.xaml.cs">
       <DependentUpon>MyLibraryPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageControllerBase.cs" />
     <Compile Include="Views\ReadingHistoryPage.xaml.cs">
       <DependentUpon>ReadingHistoryPage.xaml</DependentUpon>
     </Compile>

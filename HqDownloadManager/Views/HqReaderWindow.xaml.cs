@@ -22,7 +22,7 @@ namespace HqDownloadManager.Views {
         private readonly DependencyInjection _dependency;
         private HqReaderController _hqReaderController;
 
-        private Hq _hq;
+        private readonly Hq _hq;
         private Chapter _chapter;
         public HqReaderWindow(Hq hq, DependencyInjection dependency) {
             _hq = hq;
