@@ -27,12 +27,8 @@ namespace HqDownloadManager.Download {
 
         private readonly object _lock1 = new object();
         private readonly object _lock2 = new object();
-        private readonly object _lock3 = new object();
-        private readonly object _lock4 = new object();
         private readonly object _lock5 = new object();
         private readonly object _lock6 = new object();
-        private readonly object _lock7 = new object();
-        private readonly object _lock8 = new object();
         private readonly object _lock9 = new object();
 
         public event DownloadEventHandler DownloadStart;
@@ -41,8 +37,6 @@ namespace HqDownloadManager.Download {
         public event ProgressEventHandler DownloadPause;
         public event ProgressEventHandler DownloadResume;
         public event DownloadErrorEventHandler DownloadError;
-        public event FollowEventHandler FollowingHq;
-        public event UpdateEventHandler UpdateHq;
 
         public Downloader(DirectoryHelper directoryHelper, TaskTimer timerHelper, SourceManager sourceManager, DownloadInfoHelper downloadInfoHelper) {
             this._directoryHelper = directoryHelper;
@@ -58,7 +52,7 @@ namespace HqDownloadManager.Download {
                 DownloadStart(this, new DownloadEventArgs(hqInfo, new DirectoryInfo(hqDirectory), startTime));
                 var tempHq = new Hq {
                     Link = hqInfo.Link, Title = hqInfo.Title, CoverSource = hqInfo.CoverSource,
-                    Chapters = new List<Chapter>()
+                    Synopsis = hqInfo.Synopsis, Chapters = new List<Chapter>()
                 };
                 var numChapters = hqInfo.Chapters.Count();
                 var chapAtual = 1;
@@ -66,9 +60,7 @@ namespace HqDownloadManager.Download {
                 var totalTime = _timerHelper.RuntimeOf(() => {
                     DownloadProgress(this, new ProgressEventArgs(hqInfo, 0, numChapters));
                     foreach (var chapter in hqInfo.Chapters) {
-                        var chapterDirectory = "";
                         try {
-                            chapterDirectory = _directoryHelper.FormatMainDirectory(hqDirectory, chapter.Title);
                             if (chapter.Pages == null || chapter.Pages.Count == 0) {
                                 if (!_processing) {
                                     Task.Run(() => {
@@ -77,14 +69,14 @@ namespace HqDownloadManager.Download {
                                 }
 
                                 var chapterInfo = (Chapter)_sourceManager.GetInfo(chapter.Link);
-                                chapter.Pages = chapterInfo.Pages;
+                                chapter.Pages = chapterInfo?.Pages;
                             }
                             SaveChapter(chapter, hqDirectory);
                             tempHq.Chapters.Add(chapter);
+                            _downloadInfoHelper.SaveHqDownloadInfo(tempHq, hqDirectory, startTime);
                         } catch (Exception e) {
                             DownloadError(this, new DownloadErrorEventArgs(chapter, e, DateTime.Now));
                             failedToDownload.Add(chapter.Link);
-                            _directoryHelper.RemoveDirectory(chapterDirectory);
                         }
                         DownloadProgress(this, new ProgressEventArgs(hqInfo, chapAtual, numChapters));
                         chapAtual++;
@@ -105,8 +97,6 @@ namespace HqDownloadManager.Download {
                     var pageAtual = 1;
                     var totalPages = chapter.Pages.Count();
                     DownloadProgress(this, new ProgressEventArgs(chapter, 0, totalPages));
-                    var downloads = new Task[chapter.Pages.Count];
-                    var i = 0;
                     foreach (var page in chapter.Pages) {
                         if (_paused) {
                             DownloadPause(this, new ProgressEventArgs(DateTime.Now, chapter, pageAtual, totalPages));
@@ -117,19 +107,17 @@ namespace HqDownloadManager.Download {
                             var pageSource = $"{chapterDirectory}\\{page.Number.ToString().PadLeft(3, '0')}{FormatPage(page.Source)}";
                             if (!File.Exists(pageSource)) {
                                 using (var webClient = new WebClient()) {
-                                    downloads[i] = webClient.DownloadFileTaskAsync(new Uri(page.Source), pageSource);
-                                    page.Source = pageSource;
+                                   webClient.DownloadFile(new Uri(page.Source), pageSource);
                                 }
                             }
+                            page.Source = pageSource;
                         } catch (Exception e) {
                             DownloadError(this, new DownloadErrorEventArgs(null, e, DateTime.Now));
                         }
 
                         DownloadProgress(this, new ProgressEventArgs(chapter, pageAtual, totalPages));
                         pageAtual++;
-                        i++;
                     }
-                    Task.WaitAll(downloads);
                 });
 
                 DownloadEnd(this, new DownloadEventArgs(chapter, new DirectoryInfo(chapterDirectory),
@@ -161,54 +149,9 @@ namespace HqDownloadManager.Download {
             _paused = state;
         }
 
-        public void FollowHq(Hq hqInfo, string directory) {
-            lock (_lock3) {
-                var hqDirectory = _directoryHelper.FormatMainDirectory(directory, hqInfo.Title);
-                _downloadInfoHelper.SaveHqDownloadInfo(hqInfo, hqDirectory, DateTime.Now);
-                FollowingHq(this, new FollowEventArgs(hqInfo, DateTime.Now));
-            }
-        }
-
-        public void CheckHqUpdates() {
-            lock (_lock4) {
-                var list = new List<Hq>();
-                var downloadInfos = _downloadInfoHelper.GetHqsDownloadInfo();
-                foreach (var info in downloadInfos) {
-                    var chapterToDownload = new List<Chapter>();
-                    var hq = JsonConvert.DeserializeObject<Hq>(Encoding.ASCII.GetString(info.HqDownloaded));
-                    var update = _sourceManager.GetInfo(hq.Link) as Hq;
-                    if (update != null) {
-                        foreach (var chapter in update.Chapters) {
-                            if (!hq.Chapters.Contains(chapter)) {
-                                chapterToDownload.Add(chapter);
-                            }
-                        }
-                        if (chapterToDownload.Any()) {
-                            hq.Chapters = chapterToDownload;
-                            list.Add(hq);
-                        }
-                    }
-                }
-                UpdateHq(this, new UpdateEventArgs(list, DateTime.Now));
-            }
-        }
-
         public List<HqDownloadInfo> GetDownloadedHqsInfo() {
             lock (_lock6) {
                 return _downloadInfoHelper.GetHqsDownloadInfo();
-            }
-        }
-
-        public HqDownloadInfo GetDownloadedHqInfo(string link) {
-            lock (_lock7) {
-                var downloadInfos = _downloadInfoHelper.GetHqsDownloadInfo();
-                foreach (var info in downloadInfos) {
-                    var hq = JsonConvert.DeserializeObject<Hq>(Encoding.ASCII.GetString(info.HqDownloaded));
-                    if (hq.Link == link) {
-                        return info;
-                    }
-                }
-                return null;
             }
         }
 
@@ -217,7 +160,7 @@ namespace HqDownloadManager.Download {
                 _processing = true;
                 foreach (var chapter in hq.Chapters) {
                     var chapterInfo = (Chapter)_sourceManager.GetInfo(chapter.Link);
-                    chapter.Pages = chapterInfo.Pages;
+                    chapter.Pages = chapterInfo?.Pages;
                 }
                 _processing = false;
             }

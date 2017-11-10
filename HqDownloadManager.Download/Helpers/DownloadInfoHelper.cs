@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HqDownloadManager.Download.Databases;
 using HqDownloadManager.Download.Models;
+using HqDownloadManager.Utils;
 using Newtonsoft.Json;
 
 namespace HqDownloadManager.Download.Helpers {
@@ -25,7 +26,7 @@ namespace HqDownloadManager.Download.Helpers {
                 var dInfo = new HqDownloadInfo {
                     Link = hq.Link,
                     SavedIn = path, Time = time,
-                    HqDownloaded = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(hq))
+                    HqDownloaded = hq.ToBytes()
                 };
                 if (_downloadContext.HqDownloadInfo.Find().Where(x => x.SavedIn == path).Execute().FirstOrDefault() != null) {
                     _downloadContext.HqDownloadInfo.Update(dInfo);

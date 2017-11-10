@@ -1,24 +1,20 @@
-﻿using HqDownloadManager.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace HqDownloadManager.Helpers {
     public class ControlsHelper {
-        public Window Window => Application.Current.MainWindow;
-        public Dispatcher Dispacher => Application.Current.MainWindow?.Dispatcher;
 
-
-        public T Find<T>(string name) where T : DependencyObject {
+        public T Find<T>(string name) where T : UIElement {
             T element = null;
-            if (FindInWindow<T>(name) is T elW) {
+            if (FindInMainPage<T>(name) is T elW) {
                 element = elW;
-            } else if (FindInPage<T>(name) is T elP) {
+            } else if (FindInCurrentPage<T>(name) is T elP) {
                 element = elP;
             }
             return element;
@@ -26,54 +22,48 @@ namespace HqDownloadManager.Helpers {
 
         public T FindResource<T>(string key) {
             T resource = default(T);
-            Dispacher.Invoke(() => {
-                try {
-                    if (Window.FindResource(key) is T rs) {
-                        resource = rs;
-                    } else if (GetCurrentPage() is Page page) {
-                        resource = (T)page.FindResource(key);
-                    }
-                } catch (Exception) {
-                    try {
-                        if (GetCurrentPage() is Page page) {
-                            resource = (T)page.FindResource(key);
-                        }
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
+            try {
+                if (GetMainPage().Resources[key] is T rs) {
+                    resource = rs;
+                } else if (GetCurrentPage() is Page page) {
+                    resource = (T)page.Resources[key];
                 }
-            });
+            } catch (Exception) {
+                try {
+                    if (GetCurrentPage() is Page page) {
+                        resource = (T)page.Resources[key];
+                    }
+                } catch {
+                    // ignored
+                }
+            }
 
             return resource;
         }
 
-        private T FindInWindow<T>(string name) where T : DependencyObject {
+        private T FindInMainPage<T>(string name) where T : UIElement {
             T element = null;
-            Dispacher.Invoke(() => {
-                element = Window.FindName(name) as T;
-            });
+            element = GetMainPage().FindName(name) as T;
             return element;
         }
 
-        private T FindInPage<T>(string name) where T : DependencyObject {
+        private T FindInCurrentPage<T>(string name) where T : UIElement {
             T element = null;
-            Dispacher.Invoke(() => {
-                if (GetCurrentPage() is Page page) {
-                    element = page.FindName(name) as T;
-                }
-            });
+            if (GetCurrentPage() is Page page) {
+                element = page.FindName(name) as T;
+            }
             return element;
+        }
+
+        private Page GetMainPage() {
+            return Window.Current?.Content as Page;
         }
 
         public Page GetCurrentPage() {
             Page page = null;
-            Dispacher.Invoke(() => {
-                if (FindInWindow<DockPanel>("Content").Children[0] is Frame frame) {
-                    page = frame.Content as Page;
-                }
-            });
+            if (FindInMainPage<NavigationView>("Navigation").Content is Frame frame) {
+                page = frame.Content as Page;
+            }
             return page;
         }
     }

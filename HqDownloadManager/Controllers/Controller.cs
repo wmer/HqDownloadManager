@@ -1,101 +1,119 @@
-﻿using HqDownloadManager.Core;
-using HqDownloadManager.Helpers;
-using HqDownloadManager.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Threading;
+using Windows.Storage;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 using DependencyInjectionResolver;
 using HqDownloadManager.Compression;
-using HqDownloadManager.Core.Models;
-using HqDownloadManager.Database;
+using HqDownloadManager.Core;
+using HqDownloadManager.Core.CustomEventArgs;
+using HqDownloadManager.Databases;
 using HqDownloadManager.Download;
+using HqDownloadManager.Follow;
+using HqDownloadManager.Helpers;
 using HqDownloadManager.Models;
-using HqDownloadManager.Views;
+using HqDownloadManager.ViewModels.SettingsPage;
+using HqDownloadManager.Utils;
+using HqDownloadManager.ViewModels.List;
+using HqDownloadManager.Core.Models;
 
 namespace HqDownloadManager.Controllers {
-    public abstract class Controller {
-        protected ControlsHelper controlsHelper;
-        protected NavigationHelper navigationHelper;
-        protected ClickHelper clickHelper;
-        protected SourceManager sourceManager;
-        protected DependencyInjection dependencyInjection;
-        protected UserLibraryContext userLibrary;
-        protected DownloadManager downloadManager;
-        protected NotificationHelper notificationHelper;
-        protected ZipManager zipManager;
+    public class Controller {
+        protected DependencyInjection DependencyInjection;
 
-        protected readonly Dispatcher dispatcher;
-        protected NotificationViewModel notification;
-        protected UserPreferences userPreferences;
-        protected static ObservableCollection<DownloadListItem> downloadList = new ObservableCollection<DownloadListItem>();
+        protected ControlsHelper ControlsHelper;
+        protected NavigationHelper NavigationHelper;
+        protected SourceManager SourceManager;
+        protected UserLibraryContext UserLibrary;
+        protected DownloadManager DownloadManager;
+        protected ZipManager ZipManager;
+        protected FollowManager FollowManager;
+        protected UpdateManager UpdateManager;
 
-        protected Controller(DependencyInjection dependencyInjection, ControlsHelper controlsHelper, NavigationHelper navigationHelper,
-            ClickHelper clickHelper, SourceManager sourceManager, UserLibraryContext userLibrary, DownloadManager downloadManager,
-            NotificationHelper notificationHelper, ZipManager zipManager) {
-            this.dependencyInjection = dependencyInjection;
-            this.controlsHelper = controlsHelper;
-            this.navigationHelper = navigationHelper;
-            this.clickHelper = clickHelper;
-            this.userLibrary = userLibrary;
-            this.downloadManager = downloadManager;
-            this.notificationHelper = notificationHelper;
-            this.zipManager = zipManager;
-            this.sourceManager = sourceManager;
-            this.sourceManager.ProcessingProgress += SourceManager_ProcessingProgress;
+        protected CoreDispatcher Dispatcher;
+        protected NotificationViewModel Notification;
+        protected UserPreferencesViewModel UserPreferences;
+        //protected static ObservableCollection<DownloadListItem> DownloadList;
+        protected static bool Downloading = false;
+        private static string driverPath;
 
-            dispatcher = Application.Current.MainWindow?.Dispatcher;
-            notification = controlsHelper.FindResource<NotificationViewModel>("Notification");
+        public Controller(DependencyInjection dependencyInjection)
+        {
+            if (string.IsNullOrEmpty(driverPath)) {
+                driverPath = GetAssetFolder().Result;
+            }
+            var dbDirectory = ApplicationData.Current.LocalFolder.Path;
+            DependencyInjection = dependencyInjection;
+            this.ControlsHelper = DependencyInjection.Resolve<ControlsHelper>();
+            this.NavigationHelper = DependencyInjection.Resolve<NavigationHelper>();
+            this.UserLibrary = DependencyInjection.Resolve<UserLibraryContext>();
+            this.SourceManager = DependencyInjection
+                                        .DefineDependency<SourceManager>(0, dbDirectory)
+                                        .DefineDependency<SourceManager>(1, driverPath)
+                                        .Resolve<SourceManager>();
+            this.DownloadManager = DependencyInjection
+                                        .DefineDependency<DownloadManager>(0, dbDirectory)
+                                        .Resolve<DownloadManager>();
+            this.ZipManager = DependencyInjection.Resolve<ZipManager>();
+            this.FollowManager = DependencyInjection
+                                        .DefineDependency<FollowManager>(0, dbDirectory)
+                                        .Resolve<FollowManager>();
+            this.UpdateManager = DependencyInjection
+                                        .DefineDependency<UpdateManager>(0, dbDirectory)
+                                        .Resolve<UpdateManager>();
+
+            this.Dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
+
+            this.SourceManager.ProcessingProgress += SourceManager_ProcessingProgress;
+            this.SourceManager.ProcessingError += SourceManagerOnProcessingError;
         }
 
         public virtual void Init(params object[] values) {
-            userPreferences = new UserPreferences();
-            if (userLibrary.UserPreferences.FindOne(1) is UserPreferences userP) {
-                userPreferences.Compress = userP.Compress;
-                userPreferences.EraseFolder = userP.EraseFolder;
-                userPreferences.DownloadPath = userP.DownloadPath;
-                userPreferences.Shutdown = userP.Shutdown;
-                userPreferences.Id = userP.Id;
+            Notification = ControlsHelper.FindResource<NotificationViewModel>("Notification");
+            UserPreferences = new UserPreferencesViewModel();
+            if (UserLibrary.UserPreferences.FindOne(1) is UserPreferences uP) {
+                var userP = uP.UserPreferencesViewModel.ToObject<UserPreferencesViewModel>();
+                UserPreferences.Compress = userP.Compress;
+                UserPreferences.EraseFolder = userP.EraseFolder;
+                UserPreferences.DownloadPath = userP.DownloadPath;
+                UserPreferences.Shutdown = userP.Shutdown;
             } else {
-                userPreferences.Compress = false;
-                userPreferences.EraseFolder = false;
-                userPreferences.Shutdown = false;
-                userPreferences.DownloadPath = $"{AppDomain.CurrentDomain.BaseDirectory}\\Downloads\\Mangas";
-                userLibrary.UserPreferences.Save(userPreferences);
+                UserPreferences.Compress = false;
+                UserPreferences.EraseFolder = false;
+                UserPreferences.Shutdown = false;
+                UserPreferences.DownloadPath = $"{AppDomain.CurrentDomain.BaseDirectory}\\Downloads\\Mangas";
+                var userP = new UserPreferences { UserPreferencesViewModel = UserPreferences.ToBytes() };
+                UserLibrary.UserPreferences.Save(userP);
             }
         }
 
-        public void AddToDownloadList(Hq hq) {
-            var downloadItem = new DownloadListItem { Hq = hq, Status = "Não Baixado" };
-            if (!downloadList.Contains(downloadItem))
-            {
-                dispatcher.Invoke(() => {
-                    downloadList.Add(downloadItem);
-                });
-            }
+        public void FollowHq(Hq hq) => FollowManager.FollowHq(hq);
+
+        private async Task<string> GetAssetFolder() {
+            var driverPath = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync(@"Assets\WebDrivers");
+            return driverPath.Path;
         }
 
-        public void FollowHq(Hq hq) {
-            downloadManager.FollowHq(hq, userPreferences.DownloadPath);
-        }
 
-        public void Click(object sender, MouseButtonEventArgs e, Action action) => clickHelper.Click(sender, e, action);
-        public void SetTimesOfClick(object sender, MouseButtonEventArgs e) => clickHelper.MouseDown(sender, e);
-
-        protected virtual void SourceManager_ProcessingProgress(object sender, Core.CustomEventArgs.ProcessingEventArgs ev) {
+        protected virtual void SourceManager_ProcessingProgress(object sender, ProcessingEventArgs ev) {
             Task.Run(() => {
-                if (notification != null) {
-                    dispatcher.Invoke(() => {
-                        notification.Message = ev.StateMessage;
-                    });
+                if (Notification != null) {
+                    Notification.Message = ev.StateMessage;
+                }
+            });
+        }
+
+        protected virtual void SourceManagerOnProcessingError(object sender, ProcessingErrorEventArgs ev) {
+            Task.Run(() => {
+                if (Notification != null) {
+                    Notification.Message = $"Um erro ocorreru : {ev.Exception}";
                 }
             });
         }
     }
 }
+  

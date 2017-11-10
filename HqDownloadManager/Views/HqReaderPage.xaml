@@ -1,0 +1,42 @@
+﻿<Page
+    x:Class="HqDownloadManager.Views.HqReaderPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HqDownloadManager.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:HqDownloadManager.ViewModels.List"
+    xmlns:reader="using:HqDownloadManager.ViewModels.Reader"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <viewModels:NotificationViewModel x:Key="Notification" Visibility="Collapsed" />
+        <reader:ReaderViewModel x:Key="ReaderControl" ProgressBarWidth="900" PageWidth="1000" />
+        <CollectionViewSource x:Key="Reader" Source="{Binding Hq.Chapters, Source={StaticResource ReaderControl}}"/>
+    </Page.Resources>
+
+    <Grid DataContext="{StaticResource Reader}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <FlipView 
+            x:Name="itemFlipView" 
+            ItemsSource="{Binding ActualChapter.Pages, Source={StaticResource ReaderControl}}"
+            SelectionChanged="OnSelectionChanged">
+            <FlipView.ItemTemplate>
+                <DataTemplate x:DataType="Page">
+                    <ScrollViewer
+                      HorizontalScrollBarVisibility="Auto" 
+                      VerticalScrollBarVisibility="Hidden"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center">
+                        <Image 
+                            x:Name="HqPage"   
+                            Stretch="UniformToFill" 
+                            Width="{Binding PageWidth, Source={StaticResource ReaderControl}}"
+                            IsHitTestVisible="False"  
+                            Source="{Binding Source}" 
+                            VerticalAlignment="Center" />
+                    </ScrollViewer>
+                </DataTemplate>
+            </FlipView.ItemTemplate>
+        </FlipView>
+    </Grid>
+</Page>

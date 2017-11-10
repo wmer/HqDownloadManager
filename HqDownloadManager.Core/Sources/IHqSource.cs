@@ -13,6 +13,7 @@ namespace HqDownloadManager.Core.Sources {
         LibraryPage GetLibrary(String linkPage);
         List<Hq> GetUpdates(String updatePage);
 
-        event ProcessingEventHandler ProcessingProgress; 
+        event ProcessingEventHandler ProcessingProgress;
+        event ProcessingErrorEventHandler ProcessingError;
     }
 }

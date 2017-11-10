@@ -1,90 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using DependencyInjectionResolver;
+﻿using DependencyInjectionResolver;
 using HqDownloadManager.Controllers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
+using WinRTXamlToolkit.Controls.Extensions;
+
+// O modelo de item de Página em Branco está documentado em https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace HqDownloadManager.Views {
-    public partial class SourceLibraryPage : PageControllerBase<SourceLibraryController> {
+    public sealed partial class SourceLibraryPage : Page {
+        private readonly SourceLibraryController _controller;
         private bool _isFinalized = false;
 
-        public SourceLibraryPage(DependencyInjection dependencyInjection) : base(dependencyInjection) {
-            InitializeComponent();
+        public SourceLibraryPage() {
+            this.InitializeComponent();
+            _controller = new DependencyInjection().Resolve<SourceLibraryController>();
+            Loaded += SourceLibraryPage_Loaded; ;
         }
 
-        protected override void OnLoaded(object sender, RoutedEventArgs e) {
-            base.OnLoaded(sender, e);
+        private void SourceLibraryPage_Loaded(object sender, RoutedEventArgs e) {
+            _controller.Init();
+            var scrollViewr = HqlistGrid.GetFirstDescendantOfType<ScrollViewer>();
+            scrollViewr.ViewChanged += ScrollViewr_ViewChanged;
+
             if ((bool)CheckboxOnlyFinalized.IsChecked) {
-                Controller?.ShowOnlyFinalized();
+                _controller?.ShowOnlyFinalized();
             } else {
-                Controller.ShowSourceLibrary();
+                _controller.ShowSourceLibrary();
             }
         }
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e) =>
-            Controller?.ActualizeItemSizeAndCollumns();
-
-        private void SourceHq_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            Controller?.ShowSourceLibrary();
-            if (_isFinalized) {
-                Controller?.ShowOnlyFinalized();
+        private void ScrollViewr_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e) {
+            var scrollViewer = (ScrollViewer)sender;
+            if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight) {
+                _controller?.ShowNextPage();
             }
         }
 
-
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e) =>
-            Controller.SetTimesOfClick(sender, e);
-
-        private void Grid_MouseUp(object sender, MouseButtonEventArgs e) =>
-            Controller.Click(sender, e, () => {
-                Controller.OpenHqDetails(_isFinalized);
-            });
-
-        private void Grid_MouseEnter(object sender, MouseEventArgs e) {
-            if ((sender as Grid)?.Children[0] is TextBox txtBox) {
-                txtBox.Visibility = Visibility.Visible;
+        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e) {
+            if ((bool)CheckboxOnlyFinalized.IsChecked) {
+                _controller?.ShowOnlyFinalized();
+            } else {
+                _controller?.ShowSourceLibrary();
             }
         }
 
-        private void Grid_MouseLeave(object sender, MouseEventArgs e) {
-            if ((sender as Grid)?.Children[0] is TextBox txtBox) {
-                txtBox.Visibility = Visibility.Hidden;
-            }
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e) => _controller?.ActualizeItemSizeAndCollumns();
+
+        private void GridView_ItemClick(object sender, ItemClickEventArgs e) => _controller.OpenHqDetails(_isFinalized);
+
+        private void Lether_Click(object sender, RoutedEventArgs e) {
+            var btn = sender as Button;
+            _controller.ShowLether(btn.Content as String);
         }
 
-        private void HqList_OnScrollChanged(object sender, ScrollChangedEventArgs e) {
-            if (e.VerticalChange != 0) {
-                var scrollViewer = (ScrollViewer)e.OriginalSource;
-                if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight) {
-                    Task.Run(() => {
-                        Controller.ShowNextPage();
-                    });
-                }
-            }
-        }
-
-        private void CheckboxOnlyFinalized_OnChecked(object sender, RoutedEventArgs e) {
+        private void CheckboxOnlyFinalized_Checked(object sender, RoutedEventArgs e) {
             _isFinalized = true;
-            Controller?.ShowOnlyFinalized();
+            _controller?.ShowOnlyFinalized();
         }
 
-
-        private void CheckboxOnlyFinalized_OnUnchecked(object sender, RoutedEventArgs e) {
+        private void CheckboxOnlyFinalized_Unchecked(object sender, RoutedEventArgs e) {
             _isFinalized = false;
-            Controller?.ShowSourceLibrary();
+            _controller?.ShowSourceLibrary();
         }
-
-        private void AddToDownload_OnClick(object sender, RoutedEventArgs e) => Controller.AddInDownloadList(_isFinalized);
     }
 }

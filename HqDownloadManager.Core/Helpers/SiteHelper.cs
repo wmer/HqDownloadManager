@@ -10,13 +10,15 @@ using System.Threading.Tasks;
 
 namespace HqDownloadManager.Core.Helpers {
     internal class SiteHelper {
+        private string _webDriverPath;
         private List<String> SupportedSites;
         private Object lockThis = new Object();
         private Object lockThis2 = new Object();
         private Object lockThis3 = new Object();
         private Object lockThis4 = new Object();
 
-        public SiteHelper() {
+        public SiteHelper(string webDriverPath) {
+            _webDriverPath = webDriverPath;
             SupportedSites = new List<String> { "ymangas", "yesmangas", "mangashost", "mangahost", "unionmangas", "mangas", "mangastream",
                 "kissmanga", "readms", "mangafox" };
         }
@@ -41,6 +43,7 @@ namespace HqDownloadManager.Core.Helpers {
                     var type = AssemblyHelper.GetType(typeof(IHqSource).GetTypeInfo().Assembly, $"{host}source");
                     return new DependencyInjection()
                                                 .BindingTypes(typeof(IHqSource), type)
+                                                .DefineDependency<BrowserHelper>(0, _webDriverPath)
                                                 .Resolve<IHqSource>();
                 }
                 throw new Exception("Não é possivel fazer download deste site!");

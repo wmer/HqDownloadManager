@@ -6,18 +6,35 @@ using System.Threading.Tasks;
 using HqDownloadManager.Core.CustomEventArgs;
 using HqDownloadManager.Core.Models;
 using HqDownloadManager.Core.Database;
+using HqDownloadManager.Core.Helpers;
 
 namespace HqDownloadManager.Core.Sources {
     internal abstract class HqSource : IHqSource {
-        public LibraryContext _libraryContext;
+        protected LibraryContext LibraryContext;
+        protected HtmlSourceHelper HtmlHelper;
+        protected BrowserHelper BrowserHelper;
+        protected bool UsingIe;
 
-        public HqSource(LibraryContext libraryContext) {
-            _libraryContext = libraryContext;
-        }
+        protected object Lock1 = new object();
+        protected object Lock2 = new object();
+        protected object Lock3 = new object();
+        protected object Lock4 = new object();
+        protected object Lock5 = new object();
+        protected object Lock6 = new object();
+        protected object Lock7 = new object();
+        protected object Lock8 = new object();
+        protected object Lock9 = new object();
 
         public event ProcessingEventHandler ProcessingProgress;
-        protected object lockEvent1 = new object();
-        protected bool lockedEvent;
+        public event ProcessingErrorEventHandler ProcessingError;
+        protected object LockEvent1 = new object();
+        protected object LockEvent2 = new object();
+
+        protected HqSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) {
+            LibraryContext = libraryContext;
+            HtmlHelper = htmlHelper;
+            BrowserHelper = browserHelper;
+        }
 
         public virtual Chapter GetChapterInfo(string link) {
             throw new NotImplementedException();
@@ -36,12 +53,14 @@ namespace HqDownloadManager.Core.Sources {
         }
 
         protected void OnProcessingProgress(ProcessingEventArgs e) {
-            lock (lockEvent1) {
-                if (!lockedEvent) {
-                    lockedEvent = true;
-                    ProcessingProgress?.Invoke(this, e);
-                    lockedEvent = false;
-                }
+            lock (LockEvent1) {
+                ProcessingProgress?.Invoke(this, e);
+            }
+        }
+
+        protected void OnProcessingProgressError(ProcessingErrorEventArgs e) {
+            lock (LockEvent2) {
+                ProcessingError?.Invoke(this, e);
             }
         }
     }

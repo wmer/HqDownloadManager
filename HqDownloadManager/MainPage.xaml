@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="HqDownloadManager.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HqDownloadManager"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mainPage="using:HqDownloadManager.ViewModels.MainPage"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <mainPage:PageTitleViewModel x:Key="TitleViewModel" />
+    </Page.Resources>
+
+    <Grid 
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <NavigationView
+            x:Name="Navigation"
+            ExpandedModeThresholdWidth="1920"
+            ItemInvoked="Navigation_ItemInvoked">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Icon="Clock" Content="Atualizações" Tag="updates"/>
+                <NavigationViewItem Icon="AllApps"  Content="Todos as Hqs" Tag="allHqs"/>
+                <NavigationViewItem Icon="Library" Content="Meus Downloads" Tag="myDownloads"/>
+                <NavigationViewItem Icon="Favorite" Content="Meus Favoritos" Tag="myDownloads"/>
+                <NavigationViewItem Icon="Download" Content="Gerenciador de Download" Tag="myDownloads"/>
+            </NavigationView.MenuItems>
+            <NavigationView.HeaderTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <TextBlock 
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            FontSize="28"
+                            VerticalAlignment="Center"
+                            Text="{Binding Title, Source={StaticResource TitleViewModel}}"/>
+                    </Grid>
+                </DataTemplate>
+            </NavigationView.HeaderTemplate>
+        </NavigationView>
+    </Grid>
+</Page>

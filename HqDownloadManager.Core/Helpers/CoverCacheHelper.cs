@@ -12,8 +12,11 @@ namespace HqDownloadManager.Core.Helpers {
         private object _lock2 = new object();
         private string directory;
 
-        public CoverCacheHelper() {
-            this.directory = $"{AppDomain.CurrentDomain.BaseDirectory}\\CoverCache";
+        public CoverCacheHelper() : this(AppDomain.CurrentDomain.BaseDirectory) {
+        }
+
+        public CoverCacheHelper(string cacheDirectory) {
+            this.directory = $"{cacheDirectory}\\CoverCache";
             if (!Directory.Exists(directory)) {
                 Directory.CreateDirectory(directory);
             }
@@ -21,7 +24,7 @@ namespace HqDownloadManager.Core.Helpers {
 
         public void CreateCache(Hq hq) {
             lock (_lock1) {
-                if(string.IsNullOrEmpty(hq.CoverSource)) return;
+                if (string.IsNullOrEmpty(hq.CoverSource)) return;
                 using (var webClient = new WebClient()) {
                     var pageSource = $"{directory}\\{StringHelper.RemoveSpecialCharacters(hq.Title)}{FormatPage(hq.CoverSource)}";
                     if (!File.Exists(pageSource)) {

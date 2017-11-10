@@ -1,39 +1,35 @@
-﻿using DependencyInjectionResolver;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using HqDownloadManager.ViewModels.MainPage;
 
 namespace HqDownloadManager.Helpers {
     public class NavigationHelper {
-        private readonly Frame _mainFrame;
+        private readonly Frame _frame;
+        private readonly ControlsHelper _controlsHelper;
 
-        public NavigationHelper(ControlsHelper controlsHelper) {
-            var dockPanel = controlsHelper.Find<DockPanel>("Content");
-            _mainFrame = dockPanel.Children[0] as Frame;
+        public NavigationHelper(Frame frame, ControlsHelper controlsHelper) {
+            _frame = frame;
+            _controlsHelper = controlsHelper;
         }
 
-        public DependencyInjection Configuration() {
-            return new DependencyInjection();
+        public void Navigate<T>(string pageTitle) {
+            _frame.Navigate(typeof(T));
+            GettitleViewModel().Title = pageTitle;
         }
 
-        public void Navigate<T>(DependencyInjection configuration = null) where T : Page {
-            _mainFrame.Navigate(CreatePage<T>(configuration));
+        public void Navigate<T>(string pageTitle, object extra) {
+            _frame.Navigate(typeof(T), extra);
+            GettitleViewModel().Title = pageTitle;
         }
 
-        public void Navigate<T>(object data) where T : Page {
-            _mainFrame.Navigate(CreatePage<T>(
-                Configuration().DefineDependency<T>(0, data)
-                .DefineLifeTimeOptions<T>(InstanceOptions.DiferentInstances)));
-        }
-
-        private Page CreatePage<T>(DependencyInjection configuration = null) where T : Page {
-            if (configuration == null) {
-                configuration = Configuration();
-            }
-            return configuration.Resolve<T>();
+        private PageTitleViewModel GettitleViewModel()
+        {
+            return _controlsHelper.FindResource<PageTitleViewModel>("TitleViewModel");
         }
     }
 }

@@ -7,7 +7,9 @@ using Repository;
 
 namespace HqDownloadManager.Download.Databases {
     internal class DownloadContext : DBContext {
-        public DownloadContext() : base($"{AppDomain.CurrentDomain.BaseDirectory}\\databases", "downloadDb.db") { }
+        public DownloadContext() : this($"{AppDomain.CurrentDomain.BaseDirectory}\\databases") { }
+
+        public DownloadContext(string path) : base($"{path}\\databases", "downloadDb.db") {}
 
         public Repository<HqDownloadInfo> HqDownloadInfo { get; set; }
     }

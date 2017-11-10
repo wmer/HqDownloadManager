@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using DependencyInjectionResolver;
 using HqDownloadManager.Core.Database;
 using Newtonsoft.Json;
+using HqDownloadManager.Utils;
 using Cache = HqDownloadManager.Core.Models.Cache;
 
 namespace HqDownloadManager.Core {
@@ -26,16 +27,26 @@ namespace HqDownloadManager.Core {
         private readonly Object _lockThis5 = new Object();
         private readonly Object _lockThis6 = new Object();
         private readonly Object _lockThis7 = new Object();
+        private readonly Object _lockThis8 = new Object();
+        private readonly Object _lockThis9 = new Object();
 
         public event ProcessingEventHandler ProcessingProgress;
+        public event ProcessingErrorEventHandler ProcessingError;
 
-        public SourceManager(DependencyInjection dependencyInjection) {
+        public SourceManager(DependencyInjection dependencyInjection, string webDriverPath) : this(AppDomain.CurrentDomain.BaseDirectory, webDriverPath, dependencyInjection) {
+        }
+
+        public SourceManager(string cacheDirectory, string webDriverPath, DependencyInjection dependencyInjection) {
             _dependencyInjection = dependencyInjection;
-            _siteHelper = _dependencyInjection.Resolve<SiteHelper>();
-            _coveCacheHelper = dependencyInjection.Resolve<CoverCacheHelper>();
+            _siteHelper = _dependencyInjection
+                .DefineDependency<SiteHelper>(0, webDriverPath)
+                .Resolve<SiteHelper>();
+            _coveCacheHelper = dependencyInjection
+                .DefineDependency<CoverCacheHelper>(0, cacheDirectory)
+                .Resolve<CoverCacheHelper>();
             _libraryContext = _dependencyInjection
-                                    .DefineConstructorSignature<LibraryContext>(Type.EmptyTypes)
-                                    .Resolve<LibraryContext>();
+                .DefineDependency<LibraryContext>(0, cacheDirectory)
+                .Resolve<LibraryContext>();
         }
 
         public ModelBase GetInfo(string url, bool isFinalized = false) {
@@ -69,22 +80,20 @@ namespace HqDownloadManager.Core {
                     if (_libraryContext.Cache.FindOne(url) is Cache cache) {
                         OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Encontrado!"));
                         if ((DateTime.Now - cache.Date).Hours < timeCache) {
-                            model = JsonConvert.DeserializeObject<T>(Encoding.ASCII.GetString(cache.ModelsCache));
+                            model = cache.ModelsCache.ToObject<T>();
                         } else {
                             OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Cache Vencido"));
                             OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Atualizando..."));
                             model = method.Invoke(url);
-                            _libraryContext.Cache.Update(x => new { x.ModelsCache, x.Date },
-                                Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(model)), DateTime.Now)
-                                .Where(x => x.Link == url).Execute();
+                            _libraryContext.Cache.Update(x => new { x.ModelsCache, x.Date }, model.ToBytes(), DateTime.Now)
+                                                                     .Where(x => x.Link == url).Execute();
                         }
                     } else {
                         OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Não encontrado!"));
                         model = method.Invoke(url);
                         OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Criando Cache"));
                         var updt = new Cache {
-                            Link = url, Date = DateTime.Now, ModelsCache =
-                            Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(model))
+                            Link = url, Date = DateTime.Now, ModelsCache = model.ToBytes()
                         };
                         _libraryContext.Cache.Save(updt);
                     }
@@ -98,6 +107,7 @@ namespace HqDownloadManager.Core {
                 var model = default(T);
                 var source = _siteHelper.GetHqSourceFromUrl(url);
                 source.ProcessingProgress += Source_ProcessingProgress;
+                source.ProcessingError += SourceOnProcessingError;
                 if (typeof(T).IsAssignableFrom(typeof(Hq))) {
                     model = source.GetHqInfo(url) as T;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Criando cache de Capa..."));
@@ -116,9 +126,10 @@ namespace HqDownloadManager.Core {
                 if (_siteHelper.IsSupported(url)) {
                     var source = _siteHelper.GetHqSourceFromUrl(url);
                     source.ProcessingProgress += Source_ProcessingProgress;
+                    source.ProcessingError += SourceOnProcessingError;
                     library = source.GetLibrary(url);
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Criando cache de Capa..."));
-                    
+
                     foreach (var hq in library.Hqs) {
                         _coveCacheHelper.CreateCache(hq);
                     }
@@ -132,6 +143,7 @@ namespace HqDownloadManager.Core {
             lock (_lockThis5) {
                 var source = _siteHelper.GetHqSourceFromUrl(url);
                 source.ProcessingProgress += Source_ProcessingProgress;
+                source.ProcessingError += SourceOnProcessingError;
                 var updates = source.GetUpdates(url);
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Criando cache de Capa..."));
                 foreach (var hq in updates) {
@@ -140,6 +152,12 @@ namespace HqDownloadManager.Core {
                     }
                 }
                 return updates;
+            }
+        }
+
+        private void SourceOnProcessingError(object sender, ProcessingErrorEventArgs ev) {
+            lock (_lockThis9) {
+                OnProcessingProgressError(ev);
             }
         }
 
@@ -152,6 +170,12 @@ namespace HqDownloadManager.Core {
         protected void OnProcessingProgress(ProcessingEventArgs e) {
             lock (_lockThis4) {
                 ProcessingProgress?.Invoke(this, e);
+            }
+        }
+
+        protected void OnProcessingProgressError(ProcessingErrorEventArgs e) {
+            lock (_lockThis8) {
+                ProcessingError?.Invoke(this, e);
             }
         }
     }
