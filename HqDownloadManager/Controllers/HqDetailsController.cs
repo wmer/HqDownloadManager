@@ -24,6 +24,12 @@ namespace HqDownloadManager.Controllers {
             OpenReader(tempHq);
         }
 
+        public async Task AddSelected(Hq hq) {
+            var tempHq = hq;
+            tempHq.Chapters = await GetSelectedChapters();
+            await AddToDownloadList(tempHq);
+        }
+
         private async Task<List<Chapter>> GetSelectedChapters() {
             var listChapters = new List<Chapter>();
             ListView list = null;

@@ -32,8 +32,11 @@ namespace HqDownloadManager.Core.Sources {
                     BaseAdress = $"{site.Scheme}://{site.Host}";
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Abrindo Internet Explorer"));
                     var driver = BrowserHelper.GetDriver(updatePage);
-                    var loadcMore = driver.FindElementByClassName("loadmore");
+                    var loadcMore = driver.FindElement(By.CssSelector("a.loadmore"));
                     loadcMore.Click();
+                    Task.Delay(500).Wait();
+                    loadcMore.Click();
+                    Task.Delay(500).Wait();
                     var pageSource = driver.PageSource;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     IDocument source = HtmlHelper.GetSourceCodeFromHtml(pageSource);
@@ -53,7 +56,7 @@ namespace HqDownloadManager.Core.Sources {
                         if (title == null) continue;
                         OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados de {title}"));
                         var link = hq.QuerySelector(".lancamento-desc a")?.GetAttribute("href");
-                        if (!string.IsNullOrEmpty(link)) {
+                        if (!string.IsNullOrEmpty(link) && !string.IsNullOrEmpty(img)) {
                             var update = new Hq { Link = $"{BaseAdress}{link}", Title = title, CoverSource = img };
                             hqs.Add(update);
                             OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, update, $"{title} Adicionado"));
@@ -176,14 +179,10 @@ namespace HqDownloadManager.Core.Sources {
             lock (Lock4) {
                 try {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Abrindo Internet Explorer"));
-                    var driver = BrowserHelper.GetDriver(link);
-                    SkipAdultMessage(driver);
-                    
-                    //Task.Delay(5000).Wait();
+                    var driver = BrowserHelper.GetPhantomMobile(link);
                     var pageSource = driver.PageSource;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     IDocument leitor = HtmlHelper.GetSourceCodeFromHtml(pageSource);
-                    //Task.Delay(10000).Wait();
                     var chapter = new Chapter();
 
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
@@ -244,34 +243,19 @@ namespace HqDownloadManager.Core.Sources {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando páginas"));
                 IDocument leitor = HtmlHelper.GetSourceCodeFromHtml(document.PageSource);
                 var pageList = new List<Page>();
-                
-                var divImg = document.FindElementByClassName("page");
-                var body = document.FindElementByTagName("body");
 
                 if (leitor == null) throw new Exception("Ocorreu um erro ao buscar informaçoes do capitulo");
-                int numPages;
-                var num = int.TryParse(leitor.QuerySelector("#totalPages")?.TextContent, out numPages);
-                int propPage = numPages / 10;
-                numPages = numPages + propPage;
+                var pages = leitor.QuerySelectorAll("div#manga div.manga-pages img.page-image");
 
-                var count = 0;
-
-                for (var i = 0; i < numPages; i++) {
-                    try {
-                        if (count < 11) {
-                            var img = divImg.FindElement(By.TagName("IMG"));
-                            Task.Delay(700).Wait();
-                            var src = img.GetAttribute("src");
-                            pageList.Add(new Page { Number = (i + 1), Source = src });
-                            body.SendKeys(Keys.ArrowRight);
-                            count++;
-                        }else {
-                            Task.Delay(700).Wait();
-                            body.SendKeys(Keys.ArrowRight);
-                            count = 0;
-                        }
-                    } catch { }
+                var num = 1;
+                foreach (var img in pages) {
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Adicionando página {num}"));
+                    var page = new Page { Number = num, Source = img.GetAttribute("src") };
+                    pageList.Add(page);
+                    num++;
                 }
+
+
                 return pageList;
             }
         }

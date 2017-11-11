@@ -7,11 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:HqDownloadManager.ViewModels.List"
     xmlns:reader="using:HqDownloadManager.ViewModels.Reader"
-    mc:Ignorable="d">
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d" KeyDown="Page_KeyDown">
 
     <Page.Resources>
         <viewModels:NotificationViewModel x:Key="Notification" Visibility="Collapsed" />
-        <reader:ReaderViewModel x:Key="ReaderControl" ProgressBarWidth="900" PageWidth="1000" />
+        <reader:ReaderViewModel x:Key="ReaderControl" ControlsVisibility="Collapsed" />
         <CollectionViewSource x:Key="Reader" Source="{Binding Hq.Chapters, Source={StaticResource ReaderControl}}"/>
     </Page.Resources>
 
@@ -19,7 +20,7 @@
         <FlipView 
             x:Name="itemFlipView" 
             ItemsSource="{Binding ActualChapter.Pages, Source={StaticResource ReaderControl}}"
-            SelectionChanged="OnSelectionChanged">
+            SelectionChanged="itemFlipView_SelectionChanged">
             <FlipView.ItemTemplate>
                 <DataTemplate x:DataType="Page">
                     <ScrollViewer
@@ -29,14 +30,88 @@
                       HorizontalContentAlignment="Center">
                         <Image 
                             x:Name="HqPage"   
-                            Stretch="UniformToFill" 
-                            Width="{Binding PageWidth, Source={StaticResource ReaderControl}}"
+                            Stretch="Fill" 
+                            Width="{Binding ActualWidth, ElementName=itemFlipView}"
                             IsHitTestVisible="False"  
                             Source="{Binding Source}" 
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Stretch"/>
                     </ScrollViewer>
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
+        <Grid 
+            Visibility="{Binding ControlsVisibility, Source={StaticResource ReaderControl}}" 
+            Height="49" 
+            VerticalAlignment="Bottom" 
+            Background="#99000000">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="49"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="49"/>
+            </Grid.ColumnDefinitions>
+            <Button 
+                Name="Previous" 
+                Height="49"  
+                Width="49"
+                Grid.Column="0"
+                Click="Previous_Click">
+                <Button.Background>
+                    <ImageBrush 
+                        ImageSource="{Binding PreviousChapter.Pages[0].Source, Source={StaticResource ReaderControl}}" 
+                        Stretch="Fill" />
+                </Button.Background>
+            </Button>
+            <ProgressBar 
+                Name="ReaderProgress" 
+                Height="10"
+                Grid.Column="1"
+                Margin="10,0,10,0"
+                Minimum="0"
+                Maximum="{Binding ActualChapter.Pages.Count, Source={StaticResource ReaderControl}}" 
+                Value="{Binding SelectedIndex, ElementName=itemFlipView}" 
+                VerticalAlignment="Center" 
+                HorizontalAlignment="Stretch"/>
+            <Button 
+                Name="Next" 
+                Height="49"  
+                Width="49"
+                Grid.Column="2"
+                Click="Next_Click">
+                <Button.Background>
+                    <ImageBrush ImageSource="{Binding NextChapter.Pages[0].Source, Source={StaticResource ReaderControl}}" Stretch="Fill" />
+                </Button.Background>
+            </Button>
+        </Grid>
+        <toolkit:DropShadowPanel      
+            Visibility="{Binding Visibility, Source={StaticResource Notification}}"
+            BlurRadius="4.0"
+            ShadowOpacity="0.70"
+            OffsetX="5.0"
+            OffsetY="5.0"
+            Color="Black"  
+            HorizontalAlignment="Center" 
+            Width="604" 
+            Height="226" 
+            VerticalAlignment="Center">
+            <Grid Width="600" Height="225" Background="#B2000000" >
+                <TextBox 
+                    IsReadOnly="True"  
+                    Text="Aguarde..." 
+                    FontSize="130" 
+                    Background="{x:Null}" 
+                    Foreground="White" 
+                    BorderBrush="{x:Null}"/>
+                <TextBox 
+                    IsReadOnly="True"  
+                    Text="{Binding Message, Source={StaticResource Notification}}" 
+                    FontSize="20" 
+                    Background="{x:Null}" 
+                    Foreground="White" 
+                    VerticalAlignment="Bottom" 
+                    VerticalContentAlignment="Bottom" 
+                    BorderBrush="{x:Null}"/>
+            </Grid>
+        </toolkit:DropShadowPanel>
     </Grid>
 </Page>

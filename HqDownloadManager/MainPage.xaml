@@ -8,7 +8,7 @@
     xmlns:mainPage="using:HqDownloadManager.ViewModels.MainPage"
     mc:Ignorable="d">
     <Page.Resources>
-        <mainPage:PageTitleViewModel x:Key="TitleViewModel" />
+        <mainPage:PageTitleViewModel x:Key="TitleViewModel" CompactModeMinWidth="350" />
     </Page.Resources>
 
     <Grid 
@@ -16,6 +16,7 @@
         <NavigationView
             x:Name="Navigation"
             ExpandedModeThresholdWidth="1920"
+            CompactModeThresholdWidth = "{Binding CompactModeMinWidth, Source={StaticResource TitleViewModel}}"
             ItemInvoked="Navigation_ItemInvoked">
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Clock" Content="Atualizações" Tag="updates"/>

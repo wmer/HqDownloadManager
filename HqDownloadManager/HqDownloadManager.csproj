@@ -108,6 +108,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\DownloadList.cs" />
+    <Compile Include="Models\DownloadListItem.cs" />
     <Compile Include="Models\SourceLink.cs" />
     <Compile Include="Models\UserFavorite.cs" />
     <Compile Include="Models\UserPreferences.cs" />
@@ -128,6 +129,9 @@
     </Compile>
     <Compile Include="Views\HqReaderPage.xaml.cs">
       <DependentUpon>HqReaderPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MyLibraryPage.xaml.cs">
+      <DependentUpon>MyLibraryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SourceLibraryPage.xaml.cs">
       <DependentUpon>SourceLibraryPage.xaml</DependentUpon>
@@ -171,6 +175,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MyLibraryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SourceLibraryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -210,6 +218,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ViewModels\MyLibrary\" />
     <Folder Include="ViewModels\UpdatesPage\" />
   </ItemGroup>
   <ItemGroup>

@@ -43,11 +43,9 @@ namespace HqDownloadManager.Views {
             hqModel.Hq = _hq;
         }
 
-        private void AddAll_Click(object sender, RoutedEventArgs e) {
+        private void AddAll_Click(object sender, RoutedEventArgs e) => _controller.AddToDownloadList(_hq);
 
-        }
-
-        private void AddSelected_Click(object sender, RoutedEventArgs e) => _controller.ReadNow(_hq);
+        private void AddSelected_Click(object sender, RoutedEventArgs e) => _controller.AddSelected(_hq);
 
         private void FollowHq_Click(object sender, RoutedEventArgs e) => _controller.FollowHq(_hq);
 

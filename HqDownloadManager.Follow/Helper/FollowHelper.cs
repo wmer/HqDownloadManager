@@ -30,6 +30,7 @@ namespace HqDownloadManager.Follow.Helpers {
             lock (_lock1) {
                 if (!(_sourceManager.GetInfo(hq.Link) is Hq hqInfo)) return;
                 var dInfo = new FollowedHq {
+                    Link = hq.Link,
                     Time = DateTime.Now,
                     Hq = hqInfo.ToBytes()
                 };

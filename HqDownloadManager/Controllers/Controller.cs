@@ -37,9 +37,10 @@ namespace HqDownloadManager.Controllers {
         protected CoreDispatcher Dispatcher;
         protected NotificationViewModel Notification;
         protected UserPreferencesViewModel UserPreferences;
-        //protected static ObservableCollection<DownloadListItem> DownloadList;
+        protected static ObservableCollection<DownloadListItem> DownloadList;
         protected static bool Downloading = false;
         private static string driverPath;
+        protected static bool downloading = false;
 
         public Controller(DependencyInjection dependencyInjection)
         {
@@ -89,9 +90,29 @@ namespace HqDownloadManager.Controllers {
                 var userP = new UserPreferences { UserPreferencesViewModel = UserPreferences.ToBytes() };
                 UserLibrary.UserPreferences.Save(userP);
             }
+
+            if (downloading) return;
+            if (UserLibrary.DownloadList.FindOne(1) is DownloadList list) {                
+                DownloadList = list.List.ToObject<ObservableCollection<DownloadListItem>>();
+            } else {
+                DownloadList = new ObservableCollection<DownloadListItem>();
+                var dw = new DownloadList { List = DownloadList.ToBytes() };
+                UserLibrary.DownloadList.Save(dw);
+            }
         }
 
         public void FollowHq(Hq hq) => FollowManager.FollowHq(hq);
+
+        public async Task AddToDownloadList(Hq hq) {
+            var downloadItem = new DownloadListItem { Hq = hq, Status = "Não Baixado" };
+            if (!DownloadList.Contains(downloadItem)) {
+               await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    DownloadList.Add(downloadItem);
+                   var dw = new DownloadList { List = DownloadList.ToBytes() };
+                   UserLibrary.DownloadList.Update(dw);
+               });
+            }
+        }
 
         private async Task<string> GetAssetFolder() {
             var driverPath = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync(@"Assets\WebDrivers");

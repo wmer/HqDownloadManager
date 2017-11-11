@@ -14,10 +14,6 @@ namespace HqDownloadManager.ViewModels.Reader {
         private Chapter _nextChapter;
         private int _actualChapterIndex;
         private int _actualPage;
-
-        private double _pageWidth;
-        private double _pageHeight;
-        private double _progrssBarWidth;
         private Visibility _controlsVisibility;
 
         public Hq Hq {
@@ -76,33 +72,6 @@ namespace HqDownloadManager.ViewModels.Reader {
                 _controlsVisibility = value;
                 OnPropertyChanged("ControlsVisibility");
             }
-        }
-
-
-        public double ProgressBarWidth {
-            get => _progrssBarWidth;
-            set {
-                _progrssBarWidth = value;
-                OnPropertyChanged("ProgressBarWidth");
-            }
-        }
-
-
-        public double PageHeight {
-            get => _pageHeight;
-            set {
-                _pageHeight = value;
-                OnPropertyChanged("PageHeight");
-            }
-        }
-
-
-        public double PageWidth {
-            get => _pageWidth;
-            set {
-                _pageWidth = value;
-                OnPropertyChanged("PageWidth");
-            }
-        }
+        }        
     }
 }

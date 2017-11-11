@@ -16,6 +16,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Windows.Input;
+using Windows.System;
 
 // O modelo de item de Página em Branco está documentado em https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -39,12 +41,20 @@ namespace HqDownloadManager.Views {
             _controller.InitReader(e.Parameter as Hq);
         }
 
-        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (_controller != null) {
-                var model = Resources["ReaderControl"] as ReaderViewModel;
-                var i = (sender as FlipView).SelectedIndex;
-                var dd = model.ActualChapter.Pages.Count;
+        private void Page_KeyDown(object sender, KeyRoutedEventArgs e) {
+            if (e.Key == VirtualKey.Control) {
+                _controller.ShowHideControllers();
+            }
+            if (e.Key == VirtualKey.Shift) {
+                _controller.FullSCream();
             }
         }
+
+        private void Previous_Click(object sender, RoutedEventArgs e) => _controller.PreviousChapter();
+
+        private void Next_Click(object sender, RoutedEventArgs e) => _controller.NextChapter();
+
+        private void itemFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e) => _controller.ActualizeactualPage();
+
     }
 }
