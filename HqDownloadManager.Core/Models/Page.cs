@@ -9,6 +9,5 @@ namespace HqDownloadManager.Core.Models {
     public class Page {
         public int Number { get; set; }
         public String Source { get; set; }
-        public String LocalSource { get; set; }
     }
 }

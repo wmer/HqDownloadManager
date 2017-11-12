@@ -7,10 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\Reflection.Optimization\Reflection.Optimization\Reflection.Optimization.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Helpers\" />
+    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj" />
+    <ProjectReference Include="..\HqDownloadManager.Utils\HqDownloadManager.Utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

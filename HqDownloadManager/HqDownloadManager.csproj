@@ -143,9 +143,17 @@
       <Project>{4fbf4294-cae4-43d2-abbf-756df72358d9}</Project>
       <Name>Reflection.Optimization</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj">
+      <Project>{0044501f-1ded-49a8-a172-946274caa4d6}</Project>
+      <Name>Repository</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HqDownloadManager.Core\HqDownloadManager.Core.csproj">
       <Project>{ab71d6f5-b5da-4b10-b293-cd5f0dbfa9f2}</Project>
       <Name>HqDownloadManager.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HqDownloadManager.Utils\HqDownloadManager.Utils.csproj">
+      <Project>{6160755e-36a4-47d1-af86-035a999829fd}</Project>
+      <Name>HqDownloadManager.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
