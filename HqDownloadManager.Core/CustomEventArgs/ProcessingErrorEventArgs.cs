@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HqDownloadManager.Core.CustomEventArgs {
+namespace HqDownloadManager.Core.CustomEventArgs
+{
     public class ProcessingErrorEventArgs : EventArgs {
         public DateTime Time { get; private set; }
         public string Link { get; private set; }

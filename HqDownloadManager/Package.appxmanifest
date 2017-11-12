@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="1b9c7b61-4cf5-428d-ad29-a5473b293372"
+    Name="5b6ca519-2557-46f4-a16a-cce58b2ebac6"
     Publisher="CN=maste"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="1b9c7b61-4cf5-428d-ad29-a5473b293372" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="5b6ca519-2557-46f4-a16a-cce58b2ebac6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>HqDownloadManager</DisplayName>
