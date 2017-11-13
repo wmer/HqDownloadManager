@@ -15,43 +15,49 @@ namespace HqDownloadManager.Core {
         private DependencyInjection _dependencyInjection;
         private readonly LibraryContext _libraryContext;
         private readonly CoverCacheHelper _coveCacheHelper;
-        
+        private readonly SiteHelper _siteHelper;
+
 
         public event ProcessingEventHandler ProcessingProgress;
         public event ProcessingErrorEventHandler ProcessingError;
 
         public SourceManager(DependencyInjection dependencyInjection) {
             _dependencyInjection = dependencyInjection;
+            _siteHelper = _dependencyInjection
+                .Resolve<SiteHelper>();
             _coveCacheHelper = dependencyInjection
                .Resolve<CoverCacheHelper>();
             _libraryContext = _dependencyInjection
                 .Resolve<LibraryContext>();
         }
 
-        public async Task<T> GetInfo<T, U>(string url, bool isFinalized = false) where T : ModelBase where U : HqSource {
-            var model = default(T);
-            if (typeof(T).IsAssignableFrom(typeof(Hq))) {
-                var time = 72;
-                if (isFinalized) {
-                    time = 999999999;
+        public async Task<ModelBase> GetInfo(string url, bool isFinalized = false) {
+            var model = default(ModelBase);
+            if (_siteHelper.IsSupported(url)) {
+                if (_siteHelper.IsHqPage(url)) {
+                    var time = 72;
+                    if (isFinalized) {
+                        time = 999999999;
+                    }
+                    model = await CacheManagement(url, GetInfoFromSite<Hq>, time) as Hq;
                 }
-                model = await CacheManagement(url, GetInfoFromSite<Hq, U>, time) as T;
-            }
-            if (typeof(T).IsAssignableFrom(typeof(Chapter))) {
-                model = await CacheManagement(url, GetInfoFromSite<Chapter, U>, 999999999) as T;
+                if (_siteHelper.IsChapterReader(url)) {
+                    model = await CacheManagement(url, GetInfoFromSite<Chapter>, 999999999) as Chapter;
+                }
             }
             return model;
         }
 
-        public async Task<LibraryPage> GetLibrary<U>(string url) where U : HqSource => await CacheManagement(url, GetLibraryFromSite<U>, 168);
+        public async Task<LibraryPage> GetLibrary(string url) => await CacheManagement(url, GetLibraryFromSite, 168);
 
-        public async Task<List<Hq>> GetUpdates<U>(string url) where U : HqSource => await CacheManagement(url, GetUpdatesFromSite<U>, 1);
+        public async Task<List<Hq>> GetUpdates(string url) => await CacheManagement(url, GetUpdatesFromSite, 1);
 
-        private async Task<T> GetInfoFromSite<T, U>(string url) where T : ModelBase where U : HqSource {
+        private async Task<T> GetInfoFromSite<T>(string url) where T : ModelBase {
             var model = default(T);
-            var source = _dependencyInjection.Resolve<U>();
+            var source = _siteHelper.GetHqSourceFromUrl(url); ;
             source.ProcessingProgress += Source_ProcessingProgress;
             source.ProcessingError += SourceOnProcessingError;
+    
             if (typeof(T).IsAssignableFrom(typeof(Hq))) {
                 model = await source.GetHqInfo(url) as T;
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Criando cache de Capa..."));
@@ -63,9 +69,9 @@ namespace HqDownloadManager.Core {
             return model;
         }
 
-        private async Task<LibraryPage> GetLibraryFromSite<U>(string url) where U : HqSource {
+        private async Task<LibraryPage> GetLibraryFromSite(string url)  {
             var library = new LibraryPage();
-            var source = _dependencyInjection.Resolve<U>();
+            var source = _siteHelper.GetHqSourceFromUrl(url);
             source.ProcessingProgress += Source_ProcessingProgress;
             source.ProcessingError += SourceOnProcessingError;
             library = await source.GetLibrary(url);
@@ -80,8 +86,8 @@ namespace HqDownloadManager.Core {
             return library;
         }
 
-        private async Task<List<Hq>> GetUpdatesFromSite<U>(string url) where U : HqSource {
-            var source = _dependencyInjection.Resolve<U>();
+        private async Task<List<Hq>> GetUpdatesFromSite(string url) {
+            var source = _siteHelper.GetHqSourceFromUrl(url);
             source.ProcessingProgress += Source_ProcessingProgress;
             source.ProcessingError += SourceOnProcessingError;
             var updates = await source.GetUpdates(url);

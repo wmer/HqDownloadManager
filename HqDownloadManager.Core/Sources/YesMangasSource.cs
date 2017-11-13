@@ -137,7 +137,7 @@ namespace HqDownloadManager.Core.Sources {
         }
 
         public List<Chapter> GetListChapters(IDocument hqSource) {
-            lock (Lock5) {
+            lock (Lock1) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando capitulos"));
                 var chapterList = new List<Chapter>();
                 var chapters = hqSource.QuerySelectorAll(".eight a.button");
@@ -153,7 +153,7 @@ namespace HqDownloadManager.Core.Sources {
         }
 
         public List<Models.Page> GetPageList(IDocument chapterSoure) {
-            lock (Lock6) {
+            lock (Lock2) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando páginas"));
                 var pageList = new List<Models.Page>();
                 var mangaPages = chapterSoure.QuerySelectorAll("content-slideshow a img");

@@ -14,13 +14,6 @@ namespace HqDownloadManager.Core.Sources {
 
         protected object Lock1 = new object();
         protected object Lock2 = new object();
-        protected object Lock3 = new object();
-        protected object Lock4 = new object();
-        protected object Lock5 = new object();
-        protected object Lock6 = new object();
-        protected object Lock7 = new object();
-        protected object Lock8 = new object();
-        protected object Lock9 = new object();
 
         public HqSource(HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) {
             HtmlHelper = htmlHelper;

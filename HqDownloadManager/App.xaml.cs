@@ -1,4 +1,6 @@
 ﻿using DependencyInjectionResolver;
+using HqDownloadManager.Controller.Helpers;
+using HqDownloadManager.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,7 +43,7 @@ namespace HqDownloadManager {
 
                 var mainPage = dependencyInjection
                                     .DefineDependency<MainPage>(0, _rootFrame)
-                                    //.DefineDependency<NavigationHelper>(0, _rootFrame)
+                                    .DefineDependency<NavigationHelper>(0, _rootFrame)
                                     .Resolve<MainPage>();
                 Window.Current.Content = mainPage;
                 SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
@@ -49,7 +51,7 @@ namespace HqDownloadManager {
                     _rootFrame.CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
             }
             if (_rootFrame.Content == null) {
-               // _rootFrame.Navigate(typeof(UpdatesPage), e.Arguments);
+               _rootFrame.Navigate(typeof(UpdatesPage), e.Arguments);
                // ((Window.Current.Content as MainPage)?.Resources["TitleViewModel"] as PageTitleViewModel).Title = "Atualizações";
             }
 

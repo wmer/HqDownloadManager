@@ -223,7 +223,7 @@ namespace HqDownloadManager.Core.Sources {
         }
 
         public List<Page> GetPageList(RemoteWebDriver document) {
-            lock (Lock6) {
+            lock (Lock1) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando páginas"));
                 IDocument leitor = HtmlHelper.GetSourceCodeFromHtml(document.PageSource);
                 var pageList = new List<Page>();
