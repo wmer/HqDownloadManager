@@ -1,5 +1,4 @@
 ﻿using DependencyInjectionResolver;
-using HqDownloadManager.Core.Helpers;
 using HqDownloadManager.Core.Sources;
 using Reflection.Optimization.Helpers;
 using System;
@@ -7,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace HqDownloadManager.Core.Helpers
-{
+namespace HqDownloadManager.Core.Helpers {
     internal class SiteHelper {
         private List<String> SupportedSites;
         private Object lockThis = new Object();

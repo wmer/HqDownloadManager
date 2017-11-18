@@ -8,18 +8,25 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjectionResolver", "..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj", "{7B9A81F5-8004-4DEF-BC69-C9E390881448}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HqDownloadManager", "HqDownloadManager\HqDownloadManager.csproj", "{6F850ABC-A12B-475B-9119-EDF3AE198806}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9DFF455F-586D-4EFE-BFFF-1900CD9DAD83} = {9DFF455F-586D-4EFE-BFFF-1900CD9DAD83}
+		{4A47BCC1-A2FF-4164-9387-5042F6117399} = {4A47BCC1-A2FF-4164-9387-5042F6117399}
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F} = {FF164AE8-82B5-4C47-B417-A96A8D2EE79F}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HqDownloadManager.Core", "HqDownloadManager.Core\HqDownloadManager.Core.csproj", "{AB71D6F5-B5DA-4B10-B293-CD5F0DBFA9F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HqDownloadManager.Core", "HqDownloadManager.Core\HqDownloadManager.Core.csproj", "{AB71D6F5-B5DA-4B10-B293-CD5F0DBFA9F2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "..\..\NetStandard\Repository\Repository\Repository.csproj", "{0044501F-1DED-49A8-A172-946274CAA4D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HqDownloadManager.Utils", "HqDownloadManager.Utils\HqDownloadManager.Utils.csproj", "{6160755E-36A4-47D1-AF86-035A999829FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HqDownloadManager.Utils", "HqDownloadManager.Utils\HqDownloadManager.Utils.csproj", "{6160755E-36A4-47D1-AF86-035A999829FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HqDownloadManager.Controller", "HqDownloadManager.Controller\HqDownloadManager.Controller.csproj", "{017ACD2F-16E9-4943-A92E-2201276159B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HqDownloadManager.Download", "HqDownloadManager.Download\HqDownloadManager.Download.csproj", "{9DFF455F-586D-4EFE-BFFF-1900CD9DAD83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HqDownloadManager.Download", "HqDownloadManager.Download\HqDownloadManager.Download.csproj", "{9DFF455F-586D-4EFE-BFFF-1900CD9DAD83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HqDownloadManager.FollowUpdate", "HqDownloadManager.FollowUpdate\HqDownloadManager.FollowUpdate.csproj", "{4A47BCC1-A2FF-4164-9387-5042F6117399}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HqDownloadManager.FollowUpdate", "HqDownloadManager.FollowUpdate\HqDownloadManager.FollowUpdate.csproj", "{4A47BCC1-A2FF-4164-9387-5042F6117399}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HqDownloadManager.Compression", "HqDownloadManager.Compression\HqDownloadManager.Compression.csproj", "{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -183,6 +190,22 @@ Global
 		{4A47BCC1-A2FF-4164-9387-5042F6117399}.Release|x64.Build.0 = Release|Any CPU
 		{4A47BCC1-A2FF-4164-9387-5042F6117399}.Release|x86.ActiveCfg = Release|Any CPU
 		{4A47BCC1-A2FF-4164-9387-5042F6117399}.Release|x86.Build.0 = Release|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Debug|ARM.Build.0 = Debug|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Debug|x64.Build.0 = Debug|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Debug|x86.Build.0 = Debug|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Release|ARM.ActiveCfg = Release|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Release|ARM.Build.0 = Release|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Release|x64.ActiveCfg = Release|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Release|x64.Build.0 = Release|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Release|x86.ActiveCfg = Release|Any CPU
+		{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,5 +9,6 @@ namespace HqDownloadManager.Core.Models {
     public class ModelBase {
         public String Link { get; set; }
         public String Title { get; set; }
+        public string Path { get; set; }
     }
 }

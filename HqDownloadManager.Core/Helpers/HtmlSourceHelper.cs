@@ -3,20 +3,25 @@ using AngleSharp.Dom;
 using AngleSharp.Parser.Html;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace HqDownloadManager.Core.Helpers {
-    public class HtmlSourceHelper {
-        private object lockThis = new object();
+    internal class HtmlSourceHelper {
+        private Object lockThis = new Object();
+        private Object lockThis2 = new Object();
 
-        public async Task<IDocument> GetSourceCodeFromUrl(String url) {
-            var config = new AngleSharp.Configuration().WithDefaultLoader();
-            return await BrowsingContext.New(config).OpenAsync(url);
+        public IDocument GetSourceCodeFromUrl(String url) {
+            lock (lockThis) {
+                var config = new AngleSharp.Configuration().WithDefaultLoader();
+                var source = BrowsingContext.New(config).OpenAsync(url).Result;
+                return source;
+            }
         }
 
         public IDocument GetSourceCodeFromHtml(String html) {
-            lock (lockThis) {
+            lock (lockThis2) {
                 var parser = new HtmlParser();
                 return parser.Parse(html);
             }

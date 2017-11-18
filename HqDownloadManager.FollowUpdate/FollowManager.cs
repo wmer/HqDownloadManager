@@ -21,7 +21,7 @@ namespace HqDownloadManager.FollowUpdate
             _followHelper.FollowingHq += FollowHelperOnFollowingHq;
         }
 
-        public async Task FollowHq(Hq hq) => await _followHelper.FollowHq(hq);
+        public void FollowHq(Hq hq) => _followHelper.FollowHq(hq);
         private FollowedHq GetFollowedHq(string link) => _followHelper.GetFollowedHq(link);
         public List<FollowedHq> GetAllFollowedHqs() => _followHelper.GetAllFollowedHqs();
 

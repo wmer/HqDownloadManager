@@ -35,7 +35,7 @@ namespace HqDownloadManager.Download {
         public Downloader(DirectoryHelper directoryHelper, TaskTimer timerHelper, SourceManager sourceManager, DownloadInfoHelper downloadInfoHelper) {
             this._directoryHelper = directoryHelper;
             this._timerHelper = timerHelper;
-            this._sourceManager = sourceManager;
+            this._sourceManager = sourceManager; 
             this._downloadInfoHelper = downloadInfoHelper;
         }
 
@@ -45,20 +45,20 @@ namespace HqDownloadManager.Download {
             DownloadStart(this, new DownloadEventArgs(hqInfo, new DirectoryInfo(hqDirectory), startTime));
             var tempHq = new Hq {
                 Link = hqInfo.Link, Title = hqInfo.Title, CoverSource = hqInfo.CoverSource,
-                Synopsis = hqInfo.Synopsis, Chapters = new List<Chapter>()
+                Synopsis = hqInfo.Synopsis, Path = hqDirectory, Chapters = new List<Chapter>()
             };
             var numChapters = hqInfo.Chapters.Count();
             var chapAtual = 1;
             var failedToDownload = new List<String>();
-            DownloadProgress(this, new ProgressEventArgs(hqInfo, 0, numChapters));
             foreach (var chapter in hqInfo.Chapters) {
+                DownloadProgress(this, new ProgressEventArgs(DateTime.Now, hqInfo, chapAtual, numChapters));
                 try {
                     if (chapter.Pages == null || chapter.Pages.Count == 0) {
                         if (!_processing) {
                             AddPagesInChapters(hqInfo);
                         }
 
-                        var chapterInfo = (Chapter)await _sourceManager.GetInfo(chapter.Link);
+                        var chapterInfo = (Chapter) _sourceManager.GetInfo(chapter.Link);
                         chapter.Pages = chapterInfo?.Pages;
                     }
                     SaveChapter(chapter, hqDirectory);
@@ -68,7 +68,6 @@ namespace HqDownloadManager.Download {
                     DownloadError(this, new DownloadErrorEventArgs(chapter, e, DateTime.Now));
                     failedToDownload.Add(chapter.Link);
                 }
-                DownloadProgress(this, new ProgressEventArgs(hqInfo, chapAtual, numChapters));
                 chapAtual++;
             }
 
@@ -81,12 +80,13 @@ namespace HqDownloadManager.Download {
             lock (_lock2) {
                 var startChapterDownload = DateTime.Now;
                 var chapterDirectory = _directoryHelper.CreateHqDirectory(directory, chapter.Title);
+                chapter.Path = chapterDirectory;
                 DownloadStart(this, new DownloadEventArgs(chapter, new DirectoryInfo(chapterDirectory), startChapterDownload));
                 var downloadChapterTime = _timerHelper.RuntimeOf(() => {
                     var pageAtual = 1;
                     var totalPages = chapter.Pages.Count();
-                    DownloadProgress(this, new ProgressEventArgs(chapter, 0, totalPages));
                     foreach (var page in chapter.Pages) {
+                        DownloadProgress(this, new ProgressEventArgs(DateTime.Now, chapter, pageAtual, totalPages));
                         if (_paused) {
                             DownloadPause(this, new ProgressEventArgs(DateTime.Now, chapter, pageAtual, totalPages));
                             while (_paused) ;
@@ -104,7 +104,6 @@ namespace HqDownloadManager.Download {
                             DownloadError(this, new DownloadErrorEventArgs(null, e, DateTime.Now));
                         }
 
-                        DownloadProgress(this, new ProgressEventArgs(chapter, pageAtual, totalPages));
                         pageAtual++;
                     }
                 });
@@ -136,13 +135,11 @@ namespace HqDownloadManager.Download {
 
         public void PauseRemumeDownload(bool state) => _paused = state;
 
-        public async Task<List<HqDownloadInfo>> GetDownloadedHqsInfo() => await _downloadInfoHelper.GetHqsDownloadInfo();
-
-        private async Task AddPagesInChapters(Hq hq) {
+        private void AddPagesInChapters(Hq hq) {
             _processing = true;
             foreach (var chapter in hq.Chapters) {
                 if (chapter.Pages == null || chapter.Pages.Count == 0) {
-                    var chapterInfo = (Chapter)await _sourceManager.GetInfo(chapter.Link);
+                    var chapterInfo = (Chapter)_sourceManager.GetInfo(chapter.Link);
                     chapter.Pages = chapterInfo?.Pages;
                 }
             }

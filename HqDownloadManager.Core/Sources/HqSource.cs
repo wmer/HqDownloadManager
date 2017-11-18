@@ -1,38 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HqDownloadManager.Core.CustomEventArgs;
-using HqDownloadManager.Core.Helpers;
 using HqDownloadManager.Core.Models;
+using HqDownloadManager.Core.Database;
+using HqDownloadManager.Core.Helpers;
 
 namespace HqDownloadManager.Core.Sources {
-    public abstract class HqSource : IHqSource {
+    internal abstract class HqSource : IHqSource {
+        protected LibraryContext LibraryContext;
         protected HtmlSourceHelper HtmlHelper;
         protected BrowserHelper BrowserHelper;
         protected bool UsingIe;
 
         protected object Lock1 = new object();
         protected object Lock2 = new object();
+        protected object Lock3 = new object();
+        protected object Lock4 = new object();
+        protected object Lock5 = new object();
+        protected object Lock6 = new object();
+        protected object Lock7 = new object();
+        protected object Lock8 = new object();
+        protected object Lock9 = new object();
 
-        public HqSource(HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) {
+        public event ProcessingEventHandler ProcessingProgress;
+        public event ProcessingErrorEventHandler ProcessingError;
+        protected object LockEvent1 = new object();
+        protected object LockEvent2 = new object();
+
+        protected HqSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) {
+            LibraryContext = libraryContext;
             HtmlHelper = htmlHelper;
             BrowserHelper = browserHelper;
         }
 
-        public event ProcessingEventHandler ProcessingProgress;
-        public event ProcessingErrorEventHandler ProcessingError;
+        public virtual Chapter GetChapterInfo(string link) {
+            throw new NotImplementedException();
+        }
 
-        public abstract Task<Chapter> GetChapterInfo(string link);
+        public virtual Hq GetHqInfo(string link) {
+            throw new NotImplementedException();
+        }
 
-        public abstract Task<Hq> GetHqInfo(string link);
+        public virtual LibraryPage GetLibrary(string linkPage) {
+            throw new NotImplementedException();
+        }
 
-        public abstract Task<LibraryPage> GetLibrary(string linkPage);
+        public virtual List<Hq> GetUpdates(string updatePage) {
+            throw new NotImplementedException();
+        }
 
-        public abstract Task<List<Hq>> GetUpdates(string updatePage);
+        protected void OnProcessingProgress(ProcessingEventArgs e) {
+            lock (LockEvent1) {
+                ProcessingProgress?.Invoke(this, e);
+            }
+        }
 
-        protected void OnProcessingProgress(ProcessingEventArgs e) => ProcessingProgress?.Invoke(this, e);
-
-        protected void OnProcessingProgressError(ProcessingErrorEventArgs e) => ProcessingError?.Invoke(this, e);
+        protected void OnProcessingProgressError(ProcessingErrorEventArgs e) {
+            lock (LockEvent2) {
+                ProcessingError?.Invoke(this, e);
+            }
+        }
     }
 }

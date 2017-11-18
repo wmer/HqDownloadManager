@@ -9,7 +9,7 @@ using System.Text;
 namespace HqDownloadManager.Download.Databases
 {
     internal class DownloadContext : DBContext {
-        public DownloadContext() : base($"{CoreConfiguration.DownloadLocation}", "downloadDb.db") { }        
+        public DownloadContext() : base($"{CoreConfiguration.DatabaseLocation}", "downloadDb.db") { }        
 
         public Repository<HqDownloadInfo> HqDownloadInfo { get; set; }
     }

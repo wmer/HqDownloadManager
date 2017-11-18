@@ -1,6 +1,7 @@
 ﻿using DependencyInjectionResolver;
 using HqDownloadManager.Controller.Helpers;
 using HqDownloadManager.Views;
+using HqDownloadManager.Views.Updates;
 using System;
 using System.Collections.Generic;
 using System.IO;

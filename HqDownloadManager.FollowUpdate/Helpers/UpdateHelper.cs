@@ -28,17 +28,17 @@ namespace HqDownloadManager.FollowUpdate.Helpers
             _taskTimer = taskTimer;
         }
 
-        public async Task<List<Chapter>> GetUpdates(string hqLink) {
+        public List<Chapter> GetUpdates(string hqLink) {
             var update = new List<Chapter>();
             Hq hq = null;
             var startTime = DateTime.Now;
             if (!(_followContext.FollowedHq.FindOne(hqLink) is FollowedHq followedHq)) return update;
             hq = followedHq.Hq.ToObject<Hq>();
             UpdateStart(this, new UpdateEventArgs(hq, startTime));
-            if (!(await _sourceManager.GetInfo(hqLink) is Hq hqInfo)) return update;
+            if (!(_sourceManager.GetInfo(hqLink) is Hq hqInfo)) return update;
             update.AddRange(hqInfo.Chapters.Where(chap => !hq.Chapters.Contains(chap)));
             if (update.Count > 0) {
-                await _followHelper.FollowHq(hqInfo);
+                _followHelper.FollowHq(hqInfo);
             }
 
 

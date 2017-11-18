@@ -26,8 +26,8 @@ namespace HqDownloadManager.FollowUpdate.Helpers
         private readonly object _lock2 = new object();
         private readonly object _lock3 = new object();
 
-        public async Task FollowHq(Hq hq) {
-            if (!(await _sourceManager.GetInfo(hq.Link) is Hq hqInfo)) return;
+        public void FollowHq(Hq hq) {
+            if (!(_sourceManager.GetInfo(hq.Link) is Hq hqInfo)) return;
             var dInfo = new FollowedHq {
                 Link = hq.Link,
                 Time = DateTime.Now,

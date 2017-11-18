@@ -1,6 +1,7 @@
 ﻿using DependencyInjectionResolver;
 using HqDownloadManager.Core.Models;
 using HqDownloadManager.Download.CustomEventArgs;
+using HqDownloadManager.Download.Helpers;
 using HqDownloadManager.Download.Models;
 using HqDownloadManager.Utils;
 using System;
@@ -13,6 +14,7 @@ namespace HqDownloadManager.Download
     public class DownloadManager {
         private readonly Downloader _downloader;
         private readonly TaskTimer _timerHelper;
+        private readonly DownloadInfoHelper _downloadInfoHelper;
 
         public event DownloadEventHandler DownloadStart;
         public event DownloadEventHandler DownloadEnd;
@@ -24,8 +26,8 @@ namespace HqDownloadManager.Download
         public DownloadManager(DependencyInjection dependency) {
             var dependency1 = dependency;
             this._timerHelper = dependency1.Resolve<TaskTimer>();
-            _downloader = dependency1
-                .Resolve<Downloader>();
+            _downloader = dependency1.Resolve<Downloader>();
+            _downloadInfoHelper = dependency1.Resolve<DownloadInfoHelper>();
             _downloader.DownloadStart += Downloader_DownloadStart;
             _downloader.DownloadProgress += Downloader_DownloadProgress;
             _downloader.DownloadPause += Downloader_DownloadPause;
@@ -40,9 +42,12 @@ namespace HqDownloadManager.Download
         public void PauseResumeDownload(bool state) => 
                         _downloader.PauseRemumeDownload(state);
 
-        public async Task<List<HqDownloadInfo>> GetDownloadedHqsInfo() => 
-                         await _downloader.GetDownloadedHqsInfo();
+        public async Task<List<HqDownloadInfo>> GetDownloadedHqsInfo() =>
+                        await _downloadInfoHelper.GetHqsDownloadInfo();
+        
 
+        public async Task DeleteDownloadInfo(string link, bool deleteFiles = false) =>
+              await _downloadInfoHelper.DeleteDownloadInfo(link, deleteFiles);
 
         private void Downloader_DownloadStart(object sender, DownloadEventArgs ev) => DownloadStart?.Invoke(this, ev);
 

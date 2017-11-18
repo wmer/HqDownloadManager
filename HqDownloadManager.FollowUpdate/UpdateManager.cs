@@ -22,7 +22,7 @@ namespace HqDownloadManager.FollowUpdate
             _updateHelper.UpdateEnd += UpdateHelperOnUpdateEnd;
         }
 
-        public async Task<List<Chapter>> GetUpdatesFrom(string link) => await _updateHelper.GetUpdates(link);
+        public List<Chapter> GetUpdatesFrom(string link) => _updateHelper.GetUpdates(link);
 
         private void UpdateHelperOnUpdateStart(object sender, UpdateEventArgs ev) => UpdateStart?.Invoke(this, ev);
 

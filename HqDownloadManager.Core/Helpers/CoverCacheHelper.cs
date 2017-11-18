@@ -1,12 +1,11 @@
-﻿using HqDownloadManager.Core.Configuration;
-using HqDownloadManager.Core.Models;
-using HqDownloadManager.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
+using HqDownloadManager.Core.Configuration;
+using HqDownloadManager.Core.Models;
+using HqDownloadManager.Utils;
 
 namespace HqDownloadManager.Core.Helpers {
     internal class CoverCacheHelper {
@@ -27,7 +26,7 @@ namespace HqDownloadManager.Core.Helpers {
                 using (var webClient = new WebClient()) {
                     var pageSource = $"{directory}\\{StringHelper.RemoveSpecialCharacters(hq.Title)}{FormatPage(hq.CoverSource)}";
                     if (!File.Exists(pageSource)) {
-                        webClient.DownloadFileAsync(new Uri(hq.CoverSource), pageSource);
+                        webClient.DownloadFile(hq.CoverSource, pageSource);
                     }
                     hq.CoverSource = pageSource;
                 }

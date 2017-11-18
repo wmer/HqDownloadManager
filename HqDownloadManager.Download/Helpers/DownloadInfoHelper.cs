@@ -4,6 +4,7 @@ using HqDownloadManager.Download.Models;
 using HqDownloadManager.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,6 +42,17 @@ namespace HqDownloadManager.Download.Helpers
             return await Task.Factory.StartNew<List<HqDownloadInfo>>(()=> {
                 lock (_lock2) {
                     return _downloadContext.HqDownloadInfo.FindAll();
+                }
+            });
+        }
+
+        public async Task DeleteDownloadInfo(string link, bool deleteFiles = false) {
+            await Task.Run(()=> {
+                if (_downloadContext.HqDownloadInfo.FindOne(link) is HqDownloadInfo hqDownloadInfo) {
+                    _downloadContext.HqDownloadInfo.Delete(hqDownloadInfo);
+                    if (deleteFiles) {
+                        Directory.Delete(hqDownloadInfo.SavedIn, true);
+                    }
                 }
             });
         }

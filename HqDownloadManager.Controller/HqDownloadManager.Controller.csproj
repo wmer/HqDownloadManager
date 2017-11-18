@@ -106,27 +106,60 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationController.cs" />
     <Compile Include="ControllerBase.cs" />
     <Compile Include="Databases\UserLibraryContext.cs" />
+    <Compile Include="DownloadController.cs" />
+    <Compile Include="DownloadEventController.cs" />
     <Compile Include="Helpers\ControlsHelper.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
+    <Compile Include="HqDetailsController.cs" />
+    <Compile Include="HqReaderController.cs" />
+    <Compile Include="ListHqControllerBase.cs" />
     <Compile Include="Models\DownloadList.cs" />
     <Compile Include="Models\DownloadListItem.cs" />
     <Compile Include="Models\SourceLink.cs" />
     <Compile Include="Models\UserFavorite.cs" />
     <Compile Include="Models\UserPreferences.cs" />
     <Compile Include="Models\UserReading.cs" />
+    <Compile Include="MyLibraryController.cs" />
+    <Compile Include="PageControllerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SourceLibraryController.cs" />
+    <Compile Include="UpdatesController.cs" />
+    <Compile Include="ViewModel\ComboBox\ComboBoxViewModelBase.cs" />
+    <Compile Include="ViewModel\ComboBox\LibrarySource.cs" />
+    <Compile Include="ViewModel\ComboBox\UpdateSource.cs" />
+    <Compile Include="ViewModel\ConfigurationPage\UserPreferencesViewModel.cs" />
+    <Compile Include="ViewModel\DownloadPage\DownloadListViewModel.cs" />
+    <Compile Include="ViewModel\DownloadPage\DownloadPageViewModel.cs" />
+    <Compile Include="ViewModel\HqDetails\HqViewModel.cs" />
     <Compile Include="ViewModel\MainPage\NavigationViewModel.cs" />
+    <Compile Include="ViewModel\MyLibrary\KeepReadingViewModel.cs" />
+    <Compile Include="ViewModel\Reader\ReaderViewModel.cs" />
+    <Compile Include="ViewModel\Shared\HqListViewModel.cs" />
+    <Compile Include="ViewModel\Shared\NotificationViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="ViewsController\ConfigurationPageBase.cs" />
+    <Compile Include="ViewsController\DetailsPageBase.cs" />
+    <Compile Include="ViewsController\DownloadPageBase.cs" />
+    <Compile Include="ViewsController\MyLibraryPageBase.cs" />
+    <Compile Include="ViewsController\ReaderPageBase.cs" />
+    <Compile Include="ViewsController\SourceLibraryPageBase.cs" />
+    <Compile Include="ViewsController\UpdatesPageBase.cs" />
     <EmbeddedResource Include="Properties\HqDownloadManager.Controller.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.Runtime.CoreCLR">
+      <Version>2.0.3</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.0.1</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModel\UpdatesPage\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj">
       <Project>{7b9a81f5-8004-4def-bc69-c9e390881448}</Project>
@@ -140,6 +173,10 @@
       <Project>{0044501f-1ded-49a8-a172-946274caa4d6}</Project>
       <Name>Repository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HqDownloadManager.Compression\HqDownloadManager.Compression.csproj">
+      <Project>{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}</Project>
+      <Name>HqDownloadManager.Compression</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HqDownloadManager.Core\HqDownloadManager.Core.csproj">
       <Project>{ab71d6f5-b5da-4b10-b293-cd5f0dbfa9f2}</Project>
       <Name>HqDownloadManager.Core</Name>
@@ -147,6 +184,10 @@
     <ProjectReference Include="..\HqDownloadManager.Download\HqDownloadManager.Download.csproj">
       <Project>{9DFF455F-586D-4EFE-BFFF-1900CD9DAD83}</Project>
       <Name>HqDownloadManager.Download</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HqDownloadManager.FollowUpdate\HqDownloadManager.FollowUpdate.csproj">
+      <Project>{4A47BCC1-A2FF-4164-9387-5042F6117399}</Project>
+      <Name>HqDownloadManager.FollowUpdate</Name>
     </ProjectReference>
     <ProjectReference Include="..\HqDownloadManager.Utils\HqDownloadManager.Utils.csproj">
       <Project>{6160755e-36a4-47d1-af86-035a999829fd}</Project>
