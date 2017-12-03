@@ -1,10 +1,11 @@
-using Repository.Attributes;
+﻿using Repository.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HqDownloadManager.Core.Models {
-    internal class Cache {
+namespace HqDownloadManager.Core.Models
+{
+    public class Cache {
         [PrimaryKey]
         public string Link { get; set; }
         public DateTime Date { get; set; }

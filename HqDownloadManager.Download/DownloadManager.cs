@@ -3,7 +3,7 @@ using HqDownloadManager.Core.Models;
 using HqDownloadManager.Download.CustomEventArgs;
 using HqDownloadManager.Download.Helpers;
 using HqDownloadManager.Download.Models;
-using HqDownloadManager.Utils;
+using Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,7 +36,7 @@ namespace HqDownloadManager.Download
             _downloader.DownloadEnd += Downloader_DownloadEnd;
         }
 
-        public async Task Download(Hq item, string directory) => await
+        public void Download(Hq item, string directory) =>
                         _downloader.SaveHq(item, directory);
 
         public void PauseResumeDownload(bool state) => 

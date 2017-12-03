@@ -1,4 +1,5 @@
 ﻿using HqDownloadManager.Core.Models;
+using Repository.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace HqDownloadManager.Controller.ViewModel.Reader {
         private int _actualPage;
         private Visibility _controlsVisibility;
 
-        public Hq Hq {
+        public virtual Hq Hq {
             get => _hq;
             set {
                 _hq = value;
@@ -33,7 +34,7 @@ namespace HqDownloadManager.Controller.ViewModel.Reader {
         }
 
 
-        public Chapter NextChapter {
+        public virtual Chapter NextChapter {
             get => _nextChapter;
             set {
                 _nextChapter = value;
@@ -42,7 +43,7 @@ namespace HqDownloadManager.Controller.ViewModel.Reader {
         }
 
 
-        public Chapter ActualChapter {
+        public virtual Chapter ActualChapter {
             get => _actualChapter;
             set {
                 _actualChapter = value;
@@ -58,14 +59,16 @@ namespace HqDownloadManager.Controller.ViewModel.Reader {
             }
         }
 
-        public Chapter PreviousChapter {
+        [Required(false)]
+        public virtual Chapter PreviousChapter {
             get => _previousChapter;
             set {
                 _previousChapter = value;
                 OnPropertyChanged("PreviousChapter");
             }
         }
-
+        
+        [OnlyInModel]
         public Visibility ControlsVisibility {
             get => _controlsVisibility;
             set {

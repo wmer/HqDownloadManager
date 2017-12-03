@@ -1,30 +1,77 @@
-﻿<viewscontroller:SourceLibraryPageBase
-    xmlns:viewscontroller="using:HqDownloadManager.Controller.ViewsController"
-    x:Class="HqDownloadManager.Views.Sourcelibrary.SourceLibraryPage"
+﻿<controller:MyLibraryController
+    xmlns:controller="using:HqDownloadManager.Controller"
+    x:Class="HqDownloadManager.Views.MyLibraryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:HqDownloadManager.Views.Sourcelibrary"
+    xmlns:local="using:HqDownloadManager.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:shared="using:HqDownloadManager.Controller.ViewModel.Shared"
-    xmlns:comboBox="using:HqDownloadManager.Controller.ViewModel.ComboBox"
+    xmlns:list="using:HqDownloadManager.Controller.ViewModel.Shared"
+    xmlns:mylibrary="using:HqDownloadManager.Controller.ViewModel.MyLibrary"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d" SizeChanged="Page_SizeChanged">
+    mc:Ignorable="d">
 
     <Page.Resources>
-        <shared:NotificationViewModel x:Key="Notification" Visibility="Collapsed" />
-        <shared:HqListViewModel x:Key="HqList" Width="160.45" Height="230" />
-        <comboBox:LibrarySource x:Key="Sources" />
+        <list:NotificationViewModel x:Key="Notification" Visibility="Collapsed" />
+        <list:HqListViewModel x:Key="HqList" Width="160.45" Height="230" />
+        <mylibrary:KeepReadingViewModel x:Key="KeepReading"  />
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <TextBlock
+            x:Name="TitleBloc"
+            Text="Continue Lendo..."
+            Height="50"
+            VerticalAlignment="Top"
+            Padding="10"
+            FontSize="26"/>
+        <GridView
+            x:Name="KeepReading"
+            Height="155"
+            Margin="0,50,0,0"
+            VerticalAlignment="Top"
+            ItemsSource="{Binding Readings, Source={StaticResource KeepReading}}"
+            SelectedItem="{Binding SelectedItem, Source={StaticResource KeepReading}, Mode=TwoWay}"
+            IsItemClickEnabled="True"
+            ItemClick="KeepReading_ItemClick">
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <Grid 
+                        Width="100" 
+                        Height="140"
+                        Margin="2">
+                        <Image 
+                            Source="{Binding Hq.CoverSource}" 
+                            Stretch="Fill"
+                            Width="100" 
+                            Height="140"
+                            ToolTipService.ToolTip="{Binding Hq.Title}"/>
+                        <ProgressBar
+                            Minimum="0"
+                            Maximum="{Binding Hq.Chapters.Count}"
+                            Height="5"
+                            Value="{Binding ActualChapterIndex}"
+                            VerticalAlignment="Bottom"/>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+        <TextBlock
+            x:Name="TitleBloc2"
+            Text="Downloads"
+            Height="50"
+            Margin="0,185,0,0"
+            VerticalAlignment="Top"
+            Padding="10"
+            FontSize="26"/>
         <GridView 
-            x:Name="HqlistGrid"
-            Margin="0,43,0,0"
+            x:Name="HqsDownloaded"
             ItemsSource="{Binding Hqs, Source={StaticResource HqList}}"
             SelectedItem="{Binding SelectedItem, Source={StaticResource HqList}, Mode=TwoWay}"
+            SelectionMode="Single"
             IsItemClickEnabled="True"
-            ItemClick="GridView_ItemClick">
+            ItemClick="ItemClick"
+            Margin="0,245,0,0">
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Canvas 
@@ -34,7 +81,7 @@
                             Source="{Binding Path=CoverSource}" 
                             Stretch="Fill"
                             Width="{Binding Width, Source={StaticResource HqList}}" 
-                            Height="{Binding Height, Source={StaticResource HqList}}"  
+                            Height="{Binding Height, Source={StaticResource HqList}}"
                             ToolTipService.ToolTip="{Binding Path=Title}"/>
                         <TextBox 
                             Visibility="Visible" 
@@ -57,64 +104,15 @@
                     </Canvas>
                 </DataTemplate>
             </GridView.ItemTemplate>
-
             <GridView.ContextFlyout>
                 <MenuFlyout>
-                    <MenuFlyoutItem x:Name="AddDownload" Text="Adicionar para Download" Click="AddDownload_Click" />
-                    <MenuFlyoutItem x:Name="Follow" Text="Favoritar" Click="Follow_Click" />
+                    <MenuFlyoutItem x:Name="Erase" Text="Apagar" Click="Erase_Click" />
+                    <MenuFlyoutItem x:Name="EraseAll" Text="Apagar e Excluir Arquivos" Click="EraseAll_Click" />
+                    <MenuFlyoutItem x:Name="Follow" Text="Seguir" Click="Follow_Click" />
+                    <MenuFlyoutItem x:Name="GetUpdates" Text="Buscar Atualizaçoes" Click="GetUpdates_Click" />
                 </MenuFlyout>
             </GridView.ContextFlyout>
         </GridView>
-        <Grid 
-            Height="40" 
-            Background="#FFFFFF"
-            VerticalAlignment="Top" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="215" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="144" />
-            </Grid.ColumnDefinitions>
-            <CheckBox 
-                x:Name="CheckboxOnlyFinalized" 
-                Grid.Column="0"
-                VariableSizedWrapGrid.ColumnSpan="1"
-                Content="Somente Finalizados" 
-                Margin="10,4,0,0"  
-                FontSize="17" 
-                Height="26" 
-                Checked="CheckboxOnlyFinalized_Checked" 
-                Unchecked="CheckboxOnlyFinalized_Unchecked" />
-            <GridView 
-                x:Name="LetterList"  
-                Grid.Column="1"
-                ItemsSource="{Binding Source={StaticResource HqList}, Path=Lethers}" 
-                BorderThickness="0"
-                ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
-                ScrollViewer.VerticalScrollBarVisibility="Hidden" >
-                <GridView.ItemTemplate>
-                    <DataTemplate>
-                        <Button 
-                            x:Name="Lether" 
-                            Margin="0"  
-                            Width="60"
-                            Height="30" 
-                            Content="{Binding Key}" 
-                            Click="Lether_Click" />
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-            </GridView>
-            <ComboBox 
-                x:Name="SourceHq"
-                Grid.Column="2"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Margin="0,0,5,0"
-                ItemsSource="{Binding SourceLinks, Source={StaticResource Sources}}"
-                DisplayMemberPath="SourceName"
-                SelectedItem="{Binding SelectedSourceLink, Source={StaticResource Sources}, Mode=TwoWay}"
-                SelectedValuePath="SourceName" 
-                SelectionChanged="Selector_OnSelectionChanged" />
-        </Grid>
         <toolkit:DropShadowPanel      
             Visibility="{Binding Visibility, Source={StaticResource Notification}}"
             BlurRadius="4.0"
@@ -146,4 +144,4 @@
             </Grid>
         </toolkit:DropShadowPanel>
     </Grid>
-</viewscontroller:SourceLibraryPageBase>
+</controller:MyLibraryController>

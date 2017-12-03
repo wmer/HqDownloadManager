@@ -14,7 +14,8 @@ namespace HqDownloadManager.Controller.ViewModel.ComboBox {
                 new SourceLink {SourceName = "MangaHost", Link = "https://mangashost.com/"},
                 new SourceLink {SourceName = "YesMangas", Link = "https://ymangas.com/"},
                // new SourceLink { SourceName = "UnionMangas", Link = "http://unionmangas.net" },
-                new SourceLink {SourceName = "MangasProject", Link = "https://mangas.zlx.com.br"}
+                new SourceLink {SourceName = "MangasProject", Link = "https://mangas.zlx.com.br"},
+                new SourceLink {SourceName = "Hipercool", Link = "https://hiper.cool/"}
             };
 
             SelectedSourceLink = SourceLinks[0];

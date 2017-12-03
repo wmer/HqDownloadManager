@@ -1,14 +1,14 @@
-﻿<viewscontroller:ReaderPageBase
-    xmlns:viewscontroller="using:HqDownloadManager.Controller.ViewsController"
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:reader="using:HqDownloadManager.Controller.ViewModel.Reader"
-    xmlns:viewModels="using:HqDownloadManager.Controller.ViewModel.Shared"
-    x:Class="HqDownloadManager.Views.Reader.HqReaderPage"
+﻿<controller:HqReaderController
+    xmlns:controller="using:HqDownloadManager.Controller"
+    x:Class="HqDownloadManager.Views.HqReaderPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:HqDownloadManager.Views.Reader"
+    xmlns:local="using:HqDownloadManager.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:HqDownloadManager.Controller.ViewModel.Shared"
+    xmlns:reader="using:HqDownloadManager.Controller.ViewModel.Reader"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d" KeyDown="Page_KeyDown">
 
     <Page.Resources>
@@ -115,4 +115,4 @@
             </Grid>
         </toolkit:DropShadowPanel>
     </Grid>
-</viewscontroller:ReaderPageBase>
+</controller:HqReaderController>

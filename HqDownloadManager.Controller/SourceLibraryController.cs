@@ -20,11 +20,11 @@ namespace HqDownloadManager.Controller {
 
         private object _lock1 = new object();
 
-        public SourceLibraryController(DependencyInjection dependencyInjection) : base(dependencyInjection) {
+        public SourceLibraryController() : base() {
         }
 
-        public override void Init(params object[] values) {
-            base.Init();
+        public override void OnLoaded(object sender, RoutedEventArgs e) {
+            base.OnLoaded(sender, e);
             _hqListView = ControlsHelper.FindResource<HqListViewModel>("HqList");
             _hqList = _hqListView?.Hqs;
         }
@@ -62,7 +62,7 @@ namespace HqDownloadManager.Controller {
         private async Task ShowHqs(string link, bool clearAfter = true) {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 if (clearAfter) {
-                    _hqList.Clear();
+                     _hqList.Clear();
                 }
                 Notification.Visibility = Visibility.Visible;
             });

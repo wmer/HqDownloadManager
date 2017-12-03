@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{017ACD2F-16E9-4943-A92E-2201276159B7}</ProjectGuid>
+    <ProjectGuid>{511FDF66-7820-4410-A1D1-54D6758CE640}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HqDownloadManager.Controller</RootNamespace>
@@ -111,6 +111,7 @@
     <Compile Include="Databases\UserLibraryContext.cs" />
     <Compile Include="DownloadController.cs" />
     <Compile Include="DownloadEventController.cs" />
+    <Compile Include="FollowController.cs" />
     <Compile Include="Helpers\ControlsHelper.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="HqDetailsController.cs" />
@@ -118,12 +119,11 @@
     <Compile Include="ListHqControllerBase.cs" />
     <Compile Include="Models\DownloadList.cs" />
     <Compile Include="Models\DownloadListItem.cs" />
+    <Compile Include="Models\FollowItem.cs" />
     <Compile Include="Models\SourceLink.cs" />
-    <Compile Include="Models\UserFavorite.cs" />
     <Compile Include="Models\UserPreferences.cs" />
     <Compile Include="Models\UserReading.cs" />
     <Compile Include="MyLibraryController.cs" />
-    <Compile Include="PageControllerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceLibraryController.cs" />
     <Compile Include="UpdatesController.cs" />
@@ -133,6 +133,7 @@
     <Compile Include="ViewModel\ConfigurationPage\UserPreferencesViewModel.cs" />
     <Compile Include="ViewModel\DownloadPage\DownloadListViewModel.cs" />
     <Compile Include="ViewModel\DownloadPage\DownloadPageViewModel.cs" />
+    <Compile Include="ViewModel\Follows\FollowUpdatesViewModel.cs" />
     <Compile Include="ViewModel\HqDetails\HqViewModel.cs" />
     <Compile Include="ViewModel\MainPage\NavigationViewModel.cs" />
     <Compile Include="ViewModel\MyLibrary\KeepReadingViewModel.cs" />
@@ -140,19 +141,9 @@
     <Compile Include="ViewModel\Shared\HqListViewModel.cs" />
     <Compile Include="ViewModel\Shared\NotificationViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
-    <Compile Include="ViewsController\ConfigurationPageBase.cs" />
-    <Compile Include="ViewsController\DetailsPageBase.cs" />
-    <Compile Include="ViewsController\DownloadPageBase.cs" />
-    <Compile Include="ViewsController\MyLibraryPageBase.cs" />
-    <Compile Include="ViewsController\ReaderPageBase.cs" />
-    <Compile Include="ViewsController\SourceLibraryPageBase.cs" />
-    <Compile Include="ViewsController\UpdatesPageBase.cs" />
     <EmbeddedResource Include="Properties\HqDownloadManager.Controller.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETCore.Runtime.CoreCLR">
-      <Version>2.0.3</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.0.1</Version>
     </PackageReference>
@@ -165,33 +156,25 @@
       <Project>{7b9a81f5-8004-4def-bc69-c9e390881448}</Project>
       <Name>DependencyInjectionResolver</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\NetStandard\Reflection.Optimization\Reflection.Optimization\Reflection.Optimization.csproj">
-      <Project>{4fbf4294-cae4-43d2-abbf-756df72358d9}</Project>
-      <Name>Reflection.Optimization</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj">
       <Project>{0044501f-1ded-49a8-a172-946274caa4d6}</Project>
       <Name>Repository</Name>
     </ProjectReference>
-    <ProjectReference Include="..\HqDownloadManager.Compression\HqDownloadManager.Compression.csproj">
-      <Project>{FF164AE8-82B5-4C47-B417-A96A8D2EE79F}</Project>
-      <Name>HqDownloadManager.Compression</Name>
+    <ProjectReference Include="..\..\..\NetStandard\Utils\Utils\Utils.csproj">
+      <Project>{25eece08-e64f-49d9-9657-a18406adb95a}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\HqDownloadManager.Core\HqDownloadManager.Core.csproj">
-      <Project>{ab71d6f5-b5da-4b10-b293-cd5f0dbfa9f2}</Project>
+      <Project>{8b0db86e-74b0-4f13-b18f-8862bdb1eaa3}</Project>
       <Name>HqDownloadManager.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\HqDownloadManager.Download\HqDownloadManager.Download.csproj">
-      <Project>{9DFF455F-586D-4EFE-BFFF-1900CD9DAD83}</Project>
+      <Project>{177f41d2-b3c4-425a-ab50-ef33df16ff8a}</Project>
       <Name>HqDownloadManager.Download</Name>
     </ProjectReference>
     <ProjectReference Include="..\HqDownloadManager.FollowUpdate\HqDownloadManager.FollowUpdate.csproj">
-      <Project>{4A47BCC1-A2FF-4164-9387-5042F6117399}</Project>
+      <Project>{a09df8ff-3173-4be3-8aa2-e14bf858815f}</Project>
       <Name>HqDownloadManager.FollowUpdate</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HqDownloadManager.Utils\HqDownloadManager.Utils.csproj">
-      <Project>{6160755e-36a4-47d1-af86-035a999829fd}</Project>
-      <Name>HqDownloadManager.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

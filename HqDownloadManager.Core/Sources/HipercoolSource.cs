@@ -3,43 +3,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HqDownloadManager.Core.Models;
-using HqDownloadManager.Core.Helpers;
 using AngleSharp.Dom;
-using System.Threading;
+using DependencyInjectionResolver;
 using HqDownloadManager.Core.CustomEventArgs;
 using HqDownloadManager.Core.Database;
+using HqDownloadManager.Core.Helpers;
+using HqDownloadManager.Core.Models;
 
 namespace HqDownloadManager.Core.Sources {
-    internal class YesMangasSource : HqSource {
-        public YesMangasSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext, htmlHelper, browserHelper) {
+    internal class HipercoolSource : HqSource {
+        private string BaseAdress { get; set; }
+        private Uri Site { get; set; }
+
+        public HipercoolSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext, htmlHelper, browserHelper) {
         }
 
-        public override List<Update> GetUpdates(string updatePage) {
-            lock (Lock1) {
+        public override List<Update> GetUpdates(String updatePage) {
+            lock (Lock7) {
                 try {
+                    Uri site = new Uri(updatePage);
+                    BaseAdress = $"{site.Scheme}://{site.Host}";
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
                     var source = HtmlHelper.GetSourceCodeFromUrl(updatePage);
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     var updates = new List<Update>();
+                    var chapters = new List<Chapter>();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
-                    var updayesEl = source.QuerySelectorAll("div#lancamentos table.u-full-width tr");
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{updayesEl.Count()} mangas encontrados!"));
-                    foreach (var update in updayesEl) {
-                        var title = update.QuerySelector("td a h4")?.TextContent;
-                        OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados de {title}"));
-                        var img = update.QuerySelector("td a img")?.GetAttribute("src");
-                        var link = update.QuerySelector("td div a")?.GetAttribute("href");
-                        var chaptersEl = update.QuerySelectorAll("td .clearfix a.button");
+                    var updatesEl = source.QuerySelectorAll("div.cap-card");
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{updatesEl.Count()} mangas encontrados!"));
+                    foreach (var update in updatesEl) {
+                        var title = update.QuerySelector(".title-area")?.TextContent;
+                        if (!string.IsNullOrEmpty(title)) {
+                            title = title.Replace("\n", "").Trim();
+                        }
+                        var img = update.QuerySelector("a.container img")?.GetAttribute("src");
+                        var link = update.QuerySelector("a.container")?.GetAttribute("href");
                         if (!string.IsNullOrEmpty(link)) {
-                            var chapters = new List<Chapter>();
-                            foreach (var chap in chaptersEl) {
-                                var chapterTitle = chap.GetAttribute("href");
-                                var chapterLink = chap.GetAttribute("title");
-                                chapters.Add(new Chapter { Link = chapterLink, Title = chapterTitle });
-                            }
                             var up = new Update {
-                                Hq = new Hq { Link = link, Title = title, CoverSource = img },
+                                Hq = new Hq { Link = $"{BaseAdress}{link}", Title = title, CoverSource = $"{Site.Scheme}:{img}" },
                                 Chapters = chapters
                             };
                             updates.Add(up);
@@ -47,54 +48,41 @@ namespace HqDownloadManager.Core.Sources {
                         }
                     }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
-                    return updates;
+                    return updates; 
                 } catch (Exception e) {
                     OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, updatePage, e));
                     return null;
                 }
-
             }
         }
 
         public override LibraryPage GetLibrary(String linkPage) {
-            lock (Lock2) {
+            lock (Lock6) {
                 try {
+                    Site = new Uri(linkPage);
+                    BaseAdress = $"{Site.Scheme}://{Site.Host}";
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, "Processando os Mangas..."));
-                    var source = HtmlHelper.GetSourceCodeFromUrl(linkPage);
+                    var driver = BrowserHelper.GetDriver(linkPage);
+                    Task.Delay(5000).Wait();
+                    var pageSource = driver.PageSource;
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
+                    IDocument source = HtmlHelper.GetSourceCodeFromHtml(pageSource);
+                    driver.Quit();
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     var hqs = new List<Hq>();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
-                    var hqsEl = source.QuerySelectorAll("#mangas .two");
+                    var hqsEl = source.QuerySelectorAll(".mdl-data-table tbody tr");
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{hqsEl.Count()} mangas encontrados!"));
-                    var nextPage = source.QuerySelector("#mangas a.next")?.GetAttribute("href");
-                    var finalizadosEl = source.QuerySelectorAll("#mangas ul.nav-tabs li a");
-                    var finalizedPage = "";
-                    foreach (var el in finalizadosEl) {
-                        if (el.TextContent.Contains("Completos")) {
-                            finalizedPage = el.GetAttribute("href");
-                        }
-                    }
-                    var lethers = source.QuerySelectorAll("#mangas .letters a");
-                    var letherLink = new Dictionary<string, string>();
-                    foreach (var lether in lethers) {
-                        letherLink[lether.TextContent] = lether.GetAttribute("href");
-                    }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Preparando para retornar mangas!"));
                     foreach (var hq in hqsEl) {
-                        var title = hq.QuerySelector("h3")?.TextContent;
-                        var img = hq.QuerySelector("a img")?.GetAttribute("src");
-                        var link = hq.QuerySelector("h3 a")?.GetAttribute("href");
+                        var link = hq.QuerySelector("td a")?.GetAttribute("href");
                         if (!string.IsNullOrEmpty(link)) {
-                            var manga = new Hq { Link = link, Title = title, CoverSource = img };
-                            if (!hqs.Contains(manga)) {
-                                hqs.Add(manga);
-                                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, manga, $"{title} Adicionado"));
-                            }
+                            var manga = new SourceManager(new DependencyInjection()).GetInfo<Hq>($"{BaseAdress}{link}");
                         }
                     }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
                     return new LibraryPage {
-                        Hqs = hqs, NextPage = nextPage, FinalizedPage = finalizedPage, Letras = letherLink
+                        Hqs = hqs
                     };
                 } catch (Exception e) {
                     OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, linkPage, e));
@@ -104,21 +92,27 @@ namespace HqDownloadManager.Core.Sources {
         }
 
         public override Hq GetHqInfo(string link) {
-            lock (Lock3) {
+            lock (Lock1) {
                 try {
+                    Site = new Uri(link);
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     var source = HtmlHelper.GetSourceCodeFromUrl(link);
                     var hqInfo = new Hq();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
-                    var title = source.QuerySelector("h1.title")?.TextContent;
-                    var img = source.QuerySelector("#descricao img");
-                    var synopsis = source.QuerySelector("#descricao article")?.TextContent;
+                    var title = source.QuerySelector(".manga-card .infos-wrapper .title")?.TextContent;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {title}"));
+                    var coverEl = source.QuerySelector(".manga-card .cover-wrapper img");
+                    var synopsis = source.QuerySelector(".manga-card .infos-wrapper .sinopse")?.TextContent;
                     hqInfo.Title = title;
-                    hqInfo.CoverSource = img?.GetAttribute("src");
-                    hqInfo.Synopsis = synopsis.Replace("\n", "").Trim();
-                    hqInfo.Link = link; var hqInfos = source.QuerySelectorAll("#descricao div.content ul li");
+                    var img = coverEl?.GetAttribute("src");
+                    if (!string.IsNullOrEmpty(img)) {
+                        hqInfo.CoverSource = $"{Site.Scheme}:{img}";
+                    }
+                    hqInfo.Synopsis = synopsis?.Replace("\n", "").Trim(); ;
+                    hqInfo.Link = link;
+                    var hqInfos = source.QuerySelectorAll(".manga-card .infos-wrapper .infos .info");
                     foreach (var info in hqInfos) {
+                        var txt = info.TextContent;
                         if (info.TextContent.Contains("Autor")) {
                             hqInfo.Author = info.TextContent.Replace("Autor:", "").Trim();
                         }
@@ -136,13 +130,14 @@ namespace HqDownloadManager.Core.Sources {
         }
 
         public override Chapter GetChapterInfo(string link) {
-            lock (Lock4) {
+            lock (Lock2) {
                 try {
+                    Site = new Uri(link);
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     IDocument leitor = HtmlHelper.GetSourceCodeFromUrl(link);
                     var chapter = new Chapter();
-                    if (leitor == null) throw new Exception("Ocorreu um erro ao buscar informaçoes do capitulo");
-                    var chapterTitle = leitor.QuerySelector("header.container h1.title")?.TextContent;
+                    if (leitor == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
+                    var chapterTitle = leitor.QuerySelector(".main-container .title")?.TextContent.Trim();
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {chapterTitle}"));
                     chapter.Title = chapterTitle;
                     chapter.Link = link;
@@ -168,63 +163,45 @@ namespace HqDownloadManager.Core.Sources {
         }
 
         public List<Chapter> GetListChapters(IDocument hqSource) {
-            lock (Lock5) {
+            lock (Lock3) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando capitulos"));
                 var chapterList = new List<Chapter>();
-                var chapters = hqSource.QuerySelectorAll(".eight a.button");
-                if (chapters == null) return chapterList;
-                foreach (var chapter in chapters) {
-                    var chapterLink = chapter.GetAttribute("href");
-                    var chapterTitle = $"Capitulo - {chapter.TextContent}";
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Adicionando {chapterTitle}"));
-                    chapterList.Add(new Chapter { Title = chapterTitle, Link = chapterLink });
+                var chaptersContent = hqSource.QuerySelector(".manga-wrapper .cards-wrapper");
+                if (chaptersContent == null) {
+                    var chapterLink = hqSource.QuerySelector(".infos-wrapper .infos-buttons .button")?.GetAttribute("href"); ;
+                    var chapterTitle = $"01";
+                    var chap = new Chapter { Link = $"{BaseAdress}{chapterLink}", Title = chapterTitle };
+                    chapterList.Add(chap);
+                } else {
+                    var chapters = chaptersContent.QuerySelectorAll(".cap-card");
+                    if(chapters != null && chapters.Length > 0) {
+                        foreach (var chapter in chapters) {
+                            var chapterLink = chapter.QuerySelector(".buttons-wrapper a")?.GetAttribute("href");
+                            var chapterTitle = chapter.QuerySelector(".content .title-area .title")?.TextContent;
+                            OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Adicionando {chapterTitle}"));
+                            var chap = new Chapter { Link = $"{BaseAdress}{chapterLink}", Title = chapterTitle };
+                            chapterList.Add(chap);
+                        }
+                    }
                 }
                 return chapterList;
             }
         }
 
         public List<Models.Page> GetPageList(IDocument chapterSoure) {
-            lock (Lock6) {
+            lock (Lock4) {
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando páginas"));
                 var pageList = new List<Models.Page>();
-                var pages = GetPageListFromScript(chapterSoure);
-                var mangaPages = pages.QuerySelectorAll("img");
+                var mangaPages = chapterSoure.QuerySelectorAll(".pages-wrapper img");
                 if (mangaPages == null) return pageList;
                 var num = 1;
                 foreach (var img in mangaPages) {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Adicionando página {num}"));
-                    pageList.Add(new Page { Number = num, Source = img.GetAttribute("src") });
+                    var page = new Page { Number = num, Source = $"{Site.Scheme}:{img.GetAttribute("src")}" };
+                    pageList.Add(page);
                     num++;
                 }
                 return pageList;
-            }
-        }
-
-        private IDocument GetPageListFromScript(IDocument source) {
-            lock (Lock7) {
-                var element = "";
-                var imageElement = source.QuerySelector(".content-slideshow a");
-                if (imageElement == null) return HtmlHelper.GetSourceCodeFromHtml(element);
-                var openTag = "<div class='pages-content'>";
-                var closeTag = "</div>";
-                var content = imageElement.ParentElement?.InnerHtml;
-                if (UsingIe) {
-                    element = $"{openTag}{content}{closeTag}";
-                } else {
-                    var html = source.Body.InnerHtml;
-                    html = html.Substring(html.IndexOf("var images = ["));
-                    html = html.Substring(html.IndexOf("["), html.IndexOf("];"));
-                    var otherPages = html.Split(']')[0];
-                    otherPages = otherPages.Split('[')[1];
-                    otherPages = otherPages.Replace("\"", "");
-                    element = $"{openTag}{content}{otherPages}{closeTag}";
-                }
-
-                element = element.Replace("\"", "'");
-                element = element.Replace(".webp", "");
-                element = element.Replace("/images", "/mangas_files");
-
-                return HtmlHelper.GetSourceCodeFromHtml(element);
             }
         }
     }

@@ -3,7 +3,7 @@ using HqDownloadManager.Core.Models;
 using HqDownloadManager.FollowUpdate.CustomEventArgs;
 using HqDownloadManager.FollowUpdate.Databases;
 using HqDownloadManager.FollowUpdate.Models;
-using HqDownloadManager.Utils;
+using Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,14 +35,9 @@ namespace HqDownloadManager.FollowUpdate.Helpers
             if (!(_followContext.FollowedHq.FindOne(hqLink) is FollowedHq followedHq)) return update;
             hq = followedHq.Hq.ToObject<Hq>();
             UpdateStart(this, new UpdateEventArgs(hq, startTime));
-            if (!(_sourceManager.GetInfo(hqLink) is Hq hqInfo)) return update;
+            if (!(_sourceManager.GetInfo<Hq>(hqLink) is Hq hqInfo)) return update;
             update.AddRange(hqInfo.Chapters.Where(chap => !hq.Chapters.Contains(chap)));
-            if (update.Count > 0) {
-                _followHelper.FollowHq(hqInfo);
-            }
-
-
-            UpdateEnd(this, new UpdateEventArgs(hq, startTime, DateTime.Now, DateTime.Now - startTime));
+            
             return update;
         }
     }

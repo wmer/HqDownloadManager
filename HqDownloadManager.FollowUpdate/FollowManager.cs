@@ -22,7 +22,7 @@ namespace HqDownloadManager.FollowUpdate
         }
 
         public void FollowHq(Hq hq) => _followHelper.FollowHq(hq);
-        private FollowedHq GetFollowedHq(string link) => _followHelper.GetFollowedHq(link);
+        public FollowedHq GetFollowedHq(string link) => _followHelper.GetFollowedHq(link);
         public List<FollowedHq> GetAllFollowedHqs() => _followHelper.GetAllFollowedHqs();
 
         private void FollowHelperOnFollowingHq(object sender, FollowEventArgs ev) => FollowingHq?.Invoke(this, ev);

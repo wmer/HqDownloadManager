@@ -48,7 +48,7 @@ namespace HqDownloadManager.Core.Sources {
             throw new NotImplementedException();
         }
 
-        public virtual List<Hq> GetUpdates(string updatePage) {
+        public virtual List<Update> GetUpdates(string updatePage) {
             throw new NotImplementedException();
         }
 

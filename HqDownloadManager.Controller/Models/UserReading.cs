@@ -10,6 +10,6 @@ namespace HqDownloadManager.Controller.Models {
         [PrimaryKey]
         public string Link { get; set; }
         public DateTime Date { get; set; }
-        public byte[] HqReaderViewModel { get; set; }
+        public byte[] Reading { get; set; }
     }
 }

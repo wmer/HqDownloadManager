@@ -1,7 +1,6 @@
-﻿using HqDownloadManager.Controller.ViewModel.HqDetails;
-using HqDownloadManager.Controller.ViewsController;
+﻿using HqDownloadManager.Controller;
+using HqDownloadManager.Controller.ViewModel.HqDetails;
 using HqDownloadManager.Core.Models;
-using HqDownloadManager.Views.Reader;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,11 +18,11 @@ using Windows.UI.Xaml.Navigation;
 
 // O modelo de item de Página em Branco está documentado em https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace HqDownloadManager.Views.DetailsPage {
+namespace HqDownloadManager.Views {
     /// <summary>
     /// Uma página vazia que pode ser usada isoladamente ou navegada dentro de um Quadro.
     /// </summary>
-    public sealed partial class HqDetailsPage : DetailsPageBase {
+    public sealed partial class HqDetailsPage : HqDetailsController {
         private Hq _hq;
 
         public HqDetailsPage() {
@@ -36,14 +35,14 @@ namespace HqDownloadManager.Views.DetailsPage {
             hqModel.Hq = _hq;
         }
 
-        private void AddAll_Click(object sender, RoutedEventArgs e) => Controller.AddToDownloadList(_hq);
+        private void AddAll_Click(object sender, RoutedEventArgs e) => AddToDownloadList(_hq);
 
-        private void AddSelected_Click(object sender, RoutedEventArgs e) => Controller.AddSelected(_hq);
+        private void AddSelected_Click(object sender, RoutedEventArgs e) => AddSelected(_hq);
 
-        private void FollowHq_Click(object sender, RoutedEventArgs e) => Controller.FollowHq(_hq);
+        private void FollowHq_Click(object sender, RoutedEventArgs e) => FollowHq(_hq);
 
-        private void ReadManga_Click(object sender, RoutedEventArgs e) => Controller.OpenReader<HqReaderPage>(_hq);
+        private void ReadManga_Click(object sender, RoutedEventArgs e) => OpenReader<HqReaderPage>(_hq);
 
-        private void ReadNow_Click(object sender, RoutedEventArgs e) => Controller.ReadNow<HqReaderPage>(_hq);
+        private void ReadNow_Click(object sender, RoutedEventArgs e) => ReadNow<HqReaderPage>(_hq);
     }
 }

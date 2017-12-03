@@ -12,7 +12,7 @@ using Windows.UI.Xaml;
 
 namespace HqDownloadManager.Controller {
     public class ListHqControllerBase : ControllerBase {
-        public ListHqControllerBase(DependencyInjection dependencyInjection) : base(dependencyInjection) {
+        public ListHqControllerBase() : base() {
         }
 
         public async Task AddToDownloadList() {
@@ -22,7 +22,7 @@ namespace HqDownloadManager.Controller {
 
         public async Task FollowHq() {
             var Selectedhq = await GetSelectedHq(false);
-            FollowHq(Selectedhq);
+            //FollowHq(Selectedhq);
         }
 
         protected string GetLinkForUpdates() => GetSelectedSourceLink<UpdateSource>("Sources");
@@ -67,11 +67,10 @@ namespace HqDownloadManager.Controller {
             });
 
             if (selectedHq?.Chapters == null || selectedHq?.Chapters.Count == 0) {
-                hq = SourceManager.GetInfo(selectedHq?.Link, isFinalized) as Hq;
-            } else {
-                hq = selectedHq;
+                selectedHq = SourceManager.GetInfo<Hq>(selectedHq?.Link, isFinalized);
             }
 
+            hq = selectedHq;
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 Notification.Visibility = Visibility.Collapsed;

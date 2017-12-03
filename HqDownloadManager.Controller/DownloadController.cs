@@ -1,7 +1,7 @@
 ﻿using DependencyInjectionResolver;
 using HqDownloadManager.Controller.Models;
 using HqDownloadManager.Controller.ViewModel.DownloadPage;
-using HqDownloadManager.Utils;
+using Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml;
+using HqDownloadManager.Core.Models;
 
 namespace HqDownloadManager.Controller {
     public partial class DownloadController : ControllerBase {
@@ -18,11 +20,11 @@ namespace HqDownloadManager.Controller {
         private ListView downloadListView;
         private int actualIndex;
 
-        public DownloadController(DependencyInjection dependencyInjection) : base(dependencyInjection) {
+        public DownloadController() : base() {
         }
 
-        public override void Init(params object[] values) {
-            base.Init();
+        public override void OnLoaded(object sender, RoutedEventArgs e) {
+            base.OnLoaded(sender, e);
             downloadListViewModel = ControlsHelper.FindResource<DownloadListViewModel>("HqList");
             downloadListView = ControlsHelper.Find<ListView>("DownloadHqs");
             downloadListViewModel.Hqs = DownloadList;
@@ -41,16 +43,17 @@ namespace HqDownloadManager.Controller {
                     });
                     if (hqDownloading.Status != "Baixado") {
                         try {
-                            hqDownloading.Status = "Baixando...";
-                            var dw = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-                            UserLibrary.DownloadList.Update(dw);
-                            await DownloadManager.Download(hqDownloading.Hq, UserPreferences.DownloadPath);
-                            DownloadList[i].Status = "Baixado";
                             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                                downloadListViewModel.Hqs[i] = hqDownloading;
+                                hqDownloading.Status = "Baixando...";
                             });
-                            dw = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-                            UserLibrary.DownloadList.Update(dw);
+                            var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
+                            UserLibrary.DownloadList.Update(dwL);
+                            DownloadManager.Download(hqDownloading.Hq, UserPreferences.DownloadPath);
+                            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                                hqDownloading.Status = "Baixado";
+                            });
+                            dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
+                            UserLibrary.DownloadList.Update(dwL);
                         } catch (Exception e) {
                             ShowLog($"Um erro ocorreu durante o download de {hqDownloading.Hq.Title}. Causa: {e.Message}");
                         }
@@ -63,21 +66,21 @@ namespace HqDownloadManager.Controller {
         public void RemoveFromList() {
             var selected = downloadListView.SelectedItem as DownloadListItem;
             DownloadList.Remove(selected);
-            var dw = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-            UserLibrary.DownloadList.Update(dw);
+            var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
+            UserLibrary.DownloadList.Update(dwL);
         }
 
         public void Clearlist() {
             DownloadList.Clear();
-            var dw = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-            UserLibrary.DownloadList.Update(dw);
+            var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
+            UserLibrary.DownloadList.Update(dwL);
         }
 
         public void OrderByName() {
             var listOrder = DownloadList.OrderBy(c => c.Hq.Title).ToList();
             DownloadList = new ObservableCollection<DownloadListItem>(listOrder);
-            var dw = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-            UserLibrary.DownloadList.Update(dw);
+            var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
+            UserLibrary.DownloadList.Update(dwL);
         }
 
         public void PauseResume(bool paused) => DownloadManager.PauseResumeDownload(paused);

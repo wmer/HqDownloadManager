@@ -9,10 +9,25 @@ namespace HqDownloadManager.Core.Models {
         public string CoverSource { get; set; }
         public string Author { get; set; }
         public string Synopsis { get; set; }
+        public bool Followed { get; set; }
+        public DateTime TimeCache { get; set; }
+        public bool IsFinalized { get; set; }
         public List<Chapter> Chapters { get; set; }
 
         public int CompareTo(Hq other) {
-            return String.Compare(Link, other.Link, StringComparison.Ordinal);
+            return String.Compare(Title, other.Title, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object obj) {
+            if (obj.GetType() == typeof(Hq)) {
+                var model = (Hq)obj;
+                return Link == model.Link || (Title == model.Title && Author == model.Author);
+            }
+            return false;
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
         }
     }
 }

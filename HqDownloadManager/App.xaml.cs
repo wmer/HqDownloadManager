@@ -1,7 +1,7 @@
 ﻿using DependencyInjectionResolver;
 using HqDownloadManager.Controller.Helpers;
+using HqDownloadManager.Controller.ViewModel.MainPage;
 using HqDownloadManager.Views;
-using HqDownloadManager.Views.Updates;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,7 +44,7 @@ namespace HqDownloadManager {
 
                 var mainPage = dependencyInjection
                                     .DefineDependency<MainPage>(0, _rootFrame)
-                                    .DefineDependency<NavigationHelper>(0, _rootFrame)
+                                   .DefineDependency<NavigationHelper>(0, _rootFrame)
                                     .Resolve<MainPage>();
                 Window.Current.Content = mainPage;
                 SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
@@ -52,8 +52,8 @@ namespace HqDownloadManager {
                     _rootFrame.CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
             }
             if (_rootFrame.Content == null) {
-               _rootFrame.Navigate(typeof(UpdatesPage), e.Arguments);
-               // ((Window.Current.Content as MainPage)?.Resources["TitleViewModel"] as PageTitleViewModel).Title = "Atualizações";
+                _rootFrame.Navigate(typeof(UpdatesPage), e.Arguments);
+                ((Window.Current.Content as MainPage)?.Resources["TitleViewModel"] as NavigationViewModel).Title = "Atualizações";
             }
 
             Window.Current.Activate();
@@ -77,7 +77,7 @@ namespace HqDownloadManager {
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e) {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
-        
+
         private void OnSuspending(object sender, SuspendingEventArgs e) {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Salvar o estado do aplicativo e parar qualquer atividade em segundo plano

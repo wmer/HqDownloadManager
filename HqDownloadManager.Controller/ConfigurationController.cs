@@ -1,5 +1,5 @@
 ﻿using DependencyInjectionResolver;
-using HqDownloadManager.Utils;
+using Utils;
 using HqDownloadManager.Controller.Models;
 using HqDownloadManager.Controller.ViewModel.ConfigurationPage;
 using System;
@@ -7,14 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 
 namespace HqDownloadManager.Controller {
     public class ConfigurationController : ControllerBase {
-        public ConfigurationController(DependencyInjection dependencyInjection) : base(dependencyInjection) {
+        public ConfigurationController() : base() {
         }
 
-        public override void Init(params object[] values) {
-            base.Init();
+        public override void OnLoaded(object sender, RoutedEventArgs e) {
+            base.OnLoaded(sender, e);
             var userPreferences = GetUserPreferencesResource();
             userPreferences.Compress = UserPreferences.Compress;
             userPreferences.EraseFolder = UserPreferences.EraseFolder;

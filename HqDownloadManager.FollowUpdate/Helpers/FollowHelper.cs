@@ -3,14 +3,13 @@ using HqDownloadManager.Core.Models;
 using HqDownloadManager.FollowUpdate.CustomEventArgs;
 using HqDownloadManager.FollowUpdate.Databases;
 using HqDownloadManager.FollowUpdate.Models;
-using HqDownloadManager.Utils;
+using Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HqDownloadManager.FollowUpdate.Helpers
-{
+namespace HqDownloadManager.FollowUpdate.Helpers {
     internal class FollowHelper {
         private readonly FollowContext _context;
         private readonly SourceManager _sourceManager;
@@ -27,18 +26,22 @@ namespace HqDownloadManager.FollowUpdate.Helpers
         private readonly object _lock3 = new object();
 
         public void FollowHq(Hq hq) {
-            if (!(_sourceManager.GetInfo(hq.Link) is Hq hqInfo)) return;
-            var dInfo = new FollowedHq {
-                Link = hq.Link,
-                Time = DateTime.Now,
-                Hq = hqInfo.ToBytes()
-            };
-            if (_context.FollowedHq.FindOne(hq.Link) != null) {
-                _context.FollowedHq.Update(dInfo);
-            } else {
-                _context.FollowedHq.Save(dInfo);
+            lock (_lock1) {
+                var dInfo = new FollowedHq {
+                    Link = hq.Link,
+                    Time = DateTime.Now,
+                    Hq = hq.ToBytes()
+                };
+                if (_context.FollowedHq.FindOne(hq.Link) != null) {
+                    _context.FollowedHq.Update(dInfo);
+                } else {
+                    _context.FollowedHq.Save(dInfo);
+                    hq.Followed = true;
+                    _context.Hq.Update(x => new { x.Hq }, hq.ToBytes())
+                                                              .Where(x => x.Link == hq.Link).Execute();
+                }
+                FollowingHq(this, new FollowEventArgs(hq, DateTime.Now));
             }
-            FollowingHq(this, new FollowEventArgs(hqInfo, DateTime.Now));
         }
 
         public FollowedHq GetFollowedHq(string link) {

@@ -5,6 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\Utils\Utils\Utils.csproj" />
     <ProjectReference Include="..\HqDownloadManager.Core\HqDownloadManager.Core.csproj" />
   </ItemGroup>
 

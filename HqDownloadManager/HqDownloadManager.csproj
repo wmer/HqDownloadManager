@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{6F850ABC-A12B-475B-9119-EDF3AE198806}</ProjectGuid>
+    <ProjectGuid>{A4544E79-26BE-46CD-86C7-DD954D558F63}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HqDownloadManager</RootNamespace>
@@ -99,25 +99,28 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Configuration\ConfigurationPage.xaml.cs">
+    <Compile Include="Views\ConfigurationPage.xaml.cs">
       <DependentUpon>ConfigurationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DetailsPage\HqDetailsPage.xaml.cs">
-      <DependentUpon>HqDetailsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DownloadPage\DownloadPage.xaml.cs">
+    <Compile Include="Views\DownloadPage.xaml.cs">
       <DependentUpon>DownloadPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MyLibrary\MyLibraryPage.xaml.cs">
-      <DependentUpon>MyLibraryPage.xaml</DependentUpon>
+    <Compile Include="Views\FollowPage.xaml.cs">
+      <DependentUpon>FollowPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Reader\HqReaderPage.xaml.cs">
+    <Compile Include="Views\HqDetailsPage.xaml.cs">
+      <DependentUpon>HqDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HqReaderPage.xaml.cs">
       <DependentUpon>HqReaderPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Sourcelibrary\SourceLibraryPage.xaml.cs">
+    <Compile Include="Views\MyLibraryPage.xaml.cs">
+      <DependentUpon>MyLibraryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SourceLibraryPage.xaml.cs">
       <DependentUpon>SourceLibraryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Updates\UpdatesPage.xaml.cs">
+    <Compile Include="Views\UpdatesPage.xaml.cs">
       <DependentUpon>UpdatesPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -152,31 +155,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Configuration\ConfigurationPage.xaml">
+    <Page Include="Views\ConfigurationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DetailsPage\HqDetailsPage.xaml">
+    <Page Include="Views\DownloadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DownloadPage\DownloadPage.xaml">
+    <Page Include="Views\FollowPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MyLibrary\MyLibraryPage.xaml">
+    <Page Include="Views\HqDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Reader\HqReaderPage.xaml">
+    <Page Include="Views\HqReaderPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Sourcelibrary\SourceLibraryPage.xaml">
+    <Page Include="Views\MyLibraryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Updates\UpdatesPage.xaml">
+    <Page Include="Views\SourceLibraryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UpdatesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -184,9 +191,6 @@
   <ItemGroup>
     <PackageReference Include="AngleSharp">
       <Version>0.9.9</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyModel">
-      <Version>2.0.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.Runtime.CoreCLR">
       <Version>2.0.3</Version>
@@ -196,9 +200,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>2.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.3</Version>
     </PackageReference>
     <PackageReference Include="WinRTXamlToolkit.UWP">
       <Version>2.3.0</Version>
@@ -217,19 +218,28 @@
       <Project>{0044501f-1ded-49a8-a172-946274caa4d6}</Project>
       <Name>Repository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\NetStandard\Utils\Utils\Utils.csproj">
+      <Project>{25eece08-e64f-49d9-9657-a18406adb95a}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HqDownloadManager.Controller\HqDownloadManager.Controller.csproj">
-      <Project>{017acd2f-16e9-4943-a92e-2201276159b7}</Project>
+      <Project>{511fdf66-7820-4410-a1d1-54d6758ce640}</Project>
       <Name>HqDownloadManager.Controller</Name>
     </ProjectReference>
     <ProjectReference Include="..\HqDownloadManager.Core\HqDownloadManager.Core.csproj">
-      <Project>{ab71d6f5-b5da-4b10-b293-cd5f0dbfa9f2}</Project>
+      <Project>{8b0db86e-74b0-4f13-b18f-8862bdb1eaa3}</Project>
       <Name>HqDownloadManager.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\HqDownloadManager.Utils\HqDownloadManager.Utils.csproj">
-      <Project>{6160755e-36a4-47d1-af86-035a999829fd}</Project>
-      <Name>HqDownloadManager.Utils</Name>
+    <ProjectReference Include="..\HqDownloadManager.Download\HqDownloadManager.Download.csproj">
+      <Project>{177f41d2-b3c4-425a-ab50-ef33df16ff8a}</Project>
+      <Name>HqDownloadManager.Download</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HqDownloadManager.FollowUpdate\HqDownloadManager.FollowUpdate.csproj">
+      <Project>{a09df8ff-3173-4be3-8aa2-e14bf858815f}</Project>
+      <Name>HqDownloadManager.FollowUpdate</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

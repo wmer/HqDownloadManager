@@ -1,5 +1,5 @@
 ﻿using DependencyInjectionResolver;
-using HqDownloadManager.Utils;
+using Utils;
 using HqDownloadManager.Controller.ViewModel.Reader;
 using HqDownloadManager.Controller.ViewModel.Shared;
 using HqDownloadManager.Core.Models;
@@ -11,17 +11,18 @@ using System.Threading.Tasks;
 using HqDownloadManager.Controller.ViewModel.MyLibrary;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml;
 
 namespace HqDownloadManager.Controller {
     public class MyLibraryController : ListHqControllerBase {
         private HqListViewModel _myDownloads;
         private KeepReadingViewModel _KeepReading;
 
-        public MyLibraryController(DependencyInjection dependencyInjection) : base(dependencyInjection) {
+        public MyLibraryController() : base() {
         }
 
-        public override void Init(params object[] values) {
-            base.Init(values);
+        public override void OnLoaded(object sender, RoutedEventArgs e) {
+            base.OnLoaded(sender, e);
             _myDownloads = ControlsHelper.FindResource<HqListViewModel>("HqList");
             _KeepReading = ControlsHelper.FindResource<KeepReadingViewModel>("KeepReading");
 
@@ -36,9 +37,8 @@ namespace HqDownloadManager.Controller {
             var userReadings = UserLibrary.UserReadings.FindAll();
             var list = new List<ReaderViewModel>();
             foreach (var userReading in userReadings) {
-                var reader = userReading.HqReaderViewModel.ToObject<ReaderViewModel>();
                 _KeepReading.Date = userReading.Date;
-                list.Add(reader);
+                list.Add(userReading.Reading.ToObject<ReaderViewModel>());
             }
             list = list.Reverse<ReaderViewModel>().ToList();
             _KeepReading.Readings = new ObservableCollection<ReaderViewModel>(list);

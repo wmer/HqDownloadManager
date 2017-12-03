@@ -1,7 +1,5 @@
-﻿using HqDownloadManager.Controller.ViewsController;
+﻿using HqDownloadManager.Controller;
 using HqDownloadManager.Core.Models;
-using HqDownloadManager.Views.DetailsPage;
-using HqDownloadManager.Views.Reader;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,33 +17,33 @@ using Windows.UI.Xaml.Navigation;
 
 // O modelo de item de Página em Branco está documentado em https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace HqDownloadManager.Views.MyLibrary {
+namespace HqDownloadManager.Views {
     /// <summary>
     /// Uma página vazia que pode ser usada isoladamente ou navegada dentro de um Quadro.
     /// </summary>
-    public sealed partial class MyLibraryPage : MyLibraryPageBase {
+    public sealed partial class MyLibraryPage : MyLibraryController {
         public MyLibraryPage() {
             this.InitializeComponent();
             Unloaded += OnUnloaded;
         }
 
-        protected override void OnLoaded(object sender, RoutedEventArgs e) {
+        public override void OnLoaded(object sender, RoutedEventArgs e) {
             base.OnLoaded(sender, e);
-            Controller.ShowReadings();
-            Controller.ShowDownloads();
+            ShowReadings();
+            ShowDownloads();
         }
 
 
-        private void ItemClick(object sender, ItemClickEventArgs e) => Controller.OpenHqDetails<HqDetailsPage>();
+        private void ItemClick(object sender, ItemClickEventArgs e) => OpenHqDetails<HqDetailsPage>();
 
-        private void OnUnloaded(object sender, RoutedEventArgs e) => Controller.ClearLists();
+        private void OnUnloaded(object sender, RoutedEventArgs e) => ClearLists();
 
-        private void KeepReading_ItemClick(object sender, ItemClickEventArgs e) => Controller.KeepReading<HqReaderPage>(e.ClickedItem);
+        private void KeepReading_ItemClick(object sender, ItemClickEventArgs e) => KeepReading<HqReaderPage>(e.ClickedItem);
 
         private void Erase_Click(object sender, RoutedEventArgs e) {
             if (sender is MenuFlyoutItem menuFlyoutItem) {
                 if (menuFlyoutItem.DataContext is Hq selected) {
-                    Controller.DeleteHq(selected);
+                    DeleteHq(selected);
                 }
             }
         }
@@ -54,10 +52,10 @@ namespace HqDownloadManager.Views.MyLibrary {
             if (sender is FrameworkElement menuFlyoutItem) {
                 var lkjad = HqsDownloaded.SelectedItem;
                 if (menuFlyoutItem.DataContext is Hq selected) {
-                    Controller.DeleteHq(selected, true);
+                    DeleteHq(selected, true);
                 }
             }
-        } 
+        }
 
         private void Follow_Click(object sender, RoutedEventArgs e) {
 
@@ -67,6 +65,6 @@ namespace HqDownloadManager.Views.MyLibrary {
 
         }
 
-        private void HqsDownloaded_SelectionChanged(object sender, SelectionChangedEventArgs e) => Controller.OpenHqDetails<HqDetailsPage>();
+        private void HqsDownloaded_SelectionChanged(object sender, SelectionChangedEventArgs e) => OpenHqDetails<HqDetailsPage>();
     }
 }

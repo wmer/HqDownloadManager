@@ -15,30 +15,37 @@ namespace HqDownloadManager.Core.Sources {
         public MangaHostSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext, htmlHelper, browserHelper) {
         }
 
-        public override List<Hq> GetUpdates(String updatePage) {
+        public override List<Update> GetUpdates(String updatePage) {
             lock (Lock7) {
                 try {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
                     var source = HtmlHelper.GetSourceCodeFromUrl(updatePage);
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
-                    var hqs = new List<Hq>();
+                    var updates = new List<Update>();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
-                    var hqsEl = source.QuerySelectorAll(".table-lancamentos tr");
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{hqsEl.Count()} mangas encontrados!"));
-                    foreach (var hq in hqsEl) {
-                        var title = hq.QuerySelector("td h3.entry-title")?.TextContent;
-                        var img = hq.QuerySelector("td a img")?.GetAttribute("src");
-                        var link = hq.QuerySelector("td h3.entry-title a")?.GetAttribute("href");
+                    var updatesEl = source.QuerySelectorAll(".table-lancamentos tr");
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{updatesEl.Count()} mangas encontrados!"));
+                    foreach (var update in updatesEl) {
+                        var title = update.QuerySelector("td h3.entry-title")?.TextContent;
+                        var img = update.QuerySelector("td a img")?.GetAttribute("src");
+                        var link = update.QuerySelector("td h3.entry-title a")?.GetAttribute("href");
+                        var chaptersEl = update.QuerySelectorAll(".chapters a.btn");
                         if (!string.IsNullOrEmpty(link)) {
-                            var update = new Hq { Link = link, Title = title, CoverSource = img };
-                            if (!hqs.Contains(update)) {
-                                hqs.Add(update);
-                                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, update, $"{title} Adicionado"));
+                            var chapters = new List<Chapter>();
+                            foreach (var chap in chaptersEl) {
+                                var chapterTitle = chap.GetAttribute("href");
+                                var chapterLink = chap.GetAttribute("title");
+                                chapters.Add(new Chapter { Link = chapterLink, Title = chapterTitle });
                             }
+                            var up = new Update { Hq = new Hq { Link = link, Title = title, CoverSource = img },
+                             Chapters = chapters
+                            };
+                            updates.Add(up);
+                            OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, up.Hq, $"{title} Adicionado"));
                         }
                     }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
-                    return hqs;
+                    return updates;
                 } catch (Exception e) {
                     OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, updatePage, e));
                     return null;
@@ -115,7 +122,8 @@ namespace HqDownloadManager.Core.Sources {
                             hqInfo.Author = info.TextContent.Replace("Autor:", "").Trim();
                         }
                     }
-                    hqInfo.Chapters = GetListChapters(source).Reverse<Chapter>().ToList();
+                    var chapters = GetListChapters(source).Reverse<Chapter>().ToList();
+                    hqInfo.Chapters = chapters;
 
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto!"));
                     return hqInfo;

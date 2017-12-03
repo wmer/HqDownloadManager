@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace HqDownloadManager.Controller {
     public class HqDetailsController : ControllerBase {
-        public HqDetailsController(DependencyInjection dependencyInjection) : base(dependencyInjection) {
+        public HqDetailsController() : base() {
         }
 
         public void OpenReader<T>(Hq model) {
@@ -36,7 +36,11 @@ namespace HqDownloadManager.Controller {
                 list = ControlsHelper.Find<ListView>("HqChapters");
                 var seleteds = list.SelectedItems;
                 foreach (var item in seleteds) {
-                    listChapters.Add(item as Chapter);
+                    var chap = item as Chapter;
+                    if (chap.Pages == null || chap.Pages.Count == 0) {
+                        chap = SourceManager.GetInfo<Chapter>(chap.Link);
+                    }
+                    listChapters.Add(chap);
                 }
             });
             return listChapters;

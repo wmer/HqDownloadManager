@@ -1,15 +1,14 @@
-﻿<viewscontroller:DownloadPageBase
-    xmlns:viewscontroller="using:HqDownloadManager.Controller.ViewsController"
-    x:Class="HqDownloadManager.Views.DownloadPage.DownloadPage"
+﻿<controller:DownloadController
+    xmlns:controller="using:HqDownloadManager.Controller"
+    x:Class="HqDownloadManager.Views.DownloadPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:HqDownloadManager.Views.DownloadPage"
+    xmlns:local="using:HqDownloadManager.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:downloadpage="using:HqDownloadManager.Controller.ViewModel.DownloadPage"
     xmlns:models="using:HqDownloadManager.Controller.Models"
-    mc:Ignorable="d" x:Name="DwPage">
-
+    mc:Ignorable="d">
     <Page.Resources>
         <downloadpage:DownloadListViewModel x:Key="HqList" />
     </Page.Resources>
@@ -127,4 +126,4 @@
             FontSize="16" 
             Click="BtnPauseDownload_Click"/>
     </Grid>
-</viewscontroller:DownloadPageBase>
+</controller:DownloadController>

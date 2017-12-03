@@ -10,37 +10,33 @@ using System.Threading.Tasks;
 
 namespace HqDownloadManager.Core.Helpers {
     internal class SiteHelper {
-        private List<String> SupportedSites;
+        private Dictionary<String, Type> SupportedSites;
         private Object lockThis = new Object();
         private Object lockThis2 = new Object();
         private Object lockThis3 = new Object();
         private Object lockThis4 = new Object();
 
         public SiteHelper() {
-            SupportedSites = new List<String> { "ymangas", "yesmangas", "mangashost", "mangahost", "unionmangas", "mangas", "mangastream",
-                "kissmanga", "readms", "mangafox" };
+            SupportedSites = new Dictionary<string, Type> {
+                ["ymangas"] = typeof(YesMangasSource),
+                ["yesmangas"] = typeof(YesMangasSource),
+                ["mangashost"] = typeof(MangaHostSource),
+                ["mangahost"] = typeof(MangaHostSource),
+                ["mangahosts"] = typeof(MangaHostSource),
+                ["unionmangas"] = typeof(UnionMangasSource),
+                ["mangas"] = typeof(MangasProjectSource),
+                ["mangastream"] = typeof(MangasProjectSource),
+                ["hiper"] = typeof(HipercoolSource)
+            };
         }
 
         public IHqSource GetHqSourceFromUrl(String link) {
             lock (lockThis) {
                 Uri url = new Uri(link);
                 var host = url.Host.Split('.')[0];
-                if (SupportedSites.Contains(host)) {
-                    if ((host == "mangastream" || host == "mangas")) {
-                        host = "mangasproject";
-                    }
-                    if (host == "readms") {
-                        host = "mangastream";
-                    }
-                    if (host == "mangashost") {
-                        host = "mangahost";
-                    }
-                    if (host == "ymangas") {
-                        host = "yesmangas";
-                    }
-                    var type = AssemblyHelper.GetType(typeof(IHqSource).GetTypeInfo().Assembly, $"{host}source");
+                if (SupportedSites.ContainsKey(host)) {
                     return new DependencyInjection()
-                                                .BindingTypes(typeof(IHqSource), type)
+                                                .BindingTypes(typeof(IHqSource), SupportedSites[host])
                                                 .Resolve<IHqSource>();
                 }
                 throw new Exception("Não é possivel fazer download deste site!");
@@ -51,13 +47,13 @@ namespace HqDownloadManager.Core.Helpers {
             lock (lockThis2) {
                 Uri url = new Uri(link);
                 var host = url.Host.Split('.')[0];
-                if (SupportedSites.Contains(host)) {
+                if (SupportedSites.ContainsKey(host)) {
                     if ((host == "mangas" || host == "mangastream")) {
                         if (url.Segments.Count() == 4 && (url.Segments[1].ToLower() == "manga/" || url.Segments[1].ToLower() == "titulos/")) {
                             return true;
                         }
                     } else {
-                        if (url.Segments.Count() == 3 && (url.Segments[1].ToLower() == "manga/" || url.Segments[1].ToLower() == "titulos/")) {
+                        if (url.Segments.Count() == 3 && (url.Segments[1].ToLower() == "manga/" || url.Segments[1].ToLower() == "mangas/" || url.Segments[1].ToLower() == "titulos/")) {
                             return true;
                         }
                     }
@@ -72,17 +68,23 @@ namespace HqDownloadManager.Core.Helpers {
             lock (lockThis3) {
                 Uri url = new Uri(link);
                 var host = url.Host.Split('.')[0];
-                if (SupportedSites.Contains(host)) {
+                if (SupportedSites.ContainsKey(host)) {
                     var count = url.Segments.Count();
                     var page = url.Segments[1];
 
-                    if ((host == "mangas" || host == "mangastream")) {
+                    if (host == "mangas" || host == "mangastream") {
                         if (url.Segments.Count() > 4 && (url.Segments[1].ToLower() == "manga/" || url.Segments[1].ToLower() == "titulos/" || url.Segments[1].ToLower() == "leitor/" || url.Segments[1].ToLower() == "r/")) {
                             return true;
                         }
                     } else {
-                        if (url.Segments.Count() > 3 && (url.Segments[1].ToLower() == "manga/" || url.Segments[1].ToLower() == "titulos/" || url.Segments[1].ToLower() == "leitor/" || url.Segments[1].ToLower() == "r/")) {
-                            return true;
+                        if (host == "mangashost") {
+                            if (url.Segments.Count() > 3 && url.Segments[1].ToLower() == "manga/") {
+                                return true;
+                            }
+                        }else {
+                            if (url.Segments.Count() >= 3 && (url.Segments[1].ToLower() == "manga/" || url.Segments[1].ToLower() == "titulos/" || url.Segments[1].ToLower() == "leitor/" || url.Segments[1].ToLower() == "r/" || url.Segments[1].ToLower() == "g/")) {
+                                return true;
+                            }
                         }
                     }
 
@@ -96,7 +98,7 @@ namespace HqDownloadManager.Core.Helpers {
             lock (lockThis4) {
                 Uri url = new Uri(link);
                 var host = url.Host.Split('.')[0];
-                return SupportedSites.Contains(host);
+                return SupportedSites.ContainsKey(host);
             }
         }
     }

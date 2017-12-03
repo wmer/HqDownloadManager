@@ -1,7 +1,7 @@
 ﻿using HqDownloadManager.Core.Models;
 using HqDownloadManager.Download.Databases;
 using HqDownloadManager.Download.Models;
-using HqDownloadManager.Utils;
+using Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,21 +21,23 @@ namespace HqDownloadManager.Download.Helpers
             _downloadContext = downloadContext;
         }
 
-        public async Task SaveHqDownloadInfo(Hq hq, string path, DateTime time) {
-           await Task.Run(()=> {
-                lock (_lock) {
-                    var dInfo = new HqDownloadInfo {
-                        Link = hq.Link,
-                        SavedIn = path, Time = time,
-                        HqDownloaded = hq.ToBytes()
-                    };
-                    if (_downloadContext.HqDownloadInfo.Find().Where(x => x.SavedIn == path).Execute().FirstOrDefault() != null) {
-                        _downloadContext.HqDownloadInfo.Update(dInfo);
-                    } else {
-                        _downloadContext.HqDownloadInfo.Save(dInfo);
-                    }
+        public void SaveHqDownloadInfo(Hq hq, string path, DateTime time) {
+            lock (_lock) {
+                var dInfo = new HqDownloadInfo {
+                    Link = hq.Link,
+                    SavedIn = path, Time = time,
+                    HqDownloaded = hq.ToBytes()
+                };
+
+                if (_downloadContext.HqDownloadInfo.Find().Where(x => x.SavedIn == path).Execute().FirstOrDefault() != null) {
+                    _downloadContext.HqDownloadInfo.Update(dInfo);
+                } else {
+                    _downloadContext.HqDownloadInfo.Save(dInfo);
                 }
-            });          
+
+                _downloadContext.Hq.Update(x => new { x.Hq }, hq.ToBytes())
+                                                         .Where(x => x.Link == hq.Link).Execute();
+            }
         }
 
         public async Task<List<HqDownloadInfo>> GetHqsDownloadInfo() {

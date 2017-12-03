@@ -13,7 +13,7 @@ using OpenQA.Selenium.PhantomJS;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System.IO;
-using HqDownloadManager.Utils;
+using Utils;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium;
 
@@ -24,7 +24,7 @@ namespace HqDownloadManager.Core.Sources {
         public MangasProjectSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext, htmlHelper, browserHelper) {
         }
 
-        public override List<Hq> GetUpdates(String updatePage) {
+        public override List<Update> GetUpdates(String updatePage) {
             lock (Lock1) {
                 try {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
@@ -42,31 +42,39 @@ namespace HqDownloadManager.Core.Sources {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     IDocument source = HtmlHelper.GetSourceCodeFromHtml(pageSource);
                     driver.Quit();
-                    var hqs = new List<Hq>();
+                    var updates = new List<Update>();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
-                    var hqsEl = source.QuerySelectorAll("div#recent_releases li");
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{hqsEl.Count()} mangas encontrados!"));
-                    foreach (var hq in hqsEl) {
-                        var title = hq.QuerySelector(".lancamento-title")?.TextContent;
-                        var imgEl = hq.QuerySelector(".cover-image")?.GetAttribute("style");
+                    var updatesEl = source.QuerySelectorAll("div#recent_releases li");
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{updatesEl.Count()} mangas encontrados!"));
+                    foreach (var update in updatesEl) {
+                        var title = update.QuerySelector(".lancamento-title")?.TextContent;
+                        var imgEl = update.QuerySelector(".cover-image")?.GetAttribute("style");
                         imgEl = imgEl?.Replace("background-image: url(", "");
                         imgEl = imgEl?.Replace(")", "");
                         imgEl = imgEl?.Replace("'", "");
                         imgEl = imgEl?.Replace("\"", "");
                         var img = imgEl?.Replace(";", "");
-                        if (title == null) continue;
                         OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados de {title}"));
-                        var link = hq.QuerySelector(".lancamento-desc a")?.GetAttribute("href");
-                        if (!string.IsNullOrEmpty(link) && !string.IsNullOrEmpty(img)) {
-                            var update = new Hq { Link = $"{BaseAdress}{link}", Title = title, CoverSource = img };
-                            if (!hqs.Contains(update)) {
-                                hqs.Add(update);
-                                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, update, $"{title} Adicionado"));
+                        var link = update.QuerySelector(".lancamento-desc a")?.GetAttribute("href");
+
+                        var chaptersEl = update.QuerySelectorAll(".lancamento-list li a");
+                        if (!string.IsNullOrEmpty(link)) {
+                            var chapters = new List<Chapter>();
+                            foreach (var chap in chaptersEl) {
+                                var chapterTitle = chap.GetAttribute("href");
+                                var chapterLink = chap.GetAttribute("title");
+                                chapters.Add(new Chapter { Link = $"{BaseAdress}{chapterLink}", Title = chapterTitle });
                             }
+                            var up = new Update {
+                                Hq = new Hq { Link = $"{BaseAdress}{link}", Title = title, CoverSource = img },
+                                Chapters = chapters
+                            };
+                            updates.Add(up);
+                            OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, up.Hq, $"{title} Adicionado"));
                         }
                     }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
-                    return hqs;
+                    return updates;
                 } catch (Exception e) {
                     OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, updatePage, e));
                     return null;
@@ -169,7 +177,8 @@ namespace HqDownloadManager.Core.Sources {
                     hqInfo.Synopsis = synopsis.Replace("\n", "").Trim();
                     hqInfo.Link = link;
                     var lastchapter = source.QuerySelector("#chapter-list .list-of-chapters li a");
-                    hqInfo.Chapters = GetListChapters($"{BaseAdress}{lastchapter?.GetAttribute("href")}").Reverse<Chapter>().ToList();
+                    var chapters = GetListChapters($"{BaseAdress}{lastchapter?.GetAttribute("href")}").Reverse<Chapter>().ToList();
+                    hqInfo.Chapters = chapters;
 
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto!"));
                     return hqInfo;

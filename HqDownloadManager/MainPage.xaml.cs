@@ -1,10 +1,5 @@
 ﻿using HqDownloadManager.Controller.Helpers;
 using HqDownloadManager.Views;
-using HqDownloadManager.Views.Configuration;
-using HqDownloadManager.Views.DownloadPage;
-using HqDownloadManager.Views.MyLibrary;
-using HqDownloadManager.Views.Sourcelibrary;
-using HqDownloadManager.Views.Updates;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,20 +31,20 @@ namespace HqDownloadManager {
 
         private void Navigation_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
             if (args.IsSettingsInvoked) {
-                _navigationHelper.Navigate<ConfigurationPage>("Configuração");
+               _navigationHelper.Navigate<ConfigurationPage>("Configuração");
             } else {
                 switch (args.InvokedItem) {
                     case "Atualizações":
                         _navigationHelper.Navigate<UpdatesPage>("Atualizações");
                         break;
                     case "Todos as Hqs":
-                       _navigationHelper.Navigate<SourceLibraryPage>("Todos as Hqs");
+                        _navigationHelper.Navigate<SourceLibraryPage>("Todos as Hqs");
                         break;
                     case "Meus Downloads":
                         _navigationHelper.Navigate<MyLibraryPage>("Meus Downloads");
                         break;
                     case "Meus Favoritos":
-                        // _frame.Navigate(typeof(MusicPage));
+                        _navigationHelper.Navigate<FollowPage>("Meus Favoritos");
                         break;
 
                     case "Gerenciador de Download":

@@ -3,7 +3,7 @@ using HqDownloadManager.Core.Models;
 using HqDownloadManager.Download.CustomEventArgs;
 using HqDownloadManager.Download.Helpers;
 using HqDownloadManager.Download.Models;
-using HqDownloadManager.Utils;
+using Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,7 +39,7 @@ namespace HqDownloadManager.Download {
             this._downloadInfoHelper = downloadInfoHelper;
         }
 
-        public async Task SaveHq(Hq hqInfo, string directory) {
+        public void SaveHq(Hq hqInfo, string directory) {
             var startTime = DateTime.Now;
             var hqDirectory = _directoryHelper.CreateHqDirectory(directory, hqInfo.Title);
             DownloadStart(this, new DownloadEventArgs(hqInfo, new DirectoryInfo(hqDirectory), startTime));
@@ -54,16 +54,16 @@ namespace HqDownloadManager.Download {
                 DownloadProgress(this, new ProgressEventArgs(DateTime.Now, hqInfo, chapAtual, numChapters));
                 try {
                     if (chapter.Pages == null || chapter.Pages.Count == 0) {
-                        if (!_processing) {
-                            AddPagesInChapters(hqInfo);
-                        }
+                        //if (!_processing) {
+                        //    AddPagesInChapters(hqInfo);
+                        //}
 
-                        var chapterInfo = (Chapter) _sourceManager.GetInfo(chapter.Link);
+                        var chapterInfo = _sourceManager.GetInfo<Chapter>(chapter.Link);
                         chapter.Pages = chapterInfo?.Pages;
                     }
                     SaveChapter(chapter, hqDirectory);
                     tempHq.Chapters.Add(chapter);
-                    await _downloadInfoHelper.SaveHqDownloadInfo(tempHq, hqDirectory, startTime);
+                    _downloadInfoHelper.SaveHqDownloadInfo(tempHq, hqDirectory, startTime);
                 } catch (Exception e) {
                     DownloadError(this, new DownloadErrorEventArgs(chapter, e, DateTime.Now));
                     failedToDownload.Add(chapter.Link);
@@ -71,7 +71,7 @@ namespace HqDownloadManager.Download {
                 chapAtual++;
             }
 
-            await _downloadInfoHelper.SaveHqDownloadInfo(tempHq, hqDirectory, startTime);
+            _downloadInfoHelper.SaveHqDownloadInfo(tempHq, hqDirectory, startTime);
             DownloadEnd(this, new DownloadEventArgs(hqInfo, new DirectoryInfo(hqDirectory), startTime, DateTime.Now, DateTime.Now - startTime, failedToDownload));
 
         }
@@ -139,7 +139,7 @@ namespace HqDownloadManager.Download {
             _processing = true;
             foreach (var chapter in hq.Chapters) {
                 if (chapter.Pages == null || chapter.Pages.Count == 0) {
-                    var chapterInfo = (Chapter)_sourceManager.GetInfo(chapter.Link);
+                    var chapterInfo = _sourceManager.GetInfo<Chapter>(chapter.Link);
                     chapter.Pages = chapterInfo?.Pages;
                 }
             }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DependencyInjectionResolver;
-using HqDownloadManager.Utils;
+using Utils;
 using HqDownloadManager.Controller.Models;
 using HqDownloadManager.Controller.ViewModel.MainPage;
 using HqDownloadManager.Controller.ViewModel.Reader;
@@ -21,7 +21,7 @@ namespace HqDownloadManager.Controller {
         private NavigationViewModel _pageTitleView;
         private FlipView _flipView;
 
-        public HqReaderController(DependencyInjection dependencyInjection) : base(dependencyInjection) {
+        public HqReaderController() : base() {
         }
 
         public async Task InitReader(Hq hq) {
@@ -32,9 +32,8 @@ namespace HqDownloadManager.Controller {
             var collection = ControlsHelper.FindResource<CollectionViewSource>("Reader");
             collection.Source = hq.Chapters;
             _collectionView = collection?.View;
-            if (UserLibrary.UserReadings.FindOne(hq.Link) is UserReading userReading) {
-                var reader = userReading.HqReaderViewModel.ToObject<ReaderViewModel>();
-                UserLibrary.UserReadings.Delete(userReading);
+            if (UserLibrary.UserReadings.FindOne(hq.Link) is UserReading readings) {
+                var reader = readings.Reading.ToObject<ReaderViewModel>();
                 ContentDialog deleteFileDialog = new ContentDialog {
                     Title = "Continuar lendo?",
                     Content = "Deseja continuar ou iniciar uma nova leitura?",
@@ -63,17 +62,26 @@ namespace HqDownloadManager.Controller {
 
         public void LoadChapter() {
             var index = _collectionView.CurrentPosition;
-            var actualChap = _collectionView.CurrentItem as Chapter;
+            _readerViewModel.ActualChapterIndex = index;
+             var actualChap = _collectionView.CurrentItem as Chapter;
             if (actualChap.Pages == null || actualChap.Pages.Count == 0) {
-                _readerViewModel.ActualChapter = SourceManager.GetInfo(actualChap.Link) as Chapter;
+                _readerViewModel.ActualChapter = SourceManager.GetInfo<Chapter>(actualChap.Link);
+                var hq = _readerViewModel.Hq;
+                hq.Chapters[index] = _readerViewModel.ActualChapter;
+                UserLibrary.Hq.Update(x => new { x.Hq }, hq.ToBytes())
+                                                         .Where(x => x.Link == hq.Link).Execute();
             } else {
                 _readerViewModel.ActualChapter = actualChap;
             }
 
-            if (_collectionView.Count > 1 && _collectionView.Count < _readerViewModel.ActualChapterIndex) {
+            if (_collectionView.Count > 1 && _readerViewModel.ActualChapterIndex < _collectionView.Count) {
                 var nextChap = _collectionView[index + 1] as Chapter;
                 if (nextChap.Pages == null || nextChap.Pages.Count == 0) {
-                    _readerViewModel.NextChapter = SourceManager.GetInfo(nextChap.Link) as Chapter;
+                    _readerViewModel.NextChapter = SourceManager.GetInfo<Chapter>(nextChap.Link);
+                    var hq = _readerViewModel.Hq;
+                    hq.Chapters[index + 1] = _readerViewModel.NextChapter;
+                    UserLibrary.Hq.Update(x => new { x.Hq }, hq.ToBytes())
+                                                             .Where(x => x.Link == hq.Link).Execute();
                 } else {
                     _readerViewModel.NextChapter = nextChap;
                 }
@@ -112,14 +120,17 @@ namespace HqDownloadManager.Controller {
         }
 
         private void LoadPrevious() {
+            var index = _collectionView.CurrentPosition;
+            _readerViewModel.ActualChapterIndex = index;
             _readerViewModel.NextChapter = _readerViewModel.ActualChapter;
+            if (_readerViewModel.PreviousChapter.Pages == null || _readerViewModel.PreviousChapter.Pages.Count == 0) {
+                _readerViewModel.PreviousChapter = SourceManager.GetInfo<Chapter>(_readerViewModel.PreviousChapter.Link);
+            }
             _readerViewModel.ActualChapter = _readerViewModel.PreviousChapter;
-            _readerViewModel.ActualChapterIndex--;
-            var index = _readerViewModel.ActualChapterIndex - 1;
-            if (index >= 0) {
-                var previousChap = _collectionView[index] as Chapter;
+            if (index > 0) {
+                var previousChap = _collectionView[index - 1] as Chapter;
                 if (previousChap.Pages == null || previousChap.Pages.Count == 0) {
-                    _readerViewModel.PreviousChapter = SourceManager.GetInfo(previousChap.Link) as Chapter;
+                    _readerViewModel.PreviousChapter = SourceManager.GetInfo<Chapter>(previousChap.Link);
                 } else {
                     _readerViewModel.PreviousChapter = previousChap;
                 }
@@ -138,9 +149,7 @@ namespace HqDownloadManager.Controller {
 
         private void SaveStatus() {
             var userReading = new UserReading {
-                Link = _readerViewModel.Hq.Link,
-                Date = DateTime.Now,
-                HqReaderViewModel = _readerViewModel.ToBytes()
+                Link = _readerViewModel.Hq.Link, Date = DateTime.Now, Reading = _readerViewModel.ToBytes()
             };
 
             if (UserLibrary.UserReadings.FindOne(_readerViewModel.Hq.Link) != null) {

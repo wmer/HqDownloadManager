@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 using DependencyInjectionResolver;
 using HqDownloadManager.Core.Database;
 using Newtonsoft.Json;
-using HqDownloadManager.Utils;
-using Cache = HqDownloadManager.Core.Models.Cache;
+using Utils;
 
 namespace HqDownloadManager.Core {
     public class SourceManager {
@@ -20,15 +19,11 @@ namespace HqDownloadManager.Core {
         private readonly LibraryContext _libraryContext;
         private readonly CoverCacheHelper _coveCacheHelper;
 
-        private readonly Object _lockThis = new Object();
-        private readonly Object _lockThus2 = new Object();
+        private readonly Object _lockThis1 = new Object();
+        private readonly Object _lockThis2 = new Object();
         private readonly Object _lockThis3 = new Object();
         private readonly Object _lockThis4 = new Object();
         private readonly Object _lockThis5 = new Object();
-        private readonly Object _lockThis6 = new Object();
-        private readonly Object _lockThis7 = new Object();
-        private readonly Object _lockThis8 = new Object();
-        private readonly Object _lockThis9 = new Object();
 
         public event ProcessingEventHandler ProcessingProgress;
         public event ProcessingErrorEventHandler ProcessingError;
@@ -43,19 +38,40 @@ namespace HqDownloadManager.Core {
                 .Resolve<LibraryContext>();
         }
 
-        public ModelBase GetInfo(string url, bool isFinalized = false) {
-            lock (_lockThis7) {
-                var model = new ModelBase();
+
+        public T GetInfo<T>(string url, bool isFinalized = false, int timeCache = 72) where T: ModelBase {
+            lock (_lockThis1) {
+                var model = default(T);
                 if (_siteHelper.IsSupported(url)) {
-                    if (_siteHelper.IsHqPage(url)) {
-                        var time = 72;
+                    if (typeof(T).IsAssignableFrom(typeof(Hq))) {
                         if (isFinalized) {
-                            time = 999999999;
+                            timeCache = 999999999;
                         }
-                        model = CacheManagement(url, GetInfoFromSite<Hq>, time);
+                        if (_libraryContext.Hq.FindOne(url) is HqModel hqModel) {
+                            var hq = hqModel.Hq.ToObject<Hq>();
+                            if ((DateTime.Now - hqModel.TimeCache).Hours > timeCache) {
+                                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Cache Vencido"));
+                                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Atualizando..."));
+                                var modelFromSite = GetInfoFromSite<Hq>(url);
+                                foreach (var chap in modelFromSite.Chapters) {
+                                    if (!hq.Chapters.Contains(chap)) {
+                                        hq.Chapters.Add(chap);
+                                    }
+                                }
+                                _libraryContext.Hq.Update(x => new { x.TimeCache, x.Hq }, DateTime.Now, hq.ToBytes())
+                                                                         .Where(x => x.Link == url).Execute();
+                            }
+                            model = hq as T;
+                        } else {
+                            model = GetInfoFromSite<T>(url);
+                            (model as Hq).IsFinalized = isFinalized;
+                            _libraryContext.Hq.Save(new HqModel {
+                                Link = model.Link, TimeCache = DateTime.Now, Hq = model.ToBytes()
+                            });
+                        }
                     }
-                    if (_siteHelper.IsChapterReader(url)) {
-                        model = CacheManagement(url, GetInfoFromSite<Chapter>, 999999999);
+                    if (typeof(T).IsAssignableFrom(typeof(Chapter))) {
+                        model = GetInfoFromSite<T>(url);
                     }
                 }
                 return model;
@@ -64,10 +80,10 @@ namespace HqDownloadManager.Core {
 
         public LibraryPage GetLibrary(string url) => CacheManagement(url, GetLibraryFromSite, 168);
 
-        public List<Hq> GetUpdates(string url) => CacheManagement(url, GetUpdatesFromSite, 1);
+        public List<Update> GetUpdates(string url) => CacheManagement(url, GetUpdatesFromSite, 1);
 
         private T CacheManagement<T>(string url, Func<String, T> method, int timeCache) {
-            lock (_lockThis6) {
+            lock (_lockThis5) {
                 var model = default(T);
                 if (_siteHelper.IsSupported(url)) {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando em DB"));
@@ -97,7 +113,7 @@ namespace HqDownloadManager.Core {
         }
 
         private T GetInfoFromSite<T>(string url) where T : ModelBase {
-            lock (_lockThis) {
+            lock (_lockThis3) {
                 var model = default(T);
                 var source = _siteHelper.GetHqSourceFromUrl(url);
                 source.ProcessingProgress += Source_ProcessingProgress;
@@ -115,7 +131,7 @@ namespace HqDownloadManager.Core {
         }
 
         private LibraryPage GetLibraryFromSite(string url) {
-            lock (_lockThus2) {
+            lock (_lockThis4) {
                 var library = new LibraryPage();
                 if (_siteHelper.IsSupported(url)) {
                     var source = _siteHelper.GetHqSourceFromUrl(url);
@@ -133,7 +149,7 @@ namespace HqDownloadManager.Core {
             }
         }
 
-        private List<Hq> GetUpdatesFromSite(string url) {
+        private List<Update> GetUpdatesFromSite(string url) {
             lock (_lockThis5) {
                 var source = _siteHelper.GetHqSourceFromUrl(url);
                 source.ProcessingProgress += Source_ProcessingProgress;
@@ -141,36 +157,24 @@ namespace HqDownloadManager.Core {
                 var updates = source.GetUpdates(url);
                 OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Criando cache de Capa..."));
                 foreach (var hq in updates) {
-                    if (!string.IsNullOrEmpty(hq.Link)) {
-                        _coveCacheHelper.CreateCache(hq);
+                    if (!string.IsNullOrEmpty(hq.Hq.Link)) {
+                        _coveCacheHelper.CreateCache(hq.Hq);
                     }
                 }
                 return updates;
             }
         }
 
-        private void SourceOnProcessingError(object sender, ProcessingErrorEventArgs ev) {
-            lock (_lockThis9) {
+        private void SourceOnProcessingError(object sender, ProcessingErrorEventArgs ev) =>
                 OnProcessingProgressError(ev);
-            }
-        }
 
-        private void Source_ProcessingProgress(object sender, ProcessingEventArgs ev) {
-            lock (_lockThis3) {
+        private void Source_ProcessingProgress(object sender, ProcessingEventArgs ev) =>
                 OnProcessingProgress(ev);
-            }
-        }
 
-        protected void OnProcessingProgress(ProcessingEventArgs e) {
-            lock (_lockThis4) {
+        protected void OnProcessingProgress(ProcessingEventArgs e) =>
                 ProcessingProgress?.Invoke(this, e);
-            }
-        }
 
-        protected void OnProcessingProgressError(ProcessingErrorEventArgs e) {
-            lock (_lockThis8) {
+        protected void OnProcessingProgressError(ProcessingErrorEventArgs e) =>
                 ProcessingError?.Invoke(this, e);
-            }
-        }
     }
 }

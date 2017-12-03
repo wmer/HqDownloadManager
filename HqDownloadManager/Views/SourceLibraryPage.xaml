@@ -1,23 +1,26 @@
-﻿<viewscontroller:UpdatesPageBase
-    xmlns:viewscontroller="using:HqDownloadManager.Controller.ViewsController"
-    x:Class="HqDownloadManager.Views.Updates.UpdatesPage"
+﻿<controller:SourceLibraryController
+    xmlns:controller="using:HqDownloadManager.Controller"
+    x:Class="HqDownloadManager.Views.SourceLibraryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:local="using:HqDownloadManager.Views.Updates"
+    xmlns:local="using:HqDownloadManager.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:shared="using:HqDownloadManager.Controller.ViewModel.Shared"
     xmlns:comboBox="using:HqDownloadManager.Controller.ViewModel.ComboBox"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d" SizeChanged="Page_SizeChanged">
+
     <Page.Resources>
         <shared:NotificationViewModel x:Key="Notification" Visibility="Collapsed" />
         <shared:HqListViewModel x:Key="HqList" Width="160.45" Height="230" />
-        <comboBox:UpdateSource x:Key="Sources" />
+        <comboBox:LibrarySource x:Key="Sources" />
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <GridView 
+            x:Name="HqlistGrid"
+            Margin="0,43,0,0"
             ItemsSource="{Binding Hqs, Source={StaticResource HqList}}"
             SelectedItem="{Binding SelectedItem, Source={StaticResource HqList}, Mode=TwoWay}"
             IsItemClickEnabled="True"
@@ -31,7 +34,7 @@
                             Source="{Binding Path=CoverSource}" 
                             Stretch="Fill"
                             Width="{Binding Width, Source={StaticResource HqList}}" 
-                            Height="{Binding Height, Source={StaticResource HqList}}"
+                            Height="{Binding Height, Source={StaticResource HqList}}"  
                             ToolTipService.ToolTip="{Binding Path=Title}"/>
                         <TextBox 
                             Visibility="Visible" 
@@ -62,36 +65,56 @@
                 </MenuFlyout>
             </GridView.ContextFlyout>
         </GridView>
-        <toolkit:DropShadowPanel            
-            BlurRadius="4.0"
-            ShadowOpacity="0.70"
-            OffsetX="5.0" 
-            OffsetY="5.0"
-            Color="Black"
-            HorizontalAlignment="Right" 
-            Margin="0,0,20,0"
-            Width="140" 
-            Height="50" 
-            VerticalAlignment="Top">
-            <Canvas 
-                HorizontalAlignment="Right" 
-                Width="135" 
-                Height="40" 
-                Background="#FFFFFF"
-                VerticalAlignment="Top" 
-                RenderTransformOrigin="1,1">
-                <ComboBox 
-                    x:Name = "SourceHq"
-                    ItemsSource="{Binding SourceLinks, Source={StaticResource Sources}}"
-                    Canvas.Left ="3"
-                    Canvas.Top="5"
-                    Width="128"
-                    DisplayMemberPath="SourceName"
-                    SelectedItem="{Binding SelectedSourceLink, Source={StaticResource Sources}, Mode=TwoWay}"
-                    SelectedValuePath="SourceName" 
-                    SelectionChanged="Selector_OnSelectionChanged" />
-            </Canvas>
-        </toolkit:DropShadowPanel>
+        <Grid 
+            Height="40" 
+            Background="#FFFFFF"
+            VerticalAlignment="Top" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="215" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="144" />
+            </Grid.ColumnDefinitions>
+            <CheckBox 
+                x:Name="CheckboxOnlyFinalized" 
+                Grid.Column="0"
+                VariableSizedWrapGrid.ColumnSpan="1"
+                Content="Somente Finalizados" 
+                Margin="10,4,0,0"  
+                FontSize="17" 
+                Height="26" 
+                Checked="CheckboxOnlyFinalized_Checked" 
+                Unchecked="CheckboxOnlyFinalized_Unchecked" />
+            <GridView 
+                x:Name="LetterList"  
+                Grid.Column="1"
+                ItemsSource="{Binding Source={StaticResource HqList}, Path=Lethers}" 
+                BorderThickness="0"
+                ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
+                ScrollViewer.VerticalScrollBarVisibility="Hidden" >
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <Button 
+                            x:Name="Lether" 
+                            Margin="0"  
+                            Width="60"
+                            Height="30" 
+                            Content="{Binding Key}" 
+                            Click="Lether_Click" />
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+            <ComboBox 
+                x:Name="SourceHq"
+                Grid.Column="2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Margin="0,0,5,0"
+                ItemsSource="{Binding SourceLinks, Source={StaticResource Sources}}"
+                DisplayMemberPath="SourceName"
+                SelectedItem="{Binding SelectedSourceLink, Source={StaticResource Sources}, Mode=TwoWay}"
+                SelectedValuePath="SourceName" 
+                SelectionChanged="Selector_OnSelectionChanged" />
+        </Grid>
         <toolkit:DropShadowPanel      
             Visibility="{Binding Visibility, Source={StaticResource Notification}}"
             BlurRadius="4.0"
@@ -123,4 +146,4 @@
             </Grid>
         </toolkit:DropShadowPanel>
     </Grid>
-</viewscontroller:UpdatesPageBase>
+</controller:SourceLibraryController>

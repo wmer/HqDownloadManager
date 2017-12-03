@@ -5,22 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj" />
-    <ProjectReference Include="..\..\..\NetStandard\Reflection.Optimization\Reflection.Optimization\Reflection.Optimization.csproj" />
-    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj" />
-    <ProjectReference Include="..\HqDownloadManager.Utils\HqDownloadManager.Utils.csproj" />
+    <PackageReference Include="AngleSharp" Version="0.9.9" />
+    <PackageReference Include="PhantomJS" Version="2.1.1" />
+    <PackageReference Include="Selenium.WebDriver" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp">
-      <Version>0.9.9</Version>
-    </PackageReference>
-    <PackageReference Include="PhantomJS">
-      <Version>2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Selenium.WebDriver">
-      <Version>3.7.0</Version>
-    </PackageReference>
+    <ProjectReference Include="..\..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\Reflection.Optimization\Reflection.Optimization\Reflection.Optimization.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\Utils\Utils\Utils.csproj" />
   </ItemGroup>
 
 </Project>

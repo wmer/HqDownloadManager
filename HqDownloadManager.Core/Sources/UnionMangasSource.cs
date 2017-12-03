@@ -15,11 +15,11 @@ namespace HqDownloadManager.Core.Sources {
         public UnionMangasSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext, htmlHelper, browserHelper) {
         }
 
-        public override List<Hq> GetUpdates(string updatePage) {
+        public override List<Update> GetUpdates(string updatePage) {
             lock (Lock6) {
                 try {
                     var source = HtmlHelper.GetSourceCodeFromUrl(updatePage);
-                    var hqs = new List<Hq>();
+                    var hqs = new List<Update>();
                     return source != null ? hqs : throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
                 } catch (Exception e) {
                     throw new Exception(e.Message);
@@ -98,7 +98,8 @@ namespace HqDownloadManager.Core.Sources {
                             hqInfo.Author = info.TextContent.Replace("Autor:", "").Trim();
                         }
                     }
-                    hqInfo.Chapters = GetListChapters(source).Reverse<Chapter>().ToList();
+                    var chapters = GetListChapters(source).Reverse<Chapter>().ToList();
+                    hqInfo.Chapters = chapters;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto!"));
                     return hqInfo;
                 } catch (Exception e) {
@@ -120,7 +121,8 @@ namespace HqDownloadManager.Core.Sources {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {chapterTitle}"));
                     chapter.Title = chapterTitle;
                     chapter.Link = link;
-                    chapter.Pages = GetPageList(leitor);
+                    var pages = GetPageList(leitor);
+                    chapter.Pages = pages;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
                     return chapter;
                 } catch (Exception e) {

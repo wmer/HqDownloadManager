@@ -1,4 +1,6 @@
 ﻿using HqDownloadManager.Controller.Models;
+using HqDownloadManager.Controller.ViewModel.Reader;
+using HqDownloadManager.Core.Database;
 using Repository;
 using Repository.Core;
 using System;
@@ -9,12 +11,9 @@ using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace HqDownloadManager.Controller.Databases {
-    public class UserLibraryContext : DBContext {
-        public UserLibraryContext() : base($"{ApplicationData.Current.LocalFolder.Path}\\databases", "userLibrary.db") { }
-
+    public class UserLibraryContext : LibraryContext {
         public Repository<UserPreferences> UserPreferences { get; set; }
         public Repository<UserReading> UserReadings { get; set; }
-        public Repository<UserFavorite> UserFavorites { get; set; }
         public Repository<DownloadList> DownloadList { get; set; }
     }
 }

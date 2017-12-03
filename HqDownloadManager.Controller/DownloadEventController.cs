@@ -1,8 +1,10 @@
-﻿using HqDownloadManager.Core.CustomEventArgs;
+﻿using HqDownloadManager.Controller.Models;
+using HqDownloadManager.Core.CustomEventArgs;
 using HqDownloadManager.Core.Models;
 using HqDownloadManager.Download.CustomEventArgs;
 using HqDownloadManager.FollowUpdate.CustomEventArgs;
 using System;
+using Utils;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -24,13 +26,13 @@ namespace HqDownloadManager.Controller {
             UpdateManager.UpdateEnd += UpdateManagerOnUpdateEnd;
             UpdateManager.UpdateStart += UpdateManagerOnUpdateStart;
             FollowManager.FollowingHq += FollowManagerOnFollowingHq;
-            ZipManager.CompressionError += ZipManager_CompressionError;
-            ZipManager.CompressionEnd += ZipManager_CompressionEnd;
-            ZipManager.CompressionStart += ZipManager_CompressionStart;
+            //    ZipManager.CompressionError += ZipManager_CompressionError;
+            //    ZipManager.CompressionEnd += ZipManager_CompressionEnd;
+            //    ZipManager.CompressionStart += ZipManager_CompressionStart;
         }
 
         private void ShowLog(string msg) {
-           Task.Run(()=> {
+            Task.Run(() => {
                 Debug.WriteLine(msg);
             });
         }
@@ -39,7 +41,7 @@ namespace HqDownloadManager.Controller {
             if (hqDownloading == null) return;
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 if (ev.Item.GetType().IsAssignableFrom(typeof(Hq))) {
-                    hqDownloading.TotalChapters =(ev.Item as Hq).Chapters.Count;
+                    hqDownloading.TotalChapters = (ev.Item as Hq).Chapters.Count;
                 }
                 if (ev.Item.GetType().IsAssignableFrom(typeof(Chapter))) {
                     hqDownloading.DownloadChapter = ev.Item as Chapter;
@@ -48,7 +50,8 @@ namespace HqDownloadManager.Controller {
                 var message = $"{ev.StartTime} - Iniciando download de {ev.Item.Title} em {ev.Path}";
                 ShowLog(message);
                 hqDownloading.Status = message;
-                downloadListViewModel.Hqs[actualIndex] = hqDownloading;
+                var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
+                UserLibrary.DownloadList.Update(dwL);
             });
         }
 
@@ -68,7 +71,8 @@ namespace HqDownloadManager.Controller {
 
                 mensagem = $"{ev.Time} - Baixando {ev.Item.Title}, {mensagem}";
                 hqDownloading.Status = mensagem;
-                downloadListViewModel.Hqs[actualIndex] = hqDownloading;
+                var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
+                UserLibrary.DownloadList.Update(dwL);
                 ShowLog(mensagem);
             });
 
@@ -97,6 +101,8 @@ namespace HqDownloadManager.Controller {
                 if (ev.Item.GetType().IsAssignableFrom(typeof(Hq))) {
                     hqDownloading.FinishedIn = DateTime.Now;
                 }
+                var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
+                UserLibrary.DownloadList.Update(dwL);
             });
 
         }
@@ -118,16 +124,16 @@ namespace HqDownloadManager.Controller {
 
         }
 
-        private void ZipManager_CompressionStart(object sender, Compression.CustomEventArgs.CompressionEventArgs ev) {
+        //private void ZipManager_CompressionStart(object sender, Compression.CustomEventArgs.CompressionEventArgs ev) {
 
-        }
+        //}
 
-        private void ZipManager_CompressionEnd(object sender, Compression.CustomEventArgs.CompressionEventArgs ev) {
+        //private void ZipManager_CompressionEnd(object sender, Compression.CustomEventArgs.CompressionEventArgs ev) {
 
-        }
+        //}
 
-        private void ZipManager_CompressionError(object sender, Compression.CustomEventArgs.CompressionErrorEventArgs ev) {
+        //private void ZipManager_CompressionError(object sender, Compression.CustomEventArgs.CompressionErrorEventArgs ev) {
 
-        }
+        //}
     }
 }

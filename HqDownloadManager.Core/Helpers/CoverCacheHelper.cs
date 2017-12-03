@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using HqDownloadManager.Core.Configuration;
 using HqDownloadManager.Core.Models;
-using HqDownloadManager.Utils;
+using Utils;
 
 namespace HqDownloadManager.Core.Helpers {
     internal class CoverCacheHelper {
@@ -24,11 +24,13 @@ namespace HqDownloadManager.Core.Helpers {
             lock (_lock1) {
                 if (string.IsNullOrEmpty(hq.CoverSource)) return;
                 using (var webClient = new WebClient()) {
-                    var pageSource = $"{directory}\\{StringHelper.RemoveSpecialCharacters(hq.Title)}{FormatPage(hq.CoverSource)}";
-                    if (!File.Exists(pageSource)) {
-                        webClient.DownloadFile(hq.CoverSource, pageSource);
-                    }
-                    hq.CoverSource = pageSource;
+                    try {
+                        var pageSource = $"{directory}\\{StringHelper.RemoveSpecialCharacters(hq.Title)}{FormatPage(hq.CoverSource)}";
+                        if (!File.Exists(pageSource)) {
+                            webClient.DownloadFile(hq.CoverSource, pageSource);
+                        }
+                        hq.CoverSource = pageSource;
+                    }catch { }
                 }
             }
         }

@@ -1,4 +1,4 @@
-﻿using HqDownloadManager.Controller.ViewsController;
+﻿using HqDownloadManager.Controller;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,28 +16,28 @@ using Windows.UI.Xaml.Navigation;
 
 // O modelo de item de Página em Branco está documentado em https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace HqDownloadManager.Views.DownloadPage {
+namespace HqDownloadManager.Views {
     /// <summary>
     /// Uma página vazia que pode ser usada isoladamente ou navegada dentro de um Quadro.
     /// </summary>
-    public sealed partial class DownloadPage : DownloadPageBase {
+    public sealed partial class DownloadPage : DownloadController {
         private bool _paused = false;
 
         public DownloadPage() {
             this.InitializeComponent();
         }
 
-        private void BtnInitDownload_Click(object sender, RoutedEventArgs e) => Controller.Download();
+        private void BtnInitDownload_Click(object sender, RoutedEventArgs e) => Download();
 
         private void BtnPauseDownload_Click(object sender, RoutedEventArgs e) {
             _paused = !_paused;
-            Controller.PauseResume(_paused);
+            PauseResume(_paused);
         }
 
-        private void Erase_Click(object sender, RoutedEventArgs e) => Controller.RemoveFromList();
+        private void Erase_Click(object sender, RoutedEventArgs e) => RemoveFromList();
 
-        private void BtnEraseList_Click(object sender, RoutedEventArgs e) => Controller.Clearlist();
+        private void BtnEraseList_Click(object sender, RoutedEventArgs e) => Clearlist();
 
-        private void BtnOrdenar_Click(object sender, RoutedEventArgs e) => Controller.OrderByName();
+        private void BtnOrdenar_Click(object sender, RoutedEventArgs e) => OrderByName();
     }
 }
