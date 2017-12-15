@@ -128,7 +128,6 @@ namespace HqDownloadManager.Controller {
                             DownloadList.Add(downloadItem);
                             var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
                             UserLibrary.DownloadList.Update(dwL);
-
                         });
                     }
                 }catch { }

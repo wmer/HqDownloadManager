@@ -1,4 +1,5 @@
 ﻿using HqDownloadManager.Controller;
+using HqDownloadManager.Controller.ViewModel.Reader;
 using HqDownloadManager.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace HqDownloadManager.Views {
     /// </summary>
     public sealed partial class HqReaderPage : HqReaderController {
         private Hq _hq;
+        private ReaderViewModel _readerView;
 
         public HqReaderPage() {
             this.InitializeComponent();
@@ -31,11 +33,22 @@ namespace HqDownloadManager.Views {
 
         public override void OnLoaded(object sender, RoutedEventArgs e) {
             base.OnLoaded(sender, e);
-            InitReader(_hq);
+            InitControls();
+            if (_hq != null) {
+                InitReader(_hq);
+            }
+            if (_readerView != null) {
+                OpenReader(_readerView);
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
-            _hq = e.Parameter as Hq;
+            if (e.Parameter is Hq hq) {
+                _hq = hq;
+            }
+            if (e.Parameter is ReaderViewModel readerView) {
+                _readerView = readerView;
+            }
         }
 
         private void Page_KeyDown(object sender, KeyRoutedEventArgs e) {
@@ -52,5 +65,7 @@ namespace HqDownloadManager.Views {
         private void Next_Click(object sender, RoutedEventArgs e) => NextChapter();
 
         private void itemFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizeactualPage();
+
+        private void ScrollViewer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) => NormalizeZoom((ScrollViewer) sender, e);
     }
 }

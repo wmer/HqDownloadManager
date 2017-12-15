@@ -34,7 +34,7 @@ namespace HqDownloadManager.Views {
         }
 
 
-        private void ItemClick(object sender, ItemClickEventArgs e) => OpenHqDetails<HqDetailsPage>();
+        private void ItemClick(object sender, ItemClickEventArgs e) => OpenHqDetails<DownloadDetails>();
 
         private void OnUnloaded(object sender, RoutedEventArgs e) => ClearLists();
 
@@ -65,6 +65,6 @@ namespace HqDownloadManager.Views {
 
         }
 
-        private void HqsDownloaded_SelectionChanged(object sender, SelectionChangedEventArgs e) => OpenHqDetails<HqDetailsPage>();
+        private void HqsDownloaded_SelectionChanged(object sender, SelectionChangedEventArgs e) => OpenHqDetails<DownloadDetails>();
     }
 }

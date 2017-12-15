@@ -35,8 +35,12 @@ namespace HqDownloadManager.FollowUpdate.Helpers
             if (!(_followContext.FollowedHq.FindOne(hqLink) is FollowedHq followedHq)) return update;
             hq = followedHq.Hq.ToObject<Hq>();
             UpdateStart(this, new UpdateEventArgs(hq, startTime));
-            if (!(_sourceManager.GetInfo<Hq>(hqLink) is Hq hqInfo)) return update;
-            update.AddRange(hqInfo.Chapters.Where(chap => !hq.Chapters.Contains(chap)));
+            var hqInfo = _sourceManager.GetInfo<Hq>(hqLink, false, -1);
+            foreach (var chap in hqInfo.Chapters) {
+                if (!hq.Chapters.Contains(chap)) {
+                    update.Add(chap);
+                }
+            }
             
             return update;
         }

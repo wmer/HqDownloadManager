@@ -18,60 +18,29 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock
-            x:Name="TitleBloc"
-            Text="Continue Lendo..."
-            Height="50"
-            VerticalAlignment="Top"
-            Padding="10"
-            FontSize="26"/>
-        <GridView
-            x:Name="KeepReading"
-            Height="155"
-            Margin="0,50,0,0"
-            VerticalAlignment="Top"
-            ItemsSource="{Binding Readings, Source={StaticResource KeepReading}}"
-            SelectedItem="{Binding SelectedItem, Source={StaticResource KeepReading}, Mode=TwoWay}"
-            IsItemClickEnabled="True"
-            ItemClick="KeepReading_ItemClick">
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <Grid 
-                        Width="100" 
-                        Height="140"
-                        Margin="2">
-                        <Image 
-                            Source="{Binding Hq.CoverSource}" 
-                            Stretch="Fill"
-                            Width="100" 
-                            Height="140"
-                            ToolTipService.ToolTip="{Binding Hq.Title}"/>
-                        <ProgressBar
-                            Minimum="0"
-                            Maximum="{Binding Hq.Chapters.Count}"
-                            Height="5"
-                            Value="{Binding ActualChapterIndex}"
-                            VerticalAlignment="Bottom"/>
-                    </Grid>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
-        <TextBlock
-            x:Name="TitleBloc2"
-            Text="Downloads"
-            Height="50"
-            Margin="0,185,0,0"
-            VerticalAlignment="Top"
-            Padding="10"
-            FontSize="26"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <GridView 
             x:Name="HqsDownloaded"
+            Grid.Column="0"
+            Grid.ColumnSpan="9"
             ItemsSource="{Binding Hqs, Source={StaticResource HqList}}"
             SelectedItem="{Binding SelectedItem, Source={StaticResource HqList}, Mode=TwoWay}"
             SelectionMode="Single"
             IsItemClickEnabled="True"
-            ItemClick="ItemClick"
-            Margin="0,245,0,0">
+            ItemClick="ItemClick">
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Canvas 
@@ -104,15 +73,69 @@
                     </Canvas>
                 </DataTemplate>
             </GridView.ItemTemplate>
-            <GridView.ContextFlyout>
-                <MenuFlyout>
-                    <MenuFlyoutItem x:Name="Erase" Text="Apagar" Click="Erase_Click" />
-                    <MenuFlyoutItem x:Name="EraseAll" Text="Apagar e Excluir Arquivos" Click="EraseAll_Click" />
-                    <MenuFlyoutItem x:Name="Follow" Text="Seguir" Click="Follow_Click" />
-                    <MenuFlyoutItem x:Name="GetUpdates" Text="Buscar Atualizaçoes" Click="GetUpdates_Click" />
-                </MenuFlyout>
-            </GridView.ContextFlyout>
         </GridView>
+        <Grid
+            Grid.Column="9"
+            Grid.ColumnSpan="3">
+            <TextBlock
+                x:Name="TitleBloc"
+                Text="Continue Lendo..."
+                Height="50"
+                VerticalAlignment="Top"
+                Padding="10"
+                FontSize="26"/>
+            <ListView
+                x:Name="KeepReading"
+                Margin="0,50,0,0"
+                VerticalAlignment="Top"
+                ItemsSource="{Binding Readings, Source={StaticResource KeepReading}}"
+                SelectedItem="{Binding SelectedItem, Source={StaticResource KeepReading}, Mode=TwoWay}"
+                IsItemClickEnabled="True"
+                ItemClick="KeepReading_ItemClick">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Image 
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left"
+                                Source="{Binding Hq.CoverSource}" 
+                                Stretch="Fill"
+                                Width="75" 
+                                Height="95"
+                                Margin="0,0,0,5"
+                                ToolTipService.ToolTip="{Binding Hq.Title}"/>
+                            <TextBlock
+                                Text="{Binding Hq.Title}"
+                                Height="30"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left"
+                                FontSize="20"
+                                Margin="80,0,0,0"/>
+                            <TextBlock
+                                Text="{Binding ActualChapter.Title}"
+                                Height="30"
+                                VerticalAlignment="Top"
+                                FontSize="18"
+                                Margin="80,30,0,0"/>
+                            <ProgressBar
+                                Minimum="0"
+                                Maximum="{Binding ActualChapter.Pages.Count}"
+                                Height="8"
+                                Value="{Binding ActualPage}"
+                                VerticalAlignment="Top"
+                                Margin="80,70,0,0"/>
+                            <ProgressBar
+                                Minimum="0"
+                                Maximum="{Binding Hq.Chapters.Count}"
+                                Height="8"
+                                Value="{Binding ActualChapterIndex}"
+                                VerticalAlignment="Top"
+                                Margin="80,80,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
         <toolkit:DropShadowPanel      
             Visibility="{Binding Visibility, Source={StaticResource Notification}}"
             BlurRadius="4.0"

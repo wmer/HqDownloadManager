@@ -15,7 +15,8 @@ namespace HqDownloadManager.Core.Models {
         public override bool Equals(object obj) {
             if (obj.GetType() == typeof(Chapter)) {
                 var model = (Chapter)obj;
-                return Link == model.Link;
+                var test = Link == model.Link;
+                return test;
             }
             return false;
         }

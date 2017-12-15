@@ -38,7 +38,7 @@ namespace HqDownloadManager.Controller {
             return link;
         }
 
-        public async Task OpenHqDetails<T>(bool isFinalized = false) {
+        public virtual async Task OpenHqDetails<T>(bool isFinalized = false) {
             var Selectedhq = await GetSelectedHq(isFinalized);
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 NavigationHelper.Navigate<T>("Detalhes", Selectedhq);

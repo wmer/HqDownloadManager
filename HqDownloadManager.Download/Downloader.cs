@@ -63,7 +63,6 @@ namespace HqDownloadManager.Download {
                     }
                     SaveChapter(chapter, hqDirectory);
                     tempHq.Chapters.Add(chapter);
-                    _downloadInfoHelper.SaveHqDownloadInfo(tempHq, hqDirectory, startTime);
                 } catch (Exception e) {
                     DownloadError(this, new DownloadErrorEventArgs(chapter, e, DateTime.Now));
                     failedToDownload.Add(chapter.Link);
@@ -71,6 +70,7 @@ namespace HqDownloadManager.Download {
                 chapAtual++;
             }
 
+            tempHq.Downloaded = true;
             _downloadInfoHelper.SaveHqDownloadInfo(tempHq, hqDirectory, startTime);
             DownloadEnd(this, new DownloadEventArgs(hqInfo, new DirectoryInfo(hqDirectory), startTime, DateTime.Now, DateTime.Now - startTime, failedToDownload));
 
@@ -106,8 +106,11 @@ namespace HqDownloadManager.Download {
 
                         pageAtual++;
                     }
+                    chapter.Downloaded = true;
+                    GC.Collect();
                 });
 
+                GC.Collect();
                 DownloadEnd(this, new DownloadEventArgs(chapter, new DirectoryInfo(chapterDirectory),
                    startChapterDownload, DateTime.Now, downloadChapterTime));
             }

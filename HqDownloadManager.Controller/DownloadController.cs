@@ -31,8 +31,8 @@ namespace HqDownloadManager.Controller {
             HandlerEvents();
         }
 
-        public async Task Download() {
-            await Task.Run(async () => {
+        public void Download() {
+            Task.Run(async () => {
                 downloading = true;
                 for (var i = 0; i < DownloadList.Count; i++) {
                     actualIndex = i;

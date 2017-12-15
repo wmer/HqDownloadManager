@@ -12,6 +12,7 @@ using HqDownloadManager.Controller.ViewModel.MyLibrary;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml;
+using Windows.UI.Core;
 
 namespace HqDownloadManager.Controller {
     public class MyLibraryController : ListHqControllerBase {
@@ -30,7 +31,7 @@ namespace HqDownloadManager.Controller {
 
         public void KeepReading<T>(object clickedItem) {
             var selected = clickedItem as ReaderViewModel;
-            NavigationHelper.Navigate<T>($"{selected.Hq.Title}", selected.Hq);
+            NavigationHelper.Navigate<T>($"{selected.Hq.Title}", selected);
         }
 
         public async Task ShowReadings() {
@@ -54,6 +55,13 @@ namespace HqDownloadManager.Controller {
 
             var listOrde = _hqList.OrderBy(x => x.Title).ToList();
             _myDownloads.Hqs = new ObservableCollection<Hq>(listOrde);
+        }
+
+        public override async Task OpenHqDetails<T>(bool isFinalized = false) {
+            var Selectedhq = await GetSelectedHq(isFinalized);
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                NavigationHelper.Navigate<T>("Detalhes", Selectedhq);
+            });
         }
 
         public async Task DeleteHq(Hq hq, bool eraseFiles = false) {

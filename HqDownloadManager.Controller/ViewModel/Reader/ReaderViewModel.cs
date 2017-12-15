@@ -12,7 +12,7 @@ namespace HqDownloadManager.Controller.ViewModel.Reader {
         private Hq _hq;
         private Chapter _previousChapter;
         private Chapter _actualChapter;
-        private Chapter _nextChapter;
+        private Chapter _nextChapter; 
         private int _actualChapterIndex;
         private int _actualPage;
         private Visibility _controlsVisibility;

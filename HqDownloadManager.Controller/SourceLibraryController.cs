@@ -87,6 +87,9 @@ namespace HqDownloadManager.Controller {
             });
         }
 
-        public void ClearList() => _hqList.Clear();
+        public void ClearList() {
+            _hqList.Clear();
+            GC.Collect();
+        }
     }
 }

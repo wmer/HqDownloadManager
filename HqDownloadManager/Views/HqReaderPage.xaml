@@ -25,10 +25,12 @@
             <FlipView.ItemTemplate>
                 <DataTemplate x:DataType="Page">
                     <ScrollViewer
-                      HorizontalScrollBarVisibility="Auto" 
-                      VerticalScrollBarVisibility="Hidden"
-                      VerticalContentAlignment="Center"
-                      HorizontalContentAlignment="Center">
+                        HorizontalScrollBarVisibility="Auto" 
+                        VerticalScrollBarVisibility="Hidden"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        ZoomMode="Enabled"
+                        DoubleTapped="ScrollViewer_DoubleTapped">
                         <Image 
                             x:Name="HqPage"   
                             Stretch="Fill" 
@@ -70,7 +72,7 @@
                 Margin="10,0,10,0"
                 Minimum="0"
                 Maximum="{Binding ActualChapter.Pages.Count, Source={StaticResource ReaderControl}}" 
-                Value="{Binding SelectedIndex, ElementName=itemFlipView}" 
+                Value="{Binding ActualPage, Source={StaticResource ReaderControl}}" 
                 VerticalAlignment="Center" 
                 HorizontalAlignment="Stretch"/>
             <Button 

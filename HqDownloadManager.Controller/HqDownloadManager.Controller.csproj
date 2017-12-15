@@ -110,6 +110,7 @@
     <Compile Include="ControllerBase.cs" />
     <Compile Include="Databases\UserLibraryContext.cs" />
     <Compile Include="DownloadController.cs" />
+    <Compile Include="DownloadDetailsController.cs" />
     <Compile Include="DownloadEventController.cs" />
     <Compile Include="FollowController.cs" />
     <Compile Include="Helpers\ControlsHelper.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="ViewModel\Follows\FollowUpdatesViewModel.cs" />
     <Compile Include="ViewModel\HqDetails\HqViewModel.cs" />
     <Compile Include="ViewModel\MainPage\NavigationViewModel.cs" />
+    <Compile Include="ViewModel\MyLibrary\DownloadDetailsViewModel.cs" />
     <Compile Include="ViewModel\MyLibrary\KeepReadingViewModel.cs" />
     <Compile Include="ViewModel\Reader\ReaderViewModel.cs" />
     <Compile Include="ViewModel\Shared\HqListViewModel.cs" />

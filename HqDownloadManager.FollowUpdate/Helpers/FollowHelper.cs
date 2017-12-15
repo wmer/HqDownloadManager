@@ -27,18 +27,19 @@ namespace HqDownloadManager.FollowUpdate.Helpers {
 
         public void FollowHq(Hq hq) {
             lock (_lock1) {
+                hq.Followed = true;
+                var hqBytes = hq.ToBytes();
                 var dInfo = new FollowedHq {
                     Link = hq.Link,
                     Time = DateTime.Now,
-                    Hq = hq.ToBytes()
+                    Hq = hqBytes
                 };
                 if (_context.FollowedHq.FindOne(hq.Link) != null) {
                     _context.FollowedHq.Update(dInfo);
                 } else {
                     _context.FollowedHq.Save(dInfo);
-                    hq.Followed = true;
-                    _context.Hq.Update(x => new { x.Hq }, hq.ToBytes())
-                                                              .Where(x => x.Link == hq.Link).Execute();
+                    _context.Hq.Update(x => new { x.Hq }, hqBytes)
+                                                          .Where(x => x.Link == hq.Link).Execute();
                 }
                 FollowingHq(this, new FollowEventArgs(hq, DateTime.Now));
             }
