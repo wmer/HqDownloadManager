@@ -4,11 +4,12 @@ using System.IO;
 using System.Net;
 using System.Text;
 using HqDownloadManager.Core.Configuration;
+using HqDownloadManager.Core.CustomEventArgs;
 using HqDownloadManager.Core.Models;
 using Utils;
 
 namespace HqDownloadManager.Core.Helpers {
-    internal class CoverCacheHelper {
+    public class CoverCacheHelper {
         private object _lock1 = new object();
         private object _lock2 = new object();
         private string directory;
@@ -20,17 +21,19 @@ namespace HqDownloadManager.Core.Helpers {
             }
         }
 
-        public void CreateCache(Hq hq) {
+        public string CreateCache(Hq hq) {
             lock (_lock1) {
-                if (string.IsNullOrEmpty(hq.CoverSource)) return;
+                if (string.IsNullOrEmpty((string)hq.CoverSource)) return hq.CoverSource;
                 using (var webClient = new WebClient()) {
                     try {
-                        var pageSource = $"{directory}\\{StringHelper.RemoveSpecialCharacters(hq.Title)}{FormatPage(hq.CoverSource)}";
+                        var pageSource = $"{directory}\\{StringHelper.RemoveSpecialCharacters((string)hq.Title)}{FormatPage((string)hq.CoverSource)}";
                         if (!File.Exists(pageSource)) {
-                            webClient.DownloadFile(hq.CoverSource, pageSource);
+                            webClient.DownloadFile((string)hq.CoverSource, pageSource);
                         }
-                        hq.CoverSource = pageSource;
-                    }catch { }
+                        return pageSource;
+                    } catch {
+                        return hq.CoverSource;
+                    }
                 }
             }
         }

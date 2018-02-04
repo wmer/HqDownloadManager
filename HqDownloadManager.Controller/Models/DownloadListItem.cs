@@ -20,6 +20,7 @@ namespace HqDownloadManager.Controller.Models {
         public DateTime _finishedIn;
         public string _status;
 
+        [PrimaryKey]
         public Hq Hq {
             get => _hq;
             set {
@@ -28,6 +29,7 @@ namespace HqDownloadManager.Controller.Models {
             }
         }
 
+        [Required(false)]
         public Chapter DownloadChapter {
             get => _downloadChapter;
             set {

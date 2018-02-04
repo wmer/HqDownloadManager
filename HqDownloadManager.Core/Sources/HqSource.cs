@@ -9,7 +9,7 @@ using HqDownloadManager.Core.Database;
 using HqDownloadManager.Core.Helpers;
 
 namespace HqDownloadManager.Core.Sources {
-    internal abstract class HqSource : IHqSource {
+    public abstract class HqSource : IHqSource {
         protected LibraryContext LibraryContext;
         protected HtmlSourceHelper HtmlHelper;
         protected BrowserHelper BrowserHelper;
@@ -48,20 +48,14 @@ namespace HqDownloadManager.Core.Sources {
             throw new NotImplementedException();
         }
 
-        public virtual List<Update> GetUpdates(string updatePage) {
+        public virtual List<Update> GetUpdates(string url) {
             throw new NotImplementedException();
         }
 
-        protected void OnProcessingProgress(ProcessingEventArgs e) {
-            lock (LockEvent1) {
-                ProcessingProgress?.Invoke(this, e);
-            }
-        }
+        protected void OnProcessingProgress(ProcessingEventArgs e) =>
+                CoreEventHub.OnProcessingProgress(this, e);
 
-        protected void OnProcessingProgressError(ProcessingErrorEventArgs e) {
-            lock (LockEvent2) {
-                ProcessingError?.Invoke(this, e);
-            }
-        }
+        protected void OnProcessingProgressError(ProcessingErrorEventArgs e) =>
+                CoreEventHub.OnProcessingProgressError(this, e);
     }
 }

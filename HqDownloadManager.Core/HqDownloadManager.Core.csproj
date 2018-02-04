@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.9.9" />
+    <PackageReference Include="AngleSharp" Version="0.9.9.1" />
     <PackageReference Include="PhantomJS" Version="2.1.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="3.7.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="3.8.0" />
   </ItemGroup>
 
   <ItemGroup>

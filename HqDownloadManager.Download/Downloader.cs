@@ -11,113 +11,188 @@ using System.Net;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HqDownloadManager.Download.Databases;
+using System.Collections.ObjectModel;
+using HqDownloadManager.Core.Managers;
 
 namespace HqDownloadManager.Download {
     internal class Downloader {
+        private static ObservableCollection<DownloadItem> _downloadList = new ObservableCollection<DownloadItem>();
+
         private readonly DirectoryHelper _directoryHelper;
         private readonly TaskTimer _timerHelper;
         private readonly SourceManager _sourceManager;
+        private readonly DownloadContext _downloadContext;
         private readonly DownloadInfoHelper _downloadInfoHelper;
-        private bool _processing;
         private bool _paused;
+        private bool _stop;
 
         private readonly object _lock1 = new object();
         private readonly object _lock2 = new object();
+        private readonly object _lock3 = new object();
+        private readonly object _lock4 = new object();
+        private readonly object _lock5 = new object();
+        private readonly object _lock6 = new object();
+        private readonly object _lock7 = new object();
+        private readonly object _lock8 = new object();
 
-
-        public event DownloadEventHandler DownloadStart;
-        public event DownloadEventHandler DownloadEnd;
-        public event ProgressEventHandler DownloadProgress;
-        public event ProgressEventHandler DownloadPause;
-        public event ProgressEventHandler DownloadResume;
-        public event DownloadErrorEventHandler DownloadError;
-
-        public Downloader(DirectoryHelper directoryHelper, TaskTimer timerHelper, SourceManager sourceManager, DownloadInfoHelper downloadInfoHelper) {
+        public Downloader(DirectoryHelper directoryHelper, TaskTimer timerHelper, SourceManager sourceManager, DownloadInfoHelper downloadInfoHelper, DownloadContext downloadContext) {
             this._directoryHelper = directoryHelper;
             this._timerHelper = timerHelper;
-            this._sourceManager = sourceManager; 
+            this._sourceManager = sourceManager;
             this._downloadInfoHelper = downloadInfoHelper;
-        }
+            this._downloadContext = downloadContext;
 
-        public void SaveHq(Hq hqInfo, string directory) {
-            var startTime = DateTime.Now;
-            var hqDirectory = _directoryHelper.CreateHqDirectory(directory, hqInfo.Title);
-            DownloadStart(this, new DownloadEventArgs(hqInfo, new DirectoryInfo(hqDirectory), startTime));
-            var tempHq = new Hq {
-                Link = hqInfo.Link, Title = hqInfo.Title, CoverSource = hqInfo.CoverSource,
-                Synopsis = hqInfo.Synopsis, Path = hqDirectory, Chapters = new List<Chapter>()
-            };
-            var numChapters = hqInfo.Chapters.Count();
-            var chapAtual = 1;
-            var failedToDownload = new List<String>();
-            foreach (var chapter in hqInfo.Chapters) {
-                DownloadProgress(this, new ProgressEventArgs(DateTime.Now, hqInfo, chapAtual, numChapters));
-                try {
-                    if (chapter.Pages == null || chapter.Pages.Count == 0) {
-                        //if (!_processing) {
-                        //    AddPagesInChapters(hqInfo);
-                        //}
-
-                        var chapterInfo = _sourceManager.GetInfo<Chapter>(chapter.Link);
-                        chapter.Pages = chapterInfo?.Pages;
+            var list = _downloadContext.DownloadList.FindAll();
+            if (list != null || list.Count > 0) {
+                foreach (var item in list) {
+                    if (item.Hq != null && !string.IsNullOrEmpty(item.Hq.Link)) {
+                        _downloadList.Add(item);
                     }
-                    SaveChapter(chapter, hqDirectory);
-                    tempHq.Chapters.Add(chapter);
-                } catch (Exception e) {
-                    DownloadError(this, new DownloadErrorEventArgs(chapter, e, DateTime.Now));
-                    failedToDownload.Add(chapter.Link);
                 }
-                chapAtual++;
             }
-
-            tempHq.Downloaded = true;
-            _downloadInfoHelper.SaveHqDownloadInfo(tempHq, hqDirectory, startTime);
-            DownloadEnd(this, new DownloadEventArgs(hqInfo, new DirectoryInfo(hqDirectory), startTime, DateTime.Now, DateTime.Now - startTime, failedToDownload));
-
         }
 
-        public void SaveChapter(Chapter chapter, string directory) {
+        public void AddToDownloadList(Hq hq, string directory) {
+            lock (_lock1) {
+                if (hq.Chapters == null || hq.Chapters.Count == 0) {
+                    var hqInfo = new Hq();
+                    _sourceManager.GetSourceFromLink(hq.Link).GetInfo(hq.Link, out hqInfo);
+                    if (hqInfo != null)
+                        hq = hqInfo;
+                }
+                if (hq != null && !string.IsNullOrEmpty(hq.Link)) {
+                    var downloaditem = new DownloadItem { Hq = hq, MainDirectory = directory, IsDownloaded = false };
+                    if (!_downloadList.Contains(downloaditem)) {
+                        _downloadList.Add(downloaditem);
+                        _downloadContext.DownloadList.Save(downloaditem);
+                    }
+                }
+            }
+        }
+
+        public void ExcludeFromDownloadList(DownloadItem item) {
             lock (_lock2) {
+                _downloadList.Remove(item);
+                _downloadContext.DownloadList.Delete(item);
+            }
+        }
+
+        public ObservableCollection<DownloadItem> GetDownloadList() => _downloadList;
+
+        public void Download() {
+            lock (_lock3) {
+                Task.Run(() => {
+                    _stop = false;
+                    _paused = false;
+                    foreach (var item in _downloadList) {
+                        if (_stop) {
+                            break;
+                        }
+                        if (!item.IsDownloaded) {
+                            Download(item);
+                        }
+                    }
+
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                });
+            }
+        }
+
+        public void Download(DownloadItem downloadItem) {
+            lock (_lock4) {
+                var source = _sourceManager.GetSourceFromLink(downloadItem.Hq.Link);
+                if (downloadItem.Hq.Chapters == null || downloadItem.Hq.Chapters.Count() == 0) {
+                    var hq = new Hq();
+                    source.GetInfo(downloadItem.Hq.Link, out hq);
+                    if (hq != null) {
+                        downloadItem.Hq = hq;
+                    }
+                }
+
+                downloadItem.DownloadStarted = DateTime.Now;
+                DownloadEventHub.OnDownloadStart(this, new DownloadEventArgs(downloadItem));
+
+                var hqDirectory = _directoryHelper.CreateHqDirectory(downloadItem.MainDirectory, downloadItem.Hq.Title);
+                var numChapters = downloadItem.Hq.Chapters.Count();
+                var chapAtual = 1;
+                var failedToDownload = new List<String>();
+                foreach (var chapter in downloadItem.Hq.Chapters) {
+                    if (_stop) {
+                        DownloadEventHub.OnDownloadStop(this, new DownloadEventArgs(downloadItem, (downloadItem.DownloadFinished - downloadItem.DownloadStarted), failedToDownload));
+                        break;
+                    }
+                    try {
+                        downloadItem.ActualPage = null;
+                        SaveChapter(source, downloadItem, chapter, chapAtual, numChapters, hqDirectory);
+                    } catch (Exception e) {
+                        DownloadEventHub.OnDownloadError(this, new DownloadErrorEventArgs(downloadItem, e, DateTime.Now));
+                        failedToDownload.Add(chapter.Link);
+                    }
+                    chapAtual++;
+                }
+                downloadItem.DownloadFinished = DateTime.Now;
+                DownloadEventHub.OnDownloadEnd(this, new DownloadEventArgs(downloadItem, (downloadItem.DownloadFinished - downloadItem.DownloadStarted), failedToDownload));
+                var downloadInfo = new HqDownloadInfo(downloadItem);
+                downloadInfo.Path = hqDirectory;
+                downloadItem.IsDownloaded = true;
+                _downloadContext.DownloadList.SaveOrReplace(downloadItem);
+                _downloadInfoHelper.SaveDownloadInfo(downloadInfo);
+            }
+        }
+
+        private void SaveChapter(IHqSourceManager source, DownloadItem downloadItem, Chapter chapter, int chpaterIndex, int totalChapters, string directory) {
+            lock (_lock5) {
                 var startChapterDownload = DateTime.Now;
                 var chapterDirectory = _directoryHelper.CreateHqDirectory(directory, chapter.Title);
-                chapter.Path = chapterDirectory;
-                DownloadStart(this, new DownloadEventArgs(chapter, new DirectoryInfo(chapterDirectory), startChapterDownload));
-                var downloadChapterTime = _timerHelper.RuntimeOf(() => {
-                    var pageAtual = 1;
-                    var totalPages = chapter.Pages.Count();
-                    foreach (var page in chapter.Pages) {
-                        DownloadProgress(this, new ProgressEventArgs(DateTime.Now, chapter, pageAtual, totalPages));
-                        if (_paused) {
-                            DownloadPause(this, new ProgressEventArgs(DateTime.Now, chapter, pageAtual, totalPages));
-                            while (_paused) ;
-                            DownloadResume(this, new ProgressEventArgs(DateTime.Now, chapter, pageAtual, totalPages));
-                        }
-                        try {
-                            var pageSource = $"{chapterDirectory}\\{page.Number.ToString().PadLeft(3, '0')}{FormatPage(page.Source)}";
-                            if (!File.Exists(pageSource)) {
-                                using (var webClient = new WebClient()) {
-                                    webClient.DownloadFile(new Uri(page.Source), pageSource);
-                                }
+                if (chapter.Pages == null || chapter.Pages.Count == 0) {
+                    var chapterInfo = new Chapter();
+                    source.GetInfo(chapter.Link, out chapterInfo);
+                    chapter.Pages = chapterInfo.Pages;
+                }
+                downloadItem.LastDownloadedChapter = chapter;
+                DownloadEventHub.OnDownloadChapterStart(this, new ProgressEventArgs(DateTime.Now, downloadItem, chpaterIndex, totalChapters));
+
+                var pageAtual = 1;
+                var totalPages = chapter.Pages.Count();
+                foreach (var page in chapter.Pages) {
+                    downloadItem.ActualPage = page;
+                    if (_stop) {
+                        break;
+                    }
+                    if (_paused) {
+                        DownloadEventHub.OnDownloadPause(this, new ProgressEventArgs(DateTime.Now, downloadItem, pageAtual, totalPages));
+                        while (_paused) ;
+                        DownloadEventHub.OnDownloadResume(this, new ProgressEventArgs(DateTime.Now, downloadItem, pageAtual, totalPages));
+                    }
+
+                    DownloadEventHub.OnDownloadProgress(this, new ProgressEventArgs(DateTime.Now, downloadItem, pageAtual, totalPages));
+
+                    try {
+                        var pageSource = $"{chapterDirectory}\\{page.Number.ToString().PadLeft(3, '0')}{FormatPage(page.Source)}";
+                        if (!File.Exists(pageSource)) {
+                            using (var webClient = new WebClient()) {
+                                webClient.DownloadFile(page.Source, pageSource);
                             }
-                            page.Source = pageSource;
-                        } catch (Exception e) {
-                            DownloadError(this, new DownloadErrorEventArgs(null, e, DateTime.Now));
                         }
 
-                        pageAtual++;
+                        page.Source = pageSource;
+                        page.Chapter = chapter;
+                    } catch (Exception e) {
+                        DownloadEventHub.OnDownloadError(this, new DownloadErrorEventArgs(null, e, DateTime.Now));
                     }
-                    chapter.Downloaded = true;
-                    GC.Collect();
-                });
+
+                    pageAtual++;
+                }
 
                 GC.Collect();
-                DownloadEnd(this, new DownloadEventArgs(chapter, new DirectoryInfo(chapterDirectory),
-                   startChapterDownload, DateTime.Now, downloadChapterTime));
+                GC.WaitForPendingFinalizers();
             }
         }
 
         private string FormatPage(string source) {
-            lock (_lock1) {
+            lock (_lock6) {
                 var formatPosition = source.LastIndexOf(".");
                 var format = source.Substring(formatPosition);
                 if (format.Contains("?")) {
@@ -136,17 +211,7 @@ namespace HqDownloadManager.Download {
             }
         }
 
-        public void PauseRemumeDownload(bool state) => _paused = state;
-
-        private void AddPagesInChapters(Hq hq) {
-            _processing = true;
-            foreach (var chapter in hq.Chapters) {
-                if (chapter.Pages == null || chapter.Pages.Count == 0) {
-                    var chapterInfo = _sourceManager.GetInfo<Chapter>(chapter.Link);
-                    chapter.Pages = chapterInfo?.Pages;
-                }
-            }
-            _processing = false;
-        }
+        public void PauseRemumeDownload() => _paused = !_paused;
+        public void StopDownload() => _stop = true;
     }
 }

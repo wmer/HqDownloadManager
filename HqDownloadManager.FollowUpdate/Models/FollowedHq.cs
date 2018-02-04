@@ -8,8 +8,7 @@ namespace HqDownloadManager.FollowUpdate.Models
 {
     public class FollowedHq {
         [PrimaryKey]
-        public string Link { get; set; }
+        public virtual Hq Hq { get; set; }
         public DateTime Time { get; set; }
-        public byte[] Hq { get; set; }
     }
 }

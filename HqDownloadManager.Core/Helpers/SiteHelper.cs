@@ -1,4 +1,5 @@
 ﻿using DependencyInjectionResolver;
+using HqDownloadManager.Core.Managers;
 using HqDownloadManager.Core.Sources;
 using Reflection.Optimization.Helpers;
 using System;
@@ -9,37 +10,45 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace HqDownloadManager.Core.Helpers {
-    internal class SiteHelper {
+    public class SiteHelper {
+        private DependencyInjection _dependencyInjection;
         private Dictionary<String, Type> SupportedSites;
         private Object lockThis = new Object();
         private Object lockThis2 = new Object();
         private Object lockThis3 = new Object();
         private Object lockThis4 = new Object();
 
-        public SiteHelper() {
+        public SiteHelper(DependencyInjection dependencyInjection) {
+            _dependencyInjection = dependencyInjection;
             SupportedSites = new Dictionary<string, Type> {
-                ["ymangas"] = typeof(YesMangasSource),
-                ["yesmangas"] = typeof(YesMangasSource),
-                ["mangashost"] = typeof(MangaHostSource),
-                ["mangahost"] = typeof(MangaHostSource),
-                ["mangahosts"] = typeof(MangaHostSource),
-                ["unionmangas"] = typeof(UnionMangasSource),
-                ["mangas"] = typeof(MangasProjectSource),
-                ["mangastream"] = typeof(MangasProjectSource),
-                ["hiper"] = typeof(HipercoolSource)
+                ["ymangas"] = typeof(YesMangasSourceManager),
+                ["yesmangas"] = typeof(YesMangasSourceManager),
+                ["mangashost"] = typeof(MangaHostSourceManager),
+                ["mangahost"] = typeof(MangaHostSourceManager),
+                ["mangahosts"] = typeof(MangaHostSourceManager),
+                ["unionmangas"] = typeof(UnionMangasSourceManager),
+                ["mangas"] = typeof(MangasProjectSourceManager),
+                ["mangastream"] = typeof(MangasProjectSourceManager),
+                ["hiper"] = typeof(HipercoolSourceManager)
             };
         }
 
-        public IHqSource GetHqSourceFromUrl(String link) {
+        public Type GetHqSourceTypeFromUrl(String link) {
             lock (lockThis) {
                 Uri url = new Uri(link);
                 var host = url.Host.Split('.')[0];
                 if (SupportedSites.ContainsKey(host)) {
-                    return new DependencyInjection()
-                                                .BindingTypes(typeof(IHqSource), SupportedSites[host])
-                                                .Resolve<IHqSource>();
+                    return SupportedSites[host];
                 }
                 throw new Exception("Não é possivel fazer download deste site!");
+            }
+        }
+
+        public IHqSourceManager GetHqSourceFromUrl(String link) {
+            lock (lockThis) {
+                return _dependencyInjection
+                    .BindingTypes(typeof(IHqSourceManager), GetHqSourceTypeFromUrl(link))
+                    .Resolve<IHqSourceManager>();
             }
         }
 

@@ -10,17 +10,16 @@ using HqDownloadManager.Core.CustomEventArgs;
 using HqDownloadManager.Core.Database;
 
 namespace HqDownloadManager.Core.Sources {
-    internal class UnionMangasSource : HqSource {
+    public class UnionMangasSource : HqSource {
 
         public UnionMangasSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext, htmlHelper, browserHelper) {
         }
 
-        public override List<Update> GetUpdates(string updatePage) {
+        public override List<Update> GetUpdates(string url) {
             lock (Lock6) {
                 try {
-                    var source = HtmlHelper.GetSourceCodeFromUrl(updatePage);
                     var hqs = new List<Update>();
-                    return source != null ? hqs : throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
+                    throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
                 } catch (Exception e) {
                     throw new Exception(e.Message);
                 }
@@ -68,7 +67,8 @@ namespace HqDownloadManager.Core.Sources {
                     }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
                     return new LibraryPage {
-                        Hqs = hqs, NextPage = nextPage, FinalizedPage = finalizedPage, Letras = letherLink
+                        Link = linkPage, Hqs = hqs, NextPage = nextPage,
+                        FinalizedPage = finalizedPage, Letras = letherLink
                     };
                 } catch (Exception e) {
                     OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, linkPage, e));

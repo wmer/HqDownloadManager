@@ -11,46 +11,67 @@ using HqDownloadManager.Core.Helpers;
 using HqDownloadManager.Core.Models;
 
 namespace HqDownloadManager.Core.Sources {
-    internal class HipercoolSource : HqSource {
+    public class HipercoolSource : HqSource {
         private string BaseAdress { get; set; }
         private Uri Site { get; set; }
 
         public HipercoolSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext, htmlHelper, browserHelper) {
         }
 
-        public override List<Update> GetUpdates(String updatePage) {
+        public override List<Update> GetUpdates(string url) {
             lock (Lock7) {
                 try {
-                    Uri site = new Uri(updatePage);
-                    BaseAdress = $"{site.Scheme}://{site.Host}";
+                    Site = new Uri(url);
+                    BaseAdress = $"{Site.Scheme}://{Site.Host}";
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
-                    var source = HtmlHelper.GetSourceCodeFromUrl(updatePage);
+                    var source = HtmlHelper.GetSourceCodeFromUrl(url);
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     var updates = new List<Update>();
                     var chapters = new List<Chapter>();
+                    var dic = new Dictionary<string, (Hq Hq, List<Chapter> Chappters)>();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
                     var updatesEl = source.QuerySelectorAll("div.cap-card");
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{updatesEl.Count()} mangas encontrados!"));
                     foreach (var update in updatesEl) {
-                        var title = update.QuerySelector(".title-area")?.TextContent;
-                        if (!string.IsNullOrEmpty(title)) {
-                            title = title.Replace("\n", "").Trim();
-                        }
-                        var img = update.QuerySelector("a.container img")?.GetAttribute("src");
-                        var link = update.QuerySelector("a.container")?.GetAttribute("href");
-                        if (!string.IsNullOrEmpty(link)) {
-                            var up = new Update {
-                                Hq = new Hq { Link = $"{BaseAdress}{link}", Title = title, CoverSource = $"{Site.Scheme}:{img}" },
-                                Chapters = chapters
-                            };
-                            updates.Add(up);
-                            OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, up.Hq, $"{title} Adicionado"));
+                        var chapterTitle = update.QuerySelector(".title-area")?.TextContent;
+                        if (!string.IsNullOrEmpty(chapterTitle)) {
+                            chapterTitle = chapterTitle.Replace("\n", "").Trim();
+                            var lastIndex = chapterTitle.LastIndexOf("-");
+                            var hqTitle = "";
+                            if (lastIndex == -1) {
+                                hqTitle = chapterTitle;
+                            }else {
+                                hqTitle = chapterTitle.Substring(0, lastIndex).Trim();
+                                hqTitle = hqTitle.Replace("(BR)", "").Trim();
+                            }
+                            var hqLink = update.QuerySelector("a.container")?.GetAttribute("href");
+                            var chapterLink = update.QuerySelector("a.read-wrapper")?.GetAttribute("href");
+
+                            if (!string.IsNullOrEmpty(hqLink) && !string.IsNullOrEmpty(chapterLink)) {
+                                if (dic.ContainsKey(hqLink)) {
+                                    var chap = new Chapter { Title = chapterTitle, Link = $"{BaseAdress}{chapterLink}" };
+                                    dic[hqLink].Chappters.Add(chap);
+                                } else {
+                                    var img = update.QuerySelector("a.container img")?.GetAttribute("src");
+                                    var hq = new Hq { Link = $"{BaseAdress}{hqLink}", Title = hqTitle, CoverSource = $"{Site.Scheme}:{img}" };
+                                    var chap = new Chapter { Title = chapterTitle, Link = $"{BaseAdress}{chapterLink}" };
+                                    chapters = new List<Chapter>();
+                                    chapters.Add(chap);
+                                    dic[hqLink] = (hq, chapters);
+                                }
+                            }
                         }
                     }
+
+                    foreach (var updt in dic) {
+                        var up = new Update { Hq = updt.Value.Hq, Chapters = updt.Value.Chappters };
+                        updates.Add(up);
+                        OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, up.Hq, $"{up.Hq.Title} Adicionado"));
+                    }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
-                    return updates; 
+                    return updates;
                 } catch (Exception e) {
-                    OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, updatePage, e));
+                    OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, url, e));
                     return null;
                 }
             }
@@ -58,36 +79,7 @@ namespace HqDownloadManager.Core.Sources {
 
         public override LibraryPage GetLibrary(String linkPage) {
             lock (Lock6) {
-                try {
-                    Site = new Uri(linkPage);
-                    BaseAdress = $"{Site.Scheme}://{Site.Host}";
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, "Processando os Mangas..."));
-                    var driver = BrowserHelper.GetDriver(linkPage);
-                    Task.Delay(5000).Wait();
-                    var pageSource = driver.PageSource;
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
-                    IDocument source = HtmlHelper.GetSourceCodeFromHtml(pageSource);
-                    driver.Quit();
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
-                    var hqs = new List<Hq>();
-                    if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
-                    var hqsEl = source.QuerySelectorAll(".mdl-data-table tbody tr");
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{hqsEl.Count()} mangas encontrados!"));
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Preparando para retornar mangas!"));
-                    foreach (var hq in hqsEl) {
-                        var link = hq.QuerySelector("td a")?.GetAttribute("href");
-                        if (!string.IsNullOrEmpty(link)) {
-                            var manga = new SourceManager(new DependencyInjection()).GetInfo<Hq>($"{BaseAdress}{link}");
-                        }
-                    }
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
-                    return new LibraryPage {
-                        Hqs = hqs
-                    };
-                } catch (Exception e) {
-                    OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, linkPage, e));
-                    return null;
-                }
+                throw new NotImplementedException();
             }
         }
 
@@ -174,7 +166,7 @@ namespace HqDownloadManager.Core.Sources {
                     chapterList.Add(chap);
                 } else {
                     var chapters = chaptersContent.QuerySelectorAll(".cap-card");
-                    if(chapters != null && chapters.Length > 0) {
+                    if (chapters != null && chapters.Length > 0) {
                         foreach (var chapter in chapters) {
                             var chapterLink = chapter.QuerySelector(".buttons-wrapper a")?.GetAttribute("href");
                             var chapterTitle = chapter.QuerySelector(".content .title-area .title")?.TextContent;

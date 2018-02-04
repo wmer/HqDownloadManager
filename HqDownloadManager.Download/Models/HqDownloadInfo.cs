@@ -1,21 +1,29 @@
-﻿using Repository.Attributes;
+﻿using HqDownloadManager.Core.Models;
+using Repository.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HqDownloadManager.Download.Models
-{
-    public class HqDownloadInfo {
-        [PrimaryKey]
-        public string Link { get; set; }
-        public string SavedIn { get; set; }
-        public DateTime Time { get; set; }
-        public byte[] HqDownloaded { get; set; }
+namespace HqDownloadManager.Download.Models {
+    public class HqDownloadInfo : DownloadItem {
+        public string Path { get; set; }
+
+        public HqDownloadInfo() {
+
+        }
+
+        public HqDownloadInfo(DownloadItem downloadItem) {
+            Hq = downloadItem.Hq;
+            LastDownloadedChapter = downloadItem.LastDownloadedChapter;
+            ActualPage = downloadItem.ActualPage;
+            MainDirectory = downloadItem.MainDirectory;
+            DownloadStarted = downloadItem.DownloadStarted;
+            DownloadFinished = downloadItem.DownloadFinished;
+        }
 
         public override bool Equals(object obj) {
-            if (obj.GetType() == typeof(HqDownloadInfo)) {
-                var model = (HqDownloadInfo)obj;
-                return SavedIn == model.SavedIn;
+            if (obj is HqDownloadInfo model) {
+                return Path == model.Path;
             }
             return false;
         }

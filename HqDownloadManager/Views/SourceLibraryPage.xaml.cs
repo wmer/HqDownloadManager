@@ -1,4 +1,6 @@
 ﻿using HqDownloadManager.Controller;
+using HqDownloadManager.Controller.ViewModel.HqStatus;
+using HqDownloadManager.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,65 +23,49 @@ namespace HqDownloadManager.Views {
     /// <summary>
     /// Uma página vazia que pode ser usada isoladamente ou navegada dentro de um Quadro.
     /// </summary>
-    public sealed partial class SourceLibraryPage : SourceLibraryController {
-        private bool _isFinalized = false;
+    public sealed partial class SourceLibraryPage : Windows.UI.Xaml.Controls.Page {
+        private SourceLibraryController _controller;
 
-        public SourceLibraryPage() {
+        public SourceLibraryPage(SourceLibraryController controller) {
+            _controller = controller;
             this.InitializeComponent();
-            Unloaded += OnUnloaded;
+            this.Loaded += SourceLibraryPage_Loaded;
         }
 
-        public override void OnLoaded(object sender, RoutedEventArgs e) {
-            base.OnLoaded(sender, e);
-
-            var scrollViewr = HqlistGrid.GetFirstDescendantOfType<ScrollViewer>();
-            scrollViewr.ViewChanged += ScrollViewr_ViewChanged;
-
-            if ((bool)CheckboxOnlyFinalized.IsChecked) {
-                ShowOnlyFinalized();
-            } else {
-                ShowSourceLibrary();
-            }
+        private void SourceLibraryPage_Loaded(object sender, RoutedEventArgs e) {
+            _controller.OnLoaded(sender, e);
+            var scrollViewer = HqLibraryGrid.GetFirstDescendantOfType<ScrollViewer>();
+            var scrollbars = scrollViewer.GetDescendantsOfType<ScrollBar>().ToList();
+            var verticalBar = scrollbars.FirstOrDefault(x => x.Orientation == Orientation.Vertical);
+            verticalBar.Scroll += VerticalBar_Scroll;
         }
 
-        private void ScrollViewr_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e) {
-            var scrollViewer = (ScrollViewer)sender;
-            if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight) {
-                ShowNextPage();
-            }
+        private void VerticalBar_Scroll(object sender, ScrollEventArgs e) => _controller.OnScroll(sender, e);        
+
+        private void ReadNow_Click(object sender, RoutedEventArgs e) {
+
         }
 
-        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if ((bool)CheckboxOnlyFinalized.IsChecked) {
-                ShowOnlyFinalized();
-            } else {
-                ShowSourceLibrary();
-            }
+        private void AddAll_Click(object sender, RoutedEventArgs e) => _controller.AddToDownloadList();
+
+        private void AddSelected_Click(object sender, RoutedEventArgs e) => _controller.AddSelectedsToDownload();
+
+        private void Button_Click(object sender, RoutedEventArgs e) => DetailsManga.IsPaneOpen = false;
+
+        private void HqLibraryGrid_ItemClick(object sender, ItemClickEventArgs e) => _controller.OpenDetails(e.ClickedItem as Hq);
+
+        private void BtnSaveStatus_Click(object sender, RoutedEventArgs e) => _controller.SaveEntry();
+
+        private void BtnCloseStatus_Click(object sender, RoutedEventArgs e) => 
+                                         (Resources["HqStatus"] as HqStatusViewModel).Visibility = Visibility.Collapsed;
+
+        private void Button_Click_1(object sender, RoutedEventArgs e) {
+            var btn = (Button)sender;
+            _controller.ShowLibraryWithLether(btn.Content as string);
         }
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e) => ActualizeItemSizeAndCollumns();
+        private void BtnAll_Click(object sender, RoutedEventArgs e) => _controller.ShowLibrary();
 
-        private void GridView_ItemClick(object sender, ItemClickEventArgs e) => OpenHqDetails<HqDetailsPage>(_isFinalized);
-
-        private void Lether_Click(object sender, RoutedEventArgs e) {
-            var btn = sender as Button;
-            ShowLether(btn.Content as String);
-        }
-
-        private void CheckboxOnlyFinalized_Checked(object sender, RoutedEventArgs e) {
-            _isFinalized = true;
-            ShowOnlyFinalized();
-        }
-
-        private void CheckboxOnlyFinalized_Unchecked(object sender, RoutedEventArgs e) {
-            _isFinalized = false;
-            ShowSourceLibrary();
-        }
-
-        private async void AddDownload_Click(object sender, RoutedEventArgs e) => await AddToDownloadList();
-
-        private async void Follow_Click(object sender, RoutedEventArgs e) => await FollowHq();
-
-        private void OnUnloaded(object sender, RoutedEventArgs e) => ClearList();
+        private void BtnFinalized_Click(object sender, RoutedEventArgs e) => _controller.ShowHqFinalized();
     }
 }

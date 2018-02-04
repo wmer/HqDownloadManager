@@ -8,57 +8,51 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
-namespace HqDownloadManager.Download
-{
+namespace HqDownloadManager.Download {
     public class DownloadManager {
         private readonly Downloader _downloader;
-        private readonly TaskTimer _timerHelper;
         private readonly DownloadInfoHelper _downloadInfoHelper;
-
-        public event DownloadEventHandler DownloadStart;
-        public event DownloadEventHandler DownloadEnd;
-        public event ProgressEventHandler DownloadProgress;
-        public event ProgressEventHandler DownloadPause;
-        public event ProgressEventHandler DownloadResume;
-        public event DownloadErrorEventHandler DownloadError;
 
         public DownloadManager(DependencyInjection dependency) {
             var dependency1 = dependency;
-            this._timerHelper = dependency1.Resolve<TaskTimer>();
             _downloader = dependency1.Resolve<Downloader>();
             _downloadInfoHelper = dependency1.Resolve<DownloadInfoHelper>();
-            _downloader.DownloadStart += Downloader_DownloadStart;
-            _downloader.DownloadProgress += Downloader_DownloadProgress;
-            _downloader.DownloadPause += Downloader_DownloadPause;
-            _downloader.DownloadResume += Downloader_DownloadResume;
-            _downloader.DownloadError += Downloader_DownloadError;
-            _downloader.DownloadEnd += Downloader_DownloadEnd;
         }
 
-        public void Download(Hq item, string directory) =>
-                        _downloader.SaveHq(item, directory);
+        public void AddToDownloadList(Hq hq, string directory) =>
+                        _downloader.AddToDownloadList(hq, directory);
 
-        public void PauseResumeDownload(bool state) => 
-                        _downloader.PauseRemumeDownload(state);
+        public void ExcludeFromDownloadList(DownloadItem item) =>
+                        _downloader.ExcludeFromDownloadList(item);
 
-        public async Task<List<HqDownloadInfo>> GetDownloadedHqsInfo() =>
-                        await _downloadInfoHelper.GetHqsDownloadInfo();
-        
+        public ObservableCollection<DownloadItem> GetDownloadList() =>
+                        _downloader.GetDownloadList();
 
-        public async Task DeleteDownloadInfo(string link, bool deleteFiles = false) =>
-              await _downloadInfoHelper.DeleteDownloadInfo(link, deleteFiles);
+        public void Download() =>
+                        _downloader.Download();
 
-        private void Downloader_DownloadStart(object sender, DownloadEventArgs ev) => DownloadStart?.Invoke(this, ev);
+        public void Download(DownloadItem downloadItem) =>
+                        _downloader.Download(downloadItem);
 
-        private void Downloader_DownloadProgress(object sender, ProgressEventArgs ev) => DownloadProgress?.Invoke(this, ev);
+        public void PauseResumeDownload() =>
+                        _downloader.PauseRemumeDownload();
 
-        private void Downloader_DownloadPause(object sender, ProgressEventArgs ev) => DownloadPause?.Invoke(this, ev);
+        public void StopDownload() =>
+                        _downloader.StopDownload();
 
-        private void Downloader_DownloadResume(object sender, ProgressEventArgs ev) => DownloadResume?.Invoke(this, ev);
+        public List<HqDownloadInfo> GetDownloadedHqsInfo() =>
+                        _downloadInfoHelper.GetHqsDownloadInfo();
 
-        private void Downloader_DownloadError(object sender, DownloadErrorEventArgs ev) => DownloadError?.Invoke(this, ev);
+        public HqDownloadInfo GetChaptersFromDownloadInfo(HqDownloadInfo downloadInfo) =>
+                        _downloadInfoHelper.GetChaptersFromDownloadInfo(downloadInfo);
 
-        private void Downloader_DownloadEnd(object sender, DownloadEventArgs ev) => DownloadEnd?.Invoke(this, ev);
+        public void SaveDownloadInfo(HqDownloadInfo downloadInfo) =>
+                        _downloadInfoHelper.SaveDownloadInfo(downloadInfo);
+
+        public void DeleteDownloadInfo(HqDownloadInfo downloadInfo, bool deleteFiles = false) =>
+              _downloadInfoHelper.DeleteDownloadInfo(downloadInfo, deleteFiles);
+
     }
 }

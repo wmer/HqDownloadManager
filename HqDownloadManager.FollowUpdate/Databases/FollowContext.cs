@@ -10,6 +10,6 @@ using System.Text;
 namespace HqDownloadManager.FollowUpdate.Databases
 {
     internal class FollowContext : LibraryContext {
-        public Repository<FollowedHq> FollowedHq { get; set; }
+        //public Repository<FollowedHq> FollowedHq { get; set; }
     }
 }

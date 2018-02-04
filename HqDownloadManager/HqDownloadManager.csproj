@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{A4544E79-26BE-46CD-86C7-DD954D558F63}</ProjectGuid>
+    <ProjectGuid>{3295C660-9A23-4C90-A3B2-9FE4F590C4ED}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HqDownloadManager</RootNamespace>
@@ -99,20 +99,11 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\ConfigurationPage.xaml.cs">
-      <DependentUpon>ConfigurationPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DownloadDetails.xaml.cs">
-      <DependentUpon>DownloadDetails.xaml</DependentUpon>
+    <Compile Include="Views\DownloadDetailsPage.xaml.cs">
+      <DependentUpon>DownloadDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DownloadPage.xaml.cs">
       <DependentUpon>DownloadPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\FollowPage.xaml.cs">
-      <DependentUpon>FollowPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HqDetailsPage.xaml.cs">
-      <DependentUpon>HqDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HqReaderPage.xaml.cs">
       <DependentUpon>HqReaderPage.xaml</DependentUpon>
@@ -134,12 +125,8 @@
     <None Include="HqDownloadManager_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\WebDrivers\chromedriver.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\WebDrivers\PhantomJS.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Assets\WebDrivers\chromedriver.exe" />
+    <Content Include="Assets\WebDrivers\PhantomJS.exe" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -158,23 +145,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ConfigurationPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DownloadDetails.xaml">
+    <Page Include="Views\DownloadDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DownloadPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\FollowPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HqDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -197,16 +172,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp">
-      <Version>0.9.9</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NETCore.Runtime.CoreCLR">
-      <Version>2.0.3</Version>
+      <Version>0.9.9.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.1</Version>
+      <Version>6.0.5</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>2.0.0</Version>
+      <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="WinRTXamlToolkit.UWP">
       <Version>2.3.0</Version>
@@ -241,12 +213,11 @@
       <Project>{177f41d2-b3c4-425a-ab50-ef33df16ff8a}</Project>
       <Name>HqDownloadManager.Download</Name>
     </ProjectReference>
-    <ProjectReference Include="..\HqDownloadManager.FollowUpdate\HqDownloadManager.FollowUpdate.csproj">
-      <Project>{a09df8ff-3173-4be3-8aa2-e14bf858815f}</Project>
-      <Name>HqDownloadManager.FollowUpdate</Name>
+    <ProjectReference Include="..\HqManager\HqManager.csproj">
+      <Project>{045f301c-4bcc-46c7-be0d-5fb66d09e75a}</Project>
+      <Name>HqManager</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

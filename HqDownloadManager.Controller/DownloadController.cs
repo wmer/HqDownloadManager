@@ -1,88 +1,115 @@
-﻿using DependencyInjectionResolver;
-using HqDownloadManager.Controller.Models;
-using HqDownloadManager.Controller.ViewModel.DownloadPage;
-using Utils;
+﻿using HqDownloadManager.Controller.Helpers;
+using HqDownloadManager.Controller.ViewModel.Download;
+using HqDownloadManager.Core.Models;
+using HqDownloadManager.Download;
+using HqDownloadManager.Download.Models;
+using System.ComponentModel;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml;
-using HqDownloadManager.Core.Models;
+using HqDownloadManager.Download.CustomEventArgs;
+using Windows.UI.Xaml.Controls;
+using System.Collections.ObjectModel;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace HqDownloadManager.Controller {
-    public partial class DownloadController : ControllerBase {
-        private DownloadListItem hqDownloading;
-        private DownloadListViewModel downloadListViewModel;
-        private ListView downloadListView;
-        private int actualIndex;
+    public class DownloadController : Windows.UI.Xaml.Controls.Page {
+        protected ControlsHelper _controllerHelper;
+        protected DownloadManager _downloadManager;
+        protected DownloadListViewModel _downloadListViewModel;
+        protected ListView _downloadList;
+        protected ListView _chapterList;
+        protected List<ProgressBar> _progressBars;
 
-        public DownloadController() : base() {
+        public DownloadController(
+                ControlsHelper controllerHelper,
+                DownloadManager downloadManager) {
+            _controllerHelper = controllerHelper;
+            _downloadManager = downloadManager;
         }
 
-        public override void OnLoaded(object sender, RoutedEventArgs e) {
-            base.OnLoaded(sender, e);
-            downloadListViewModel = ControlsHelper.FindResource<DownloadListViewModel>("HqList");
-            downloadListView = ControlsHelper.Find<ListView>("DownloadHqs");
-            downloadListViewModel.Hqs = DownloadList;
-            HandlerEvents();
-        }
+        public virtual void OnLoaded(object sender, RoutedEventArgs e) {
+            _downloadListViewModel = _controllerHelper.FindResource<DownloadListViewModel>("DownloadListView");
+            _downloadList = _controllerHelper.Find<ListView>("DownloadList");
+            _chapterList = _controllerHelper.Find<ListView>("HqChapters");
 
-        public void Download() {
+            DownloadEventHub.DownloadStart += OnDownloadStart;
+            DownloadEventHub.DownloadEnd += OnDonwloadEnd;
+            DownloadEventHub.DownloadChapterStart += OnDownloadChapterStart;
+            DownloadEventHub.DownloadProgress += OnDownloadProgress;
+
             Task.Run(async () => {
-                downloading = true;
-                for (var i = 0; i < DownloadList.Count; i++) {
-                    actualIndex = i;
-                    hqDownloading = DownloadList[i];
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                        downloadListView.SelectedItem = hqDownloading;
-                        downloadListView.ScrollIntoView(downloadListView.SelectedItem);
-                    });
-                    if (hqDownloading.Status != "Baixado") {
-                        try {
-                            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                                hqDownloading.Status = "Baixando...";
-                            });
-                            var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-                            UserLibrary.DownloadList.Update(dwL);
-                            DownloadManager.Download(hqDownloading.Hq, UserPreferences.DownloadPath);
-                            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                                hqDownloading.Status = "Baixado";
-                            });
-                            dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-                            UserLibrary.DownloadList.Update(dwL);
-                        } catch (Exception e) {
-                            ShowLog($"Um erro ocorreu durante o download de {hqDownloading.Hq.Title}. Causa: {e.Message}");
-                        }
-                    }
-                }
-                downloading = false;
+                var downloadList = _downloadManager.GetDownloadList();
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    _downloadListViewModel.DownloadList = downloadList;
+                });
             });
         }
 
-        public void RemoveFromList() {
-            var selected = downloadListView.SelectedItem as DownloadListItem;
-            DownloadList.Remove(selected);
-            var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-            UserLibrary.DownloadList.Update(dwL);
+        public void Download() => _downloadManager.Download();
+        public void PauseResumeDownload() => _downloadManager.PauseResumeDownload();
+        public void StopDownload() => _downloadManager.StopDownload();
+        public void ExcludeItem() => _downloadManager.ExcludeFromDownloadList(_downloadListViewModel.ActualDownload);
+
+        private void ShowMessage(string message) {
+            var previousMessage = _downloadListViewModel.Message;
+            if (string.IsNullOrEmpty(previousMessage)) {
+                _downloadListViewModel.Message = $"{DateTime.Now} - {message}";
+            }else {
+                _downloadListViewModel.Message = $"{previousMessage}" +
+                    $"{Environment.NewLine}{DateTime.Now} - {message}";
+            }
         }
 
-        public void Clearlist() {
-            DownloadList.Clear();
-            var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-            UserLibrary.DownloadList.Update(dwL);
+        private void OnDownloadChapterStart(object sender, ProgressEventArgs ev) {
+            Task.Run(async () => {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    _chapterList.ScrollIntoView(ev.Item.LastDownloadedChapter);
+                    _chapterList.SelectedItem = ev.Item.LastDownloadedChapter;
+                    
+
+                    _progressBars[0].Maximum = ev.Total;
+                    _progressBars[0].Value = ev.NumAtual;
+                    _progressBars[1].Value = 0;
+
+                    _downloadList.UpdateLayout();
+                });
+            });
         }
 
-        public void OrderByName() {
-            var listOrder = DownloadList.OrderBy(c => c.Hq.Title).ToList();
-            DownloadList = new ObservableCollection<DownloadListItem>(listOrder);
-            var dwL = new DownloadList { Id = 1, List = DownloadList.ToBytes() };
-            UserLibrary.DownloadList.Update(dwL);
+        private void OnDownloadProgress(object sender, ProgressEventArgs ev) {
+            Task.Run(async () => {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    
+                    _progressBars[1].Maximum = ev.Total;
+                    _progressBars[1].Value = ev.NumAtual;
+
+                    _downloadList.UpdateLayout();
+                });
+            });
         }
 
-        public void PauseResume(bool paused) => DownloadManager.PauseResumeDownload(paused);
+        private void OnDonwloadEnd(object sender, DownloadEventArgs ev) {
+            Task.Run(async () => {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+
+                });
+            });
+        }
+
+        private void OnDownloadStart(object sender, DownloadEventArgs ev) {
+            Task.Run(async () => {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    _downloadListViewModel.ActualDownload = ev.Item;
+                    _downloadList.ScrollIntoView(ev.Item);
+                    var template = _downloadList.ContainerFromItem(ev.Item);
+                    _progressBars = _controllerHelper.FindIn<ProgressBar>(template);
+                });
+            });
+        }
     }
 }

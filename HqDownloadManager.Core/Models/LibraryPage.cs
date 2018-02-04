@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace HqDownloadManager.Core.Models {
     public class LibraryPage {
+        public string Link { get; set; }
         public string FinalizedPage { get; set; }
         public string NextPage { get; set; }
         public List<Hq> Hqs { get; set; }

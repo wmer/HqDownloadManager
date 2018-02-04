@@ -11,9 +11,7 @@ namespace HqDownloadManager.Core.Sources {
         Hq GetHqInfo(String link);
         Chapter GetChapterInfo(String link);
         LibraryPage GetLibrary(String linkPage);
-        List<Update> GetUpdates(String updatePage);
-
-        event ProcessingEventHandler ProcessingProgress;
-        event ProcessingErrorEventHandler ProcessingError;
+        List<Update> GetUpdates(string url);
+        
     }
 }

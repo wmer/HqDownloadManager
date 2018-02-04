@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace HqDownloadManager.Core.Models {
     public class Chapter : ModelBase, IComparable<Chapter> {
-        public List<Page> Pages { get; set; }
+        public virtual Hq Hq { get; set; }
+        public virtual List<Page> Pages { get; set; }
 
         public int CompareTo(Chapter other) {
             return Pages.Count().CompareTo(other.Pages.Count());

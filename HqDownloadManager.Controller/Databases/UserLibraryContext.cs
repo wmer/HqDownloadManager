@@ -12,8 +12,8 @@ using Windows.Storage;
 
 namespace HqDownloadManager.Controller.Databases {
     public class UserLibraryContext : LibraryContext {
-        public Repository<UserPreferences> UserPreferences { get; set; }
-        public Repository<UserReading> UserReadings { get; set; }
-        public Repository<DownloadList> DownloadList { get; set; }
+        //public Repository<UserPreferences> UserPreferences { get; set; }
+        public Repository<ReaderViewModel> UserReadings { get; set; }
+        public Repository<DownloadListItem> DownloadList { get; set; }
     }
 }

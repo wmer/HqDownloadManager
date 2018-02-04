@@ -10,8 +10,6 @@ namespace HqDownloadManager.Core.Models {
         [PrimaryKey]
         public String Link { get; set; }
         public String Title { get; set; }
-        public string Path { get; set; }
-        public bool Downloaded { get; set; }
-        public bool Read { get; set; }
+        public DateTime TimeInCache { get; set; }
     }
 }

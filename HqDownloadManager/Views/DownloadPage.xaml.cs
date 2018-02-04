@@ -20,24 +20,21 @@ namespace HqDownloadManager.Views {
     /// <summary>
     /// Uma página vazia que pode ser usada isoladamente ou navegada dentro de um Quadro.
     /// </summary>
-    public sealed partial class DownloadPage : DownloadController {
-        private bool _paused = false;
-
-        public DownloadPage() {
+    public sealed partial class DownloadPage : Page {
+        private DownloadController _controller;
+        public DownloadPage(DownloadController controller) {
+            _controller = controller;
             this.InitializeComponent();
+            this.Loaded += _controller.OnLoaded;
         }
 
-        private void BtnInitDownload_Click(object sender, RoutedEventArgs e) => Download();
+        private void BtnInitDownload_Click(object sender, RoutedEventArgs e) => _controller.Download();
 
-        private void BtnPauseDownload_Click(object sender, RoutedEventArgs e) {
-            _paused = !_paused;
-            PauseResume(_paused);
-        }
+        private void BtnPauseDownload_Click(object sender, RoutedEventArgs e) => _controller.PauseResumeDownload();
 
-        private void Erase_Click(object sender, RoutedEventArgs e) => RemoveFromList();
+        private void BtnStopDownload_Click(object sender, RoutedEventArgs e) => _controller.StopDownload();
 
-        private void BtnEraseList_Click(object sender, RoutedEventArgs e) => Clearlist();
+        private void Deleteitem_Click(object sender, RoutedEventArgs e) => _controller.ExcludeItem();
 
-        private void BtnOrdenar_Click(object sender, RoutedEventArgs e) => OrderByName();
     }
 }

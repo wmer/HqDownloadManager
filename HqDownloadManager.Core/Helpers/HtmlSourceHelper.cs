@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace HqDownloadManager.Core.Helpers {
-    internal class HtmlSourceHelper {
+    public class HtmlSourceHelper {
         private Object lockThis = new Object();
         private Object lockThis2 = new Object();
 

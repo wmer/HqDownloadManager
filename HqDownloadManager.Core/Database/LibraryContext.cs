@@ -12,6 +12,8 @@ namespace HqDownloadManager.Core.Database {
         }
 
         public Repository<Cache> Cache { get; set; }
-        public Repository<HqModel> Hq { get; set; }
+        public Repository<Hq> Hq { get; set; }
+        public Repository<Chapter> Chapter { get; set; }
+        public Repository<Page> Page { get; set; }
     }
 }

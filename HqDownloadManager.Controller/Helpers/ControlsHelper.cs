@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace HqDownloadManager.Controller.Helpers {
     public class ControlsHelper {
@@ -14,6 +15,10 @@ namespace HqDownloadManager.Controller.Helpers {
                 element = elW;
             } else if (FindInCurrentPage<T>(name) is T elP) {
                 element = elP;
+            } else if (FindChildControl<T>(GetCurrentPage(), name) is T elC) {
+                element = elC;
+            } else if (FindChildControl<T>(GetMainPage(), name) is T elCM) {
+                element = elCM;
             }
             return element;
         }
@@ -37,6 +42,35 @@ namespace HqDownloadManager.Controller.Helpers {
             }
 
             return resource;
+        }
+
+        public T FindIn<T>(DependencyObject control, string name) where T: DependencyObject {
+            T element = default(T);
+            try {
+                if (FindChildControl<T>(control, name) is T elC) {
+                    element = elC;
+                }
+            } catch {
+                // ignored
+            }
+            return element;
+        }
+
+        public List<T> FindIn<T>(DependencyObject control) where T : DependencyObject {
+            var list = new List<T>();
+            int childNumber = VisualTreeHelper.GetChildrenCount(control);
+            for (int i = 0; i < childNumber; i++) {
+                DependencyObject child = VisualTreeHelper.GetChild(control, i);
+
+                if (child is T c) {
+                    list.Add(c);
+                } else {
+                    list.AddRange(FindIn<T>(child));
+                }
+
+            }
+
+            return list;
         }
 
         private T FindInMainPage<T>(string name) where T : UIElement {
@@ -63,6 +97,27 @@ namespace HqDownloadManager.Controller.Helpers {
                 page = frame.Content as Page;
             }
             return page;
+        }
+
+        private DependencyObject FindChildControl<T>(DependencyObject control, string ctrlName) {
+            int childNumber = VisualTreeHelper.GetChildrenCount(control);
+            for (int i = 0; i < childNumber; i++) {
+                DependencyObject child = VisualTreeHelper.GetChild(control, i);
+                FrameworkElement fe = child as FrameworkElement;
+                if (fe == null) return null;
+                if (fe.Name == ctrlName) {
+                    return child;
+                }
+
+                if (child is T && fe.Name == ctrlName) {
+                    return child;
+                } else {
+                    DependencyObject nextLevel = FindChildControl<T>(child, ctrlName);
+                    if (nextLevel != null)
+                        return nextLevel;
+                }
+            }
+            return null;
         }
     }
 }

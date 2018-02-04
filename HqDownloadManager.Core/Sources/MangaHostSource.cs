@@ -10,44 +10,86 @@ using HqDownloadManager.Core.CustomEventArgs;
 using HqDownloadManager.Core.Database;
 
 namespace HqDownloadManager.Core.Sources {
-    internal class MangaHostSource : HqSource {
+    public class MangaHostSource : HqSource {
 
         public MangaHostSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext, htmlHelper, browserHelper) {
         }
 
-        public override List<Update> GetUpdates(String updatePage) {
+        public List<Hq> Search(string hqTitle) {
+            lock (Lock8) {
+                var result = new List<Hq>();
+                hqTitle = hqTitle.Replace(" ", "+");
+                var linkSearch = $"https://mangahost.cc/find/{hqTitle}";
+                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
+                //var driver = BrowserHelper.GetDriver(linkSearch);
+                //var pageSource = driver.PageSource;
+                //OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
+                IDocument source = HtmlHelper.GetSourceCodeFromUrl(linkSearch);
+
+                var hqsEl = source.QuerySelectorAll(".table-search tr");
+                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{hqsEl.Count()} mangas encontrados!"));
+                if (hqsEl.Count() > 0) {
+                    foreach (var hqEl in hqsEl) {
+                        var title = hqEl.QuerySelector("td h3.entry-title")?.TextContent;
+                        if (!string.IsNullOrEmpty(title)) {
+                            title = title.Replace("(BR)", "").Trim();
+                            var sinopse = hqEl.QuerySelector("td div.entry-content")?.TextContent;
+                            var img = hqEl.QuerySelector("td a img.manga")?.GetAttribute("src");
+                            var link = hqEl.QuerySelector("td h3.entry-title a")?.GetAttribute("href");
+                            if (!string.IsNullOrEmpty(link)) {
+                                result.Add(new Hq { Link = link, Title = title, Synopsis = sinopse, CoverSource = img });
+                            }
+                        }
+                    }
+                } else {
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Não foi encontrado resultados!"));
+                }
+
+                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
+                return result;
+            }
+        }
+
+        public override List<Update> GetUpdates(string url) {
             lock (Lock7) {
                 try {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
-                    var source = HtmlHelper.GetSourceCodeFromUrl(updatePage);
+                    var driver = BrowserHelper.GetDriver(url);
+                    var pageSource = driver.PageSource;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
+                    IDocument source = HtmlHelper.GetSourceCodeFromHtml(pageSource);
+                    driver.Quit();
                     var updates = new List<Update>();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
                     var updatesEl = source.QuerySelectorAll(".table-lancamentos tr");
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{updatesEl.Count()} mangas encontrados!"));
                     foreach (var update in updatesEl) {
                         var title = update.QuerySelector("td h3.entry-title")?.TextContent;
-                        var img = update.QuerySelector("td a img")?.GetAttribute("src");
-                        var link = update.QuerySelector("td h3.entry-title a")?.GetAttribute("href");
-                        var chaptersEl = update.QuerySelectorAll(".chapters a.btn");
-                        if (!string.IsNullOrEmpty(link)) {
-                            var chapters = new List<Chapter>();
-                            foreach (var chap in chaptersEl) {
-                                var chapterTitle = chap.GetAttribute("href");
-                                var chapterLink = chap.GetAttribute("title");
-                                chapters.Add(new Chapter { Link = chapterLink, Title = chapterTitle });
+                        if (!string.IsNullOrEmpty(title)) {
+                            title = title.Replace("(BR)", "").Trim();
+                            var img = update.QuerySelector("td a img.manga")?.GetAttribute("src");
+                            var link = update.QuerySelector("td h3.entry-title a")?.GetAttribute("href");
+                            var chaptersEl = update.QuerySelectorAll(".chapters a.btn");
+                            if (!string.IsNullOrEmpty(link)) {
+                                var chapters = new List<Chapter>();
+                                foreach (var chap in chaptersEl) {
+                                    var chapterTitle = chap.GetAttribute("title");
+                                    var chapterLink = chap.GetAttribute("href");
+                                    chapters.Add(new Chapter { Link = chapterLink, Title = chapterTitle });
+                                }
+                                var up = new Update {
+                                    Hq = new Hq { Link = link, Title = title, CoverSource = img },
+                                    Chapters = chapters
+                                };
+                                updates.Add(up);
+                                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, up.Hq, $"{title} Adicionado"));
                             }
-                            var up = new Update { Hq = new Hq { Link = link, Title = title, CoverSource = img },
-                             Chapters = chapters
-                            };
-                            updates.Add(up);
-                            OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, up.Hq, $"{title} Adicionado"));
-                        }
+                        }                  
                     }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
                     return updates;
                 } catch (Exception e) {
-                    OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, updatePage, e));
+                    OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, url, e));
                     return null;
                 }
             }
@@ -56,10 +98,13 @@ namespace HqDownloadManager.Core.Sources {
         public override LibraryPage GetLibrary(String linkPage) {
             lock (Lock6) {
                 try {
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, "Processando os Mangas..."));
-                    var source = HtmlHelper.GetSourceCodeFromUrl(linkPage);
-
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
+                    var driver = BrowserHelper.GetDriver(linkPage);
+                    var pageSource = driver.PageSource;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
+                    IDocument source = HtmlHelper.GetSourceCodeFromHtml(pageSource);
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
+                    driver.Quit();
 
                     var hqs = new List<Hq>();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
@@ -93,7 +138,8 @@ namespace HqDownloadManager.Core.Sources {
                     }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
                     return new LibraryPage {
-                        Hqs = hqs, NextPage = nextPage, FinalizedPage = finalizedPage, Letras = letherLink
+                        Link = linkPage, Hqs = hqs, NextPage = nextPage,
+                        FinalizedPage = finalizedPage, Letras = letherLink
                     };
                 } catch (Exception e) {
                     OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, linkPage, e));

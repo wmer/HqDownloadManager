@@ -11,5 +11,6 @@ namespace HqDownloadManager.Download.Databases
 {
     public class DownloadContext : LibraryContext {
         public Repository<HqDownloadInfo> HqDownloadInfo { get; set; }
+        public Repository<DownloadItem> DownloadList { get; set; }
     }
 }

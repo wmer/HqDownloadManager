@@ -14,8 +14,6 @@ namespace HqDownloadManager.FollowUpdate.Helpers {
         private readonly FollowContext _context;
         private readonly SourceManager _sourceManager;
 
-        public event FollowEventHandler FollowingHq;
-
         public FollowHelper(FollowContext context, SourceManager sourceManager) {
             this._context = context;
             this._sourceManager = sourceManager;
@@ -27,34 +25,15 @@ namespace HqDownloadManager.FollowUpdate.Helpers {
 
         public void FollowHq(Hq hq) {
             lock (_lock1) {
-                hq.Followed = true;
-                var hqBytes = hq.ToBytes();
-                var dInfo = new FollowedHq {
-                    Link = hq.Link,
-                    Time = DateTime.Now,
-                    Hq = hqBytes
-                };
-                if (_context.FollowedHq.FindOne(hq.Link) != null) {
-                    _context.FollowedHq.Update(dInfo);
-                } else {
-                    _context.FollowedHq.Save(dInfo);
-                    _context.Hq.Update(x => new { x.Hq }, hqBytes)
-                                                          .Where(x => x.Link == hq.Link).Execute();
-                }
-                FollowingHq(this, new FollowEventArgs(hq, DateTime.Now));
+                _context.Hq.Update(x => new { x.Followed }, true)
+                                                         .Where(x => x.Link == hq.Link).Execute();
+                FollowUpdateEventHub.OnFollowingHq(this, new FollowEventArgs(hq, DateTime.Now));
             }
         }
 
-        public FollowedHq GetFollowedHq(string link) {
-            lock (_lock2) {
-                return _context.FollowedHq.FindOne(link);
-            }
-        }
+        public Hq GetFollowedHq(string link) => _context.Hq.FindOne(link);
 
-        public List<FollowedHq> GetAllFollowedHqs() {
-            lock (_lock3) {
-                return _context.FollowedHq.FindAll();
-            }
-        }
+        public List<Hq> GetAllFollowedHqs() =>
+                     _context.Hq.Find().Where(x => x.Followed == true).Execute();
     }
 }

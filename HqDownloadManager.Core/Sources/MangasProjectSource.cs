@@ -18,26 +18,27 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium;
 
 namespace HqDownloadManager.Core.Sources {
-    internal class MangasProjectSource : HqSource {
+    public class MangasProjectSource : HqSource {
         private string BaseAdress { get; set; }
 
         public MangasProjectSource(LibraryContext libraryContext, HtmlSourceHelper htmlHelper, BrowserHelper browserHelper) : base(libraryContext, htmlHelper, browserHelper) {
         }
 
-        public override List<Update> GetUpdates(String updatePage) {
+        public override List<Update> GetUpdates(string url) {
             lock (Lock1) {
                 try {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
-                    Uri site = new Uri(updatePage);
+                    Uri site = new Uri(url);
                     BaseAdress = $"{site.Scheme}://{site.Host}";
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Abrindo Internet Explorer"));
-                    var driver = BrowserHelper.GetDriver(updatePage);
-                    Task.Delay(500).Wait();
+                    var driver = BrowserHelper.GetDriver(url);
+                    
+                    Task.Delay(20000).Wait();
                     var loadcMore = driver.FindElement(By.CssSelector("a.loadmore"));
                     loadcMore.Click();
-                    Task.Delay(500).Wait();
+                    Task.Delay(20000).Wait();
                     loadcMore.Click();
-                    Task.Delay(500).Wait();
+                    Task.Delay(20000).Wait();
                     var pageSource = driver.PageSource;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     IDocument source = HtmlHelper.GetSourceCodeFromHtml(pageSource);
@@ -48,36 +49,39 @@ namespace HqDownloadManager.Core.Sources {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"{updatesEl.Count()} mangas encontrados!"));
                     foreach (var update in updatesEl) {
                         var title = update.QuerySelector(".lancamento-title")?.TextContent;
-                        var imgEl = update.QuerySelector(".cover-image")?.GetAttribute("style");
-                        imgEl = imgEl?.Replace("background-image: url(", "");
-                        imgEl = imgEl?.Replace(")", "");
-                        imgEl = imgEl?.Replace("'", "");
-                        imgEl = imgEl?.Replace("\"", "");
-                        var img = imgEl?.Replace(";", "");
-                        OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados de {title}"));
-                        var link = update.QuerySelector(".lancamento-desc a")?.GetAttribute("href");
+                        if (!string.IsNullOrEmpty(title)) {
+                            title = title.Replace("(BR)", "").Trim();
+                            var imgEl = update.QuerySelector(".cover-image")?.GetAttribute("style");
+                            imgEl = imgEl?.Replace("background-image: url(", "");
+                            imgEl = imgEl?.Replace(")", "");
+                            imgEl = imgEl?.Replace("'", "");
+                            imgEl = imgEl?.Replace("\"", "");
+                            var img = imgEl?.Replace(";", "");
+                            OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados de {title}"));
+                            var link = update.QuerySelector(".lancamento-desc a")?.GetAttribute("href");
 
-                        var chaptersEl = update.QuerySelectorAll(".lancamento-list li a");
-                        if (!string.IsNullOrEmpty(link)) {
-                            var chapters = new List<Chapter>();
-                            foreach (var chap in chaptersEl) {
-                                var chapterTitle = chap.GetAttribute("href");
-                                var chapterLink = chap.GetAttribute("title");
-                                chapters.Add(new Chapter { Link = $"{BaseAdress}{chapterLink}", Title = chapterTitle });
+                            var chaptersEl = update.QuerySelectorAll(".lancamento-list li a");
+                            if (!string.IsNullOrEmpty(link)) {
+                                var chapters = new List<Chapter>();
+                                foreach (var chap in chaptersEl) {
+                                    var chapterTitle = chap.GetAttribute("title");
+                                    var chapterLink = chap.GetAttribute("href");
+                                    chapters.Add(new Chapter { Link = $"{BaseAdress}{chapterLink}", Title = chapterTitle });
+                                }
+                                var up = new Update {
+                                    Hq = new Hq { Link = $"{BaseAdress}{link}", Title = title, CoverSource = img },
+                                    Chapters = chapters
+                                };
+                                updates.Add(up);
+                                OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, up.Hq, $"{title} Adicionado"));
                             }
-                            var up = new Update {
-                                Hq = new Hq { Link = $"{BaseAdress}{link}", Title = title, CoverSource = img },
-                                Chapters = chapters
-                            };
-                            updates.Add(up);
-                            OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, up.Hq, $"{title} Adicionado"));
-                        }
+                        }                      
                     }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
                     return updates;
                 } catch (Exception e) {
-                    OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, updatePage, e));
-                    return null;
+                    OnProcessingProgressError(new ProcessingErrorEventArgs(DateTime.Now, url, e));
+                    return new List<Update>();
                 }
             }
         }
@@ -139,7 +143,7 @@ namespace HqDownloadManager.Core.Sources {
                     }
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Tudo pronto"));
                     return new LibraryPage {
-                        Hqs = hqs, NextPage = $"{BaseAdress}{nextPage}",
+                        Link = linkPage, Hqs = hqs, NextPage = $"{BaseAdress}{nextPage}",
                         FinalizedPage = $"{BaseAdress}{finalizedPage}", Letras = letherLink
                     };
                 } catch (Exception e) {

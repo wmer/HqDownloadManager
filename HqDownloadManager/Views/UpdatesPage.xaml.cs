@@ -1,4 +1,6 @@
 ﻿using HqDownloadManager.Controller;
+using HqDownloadManager.Controller.ViewModel.HqStatus;
+using HqDownloadManager.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,27 +22,33 @@ namespace HqDownloadManager.Views {
     /// <summary>
     /// Uma página vazia que pode ser usada isoladamente ou navegada dentro de um Quadro.
     /// </summary>
-    public sealed partial class UpdatesPage : UpdatesController {
-        public UpdatesPage() {
+    public sealed partial class UpdatesPage : Windows.UI.Xaml.Controls.Page {
+        private SourceUpdateController _controller;
+
+        public UpdatesPage(SourceUpdateController controller) {
+            _controller = controller;
             this.InitializeComponent();
-            Unloaded += OnUnloaded;
+            this.Loaded += UpdatesPage_Loaded;
         }
 
-        public override void OnLoaded(object sender, RoutedEventArgs e) {
-            base.OnLoaded(sender, e);
-            ShowHqUpdates();
+        private void UpdatesPage_Loaded(object sender, RoutedEventArgs e) => _controller.OnLoaded(sender, e);
+
+        private void GridView_ItemClick(object sender, ItemClickEventArgs e) => _controller.OpenDetails((e.ClickedItem as Update).Hq);
+
+        private void Button_Click(object sender, RoutedEventArgs e) => DetailsManga.IsPaneOpen = false;
+
+        private void AddAll_Click(object sender, RoutedEventArgs e) => _controller.AddToDownloadList();
+
+        private void AddSelected_Click(object sender, RoutedEventArgs e) => _controller.AddSelectedsToDownload();
+
+        private void BtnDownloadUpdates_Click(object sender, RoutedEventArgs e) => _controller.Downloadupdates();
+
+        private void ReadUpdate_Click(object sender, RoutedEventArgs e) {
+
         }
 
-        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e) => ShowHqUpdates();
+        private void ReadNow_Click(object sender, RoutedEventArgs e) {
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e) => ActualizeItemSizeAndCollumns();
-
-        private async void GridView_ItemClick(object sender, ItemClickEventArgs e) => await OpenHqDetails<HqDetailsPage>();
-
-        private async void AddDownload_Click(object sender, RoutedEventArgs e) => await AddToDownloadList();
-
-        private async void Follow_Click(object sender, RoutedEventArgs e) => await FollowHq();
-
-        private void OnUnloaded(object sender, RoutedEventArgs e) => ClearList();
+        }
     }
 }

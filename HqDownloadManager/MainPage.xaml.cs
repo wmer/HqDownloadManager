@@ -31,7 +31,7 @@ namespace HqDownloadManager {
 
         private void Navigation_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
             if (args.IsSettingsInvoked) {
-               _navigationHelper.Navigate<ConfigurationPage>("Configuração");
+                //_navigationHelper.Navigate<ConfigurationPage>("Configuração");
             } else {
                 switch (args.InvokedItem) {
                     case "Atualizações":
@@ -43,9 +43,9 @@ namespace HqDownloadManager {
                     case "Meus Downloads":
                         _navigationHelper.Navigate<MyLibraryPage>("Meus Downloads");
                         break;
-                    case "Meus Favoritos":
-                        _navigationHelper.Navigate<FollowPage>("Meus Favoritos");
-                        break;
+                    //case "Meus Favoritos":
+                    //    _navigationHelper.Navigate<FollowPage>("Meus Favoritos");
+                    //    break;
 
                     case "Gerenciador de Download":
                         _navigationHelper.Navigate<DownloadPage>("Downloads");

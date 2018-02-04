@@ -1,5 +1,4 @@
 ﻿using HqDownloadManager.Controller;
-using HqDownloadManager.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,50 +20,15 @@ namespace HqDownloadManager.Views {
     /// <summary>
     /// Uma página vazia que pode ser usada isoladamente ou navegada dentro de um Quadro.
     /// </summary>
-    public sealed partial class MyLibraryPage : MyLibraryController {
-        public MyLibraryPage() {
+    public sealed partial class MyLibraryPage : Page {
+        private MyLibraryPageController _controoller;
+
+        public MyLibraryPage(MyLibraryPageController controoller) {
+            _controoller = controoller;
             this.InitializeComponent();
-            Unloaded += OnUnloaded;
+            this.Loaded += _controoller.OnLoaded;
         }
 
-        public override void OnLoaded(object sender, RoutedEventArgs e) {
-            base.OnLoaded(sender, e);
-            ShowReadings();
-            ShowDownloads();
-        }
-
-
-        private void ItemClick(object sender, ItemClickEventArgs e) => OpenHqDetails<DownloadDetails>();
-
-        private void OnUnloaded(object sender, RoutedEventArgs e) => ClearLists();
-
-        private void KeepReading_ItemClick(object sender, ItemClickEventArgs e) => KeepReading<HqReaderPage>(e.ClickedItem);
-
-        private void Erase_Click(object sender, RoutedEventArgs e) {
-            if (sender is MenuFlyoutItem menuFlyoutItem) {
-                if (menuFlyoutItem.DataContext is Hq selected) {
-                    DeleteHq(selected);
-                }
-            }
-        }
-
-        private void EraseAll_Click(object sender, RoutedEventArgs e) {
-            if (sender is FrameworkElement menuFlyoutItem) {
-                var lkjad = HqsDownloaded.SelectedItem;
-                if (menuFlyoutItem.DataContext is Hq selected) {
-                    DeleteHq(selected, true);
-                }
-            }
-        }
-
-        private void Follow_Click(object sender, RoutedEventArgs e) {
-
-        }
-
-        private void GetUpdates_Click(object sender, RoutedEventArgs e) {
-
-        }
-
-        private void HqsDownloaded_SelectionChanged(object sender, SelectionChangedEventArgs e) => OpenHqDetails<DownloadDetails>();
+        private void HqLibraryGrid_ItemClick(object sender, ItemClickEventArgs e) => _controoller.OpenDetails<DownloadDetailsPage>();
     }
 }

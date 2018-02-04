@@ -106,53 +106,48 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationController.cs" />
-    <Compile Include="ControllerBase.cs" />
+    <Compile Include="CustomEvents\NavigationEventArgs.cs" />
+    <Compile Include="CustomEvents\NavigationEventHub.cs" />
     <Compile Include="Databases\UserLibraryContext.cs" />
     <Compile Include="DownloadController.cs" />
     <Compile Include="DownloadDetailsController.cs" />
-    <Compile Include="DownloadEventController.cs" />
-    <Compile Include="FollowController.cs" />
     <Compile Include="Helpers\ControlsHelper.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
-    <Compile Include="HqDetailsController.cs" />
     <Compile Include="HqReaderController.cs" />
-    <Compile Include="ListHqControllerBase.cs" />
-    <Compile Include="Models\DownloadList.cs" />
     <Compile Include="Models\DownloadListItem.cs" />
     <Compile Include="Models\FollowItem.cs" />
     <Compile Include="Models\SourceLink.cs" />
     <Compile Include="Models\UserPreferences.cs" />
     <Compile Include="Models\UserReading.cs" />
-    <Compile Include="MyLibraryController.cs" />
+    <Compile Include="MyLibraryPageController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SourceControllerBase.cs" />
     <Compile Include="SourceLibraryController.cs" />
-    <Compile Include="UpdatesController.cs" />
-    <Compile Include="ViewModel\ComboBox\ComboBoxViewModelBase.cs" />
-    <Compile Include="ViewModel\ComboBox\LibrarySource.cs" />
-    <Compile Include="ViewModel\ComboBox\UpdateSource.cs" />
-    <Compile Include="ViewModel\ConfigurationPage\UserPreferencesViewModel.cs" />
-    <Compile Include="ViewModel\DownloadPage\DownloadListViewModel.cs" />
-    <Compile Include="ViewModel\DownloadPage\DownloadPageViewModel.cs" />
-    <Compile Include="ViewModel\Follows\FollowUpdatesViewModel.cs" />
-    <Compile Include="ViewModel\HqDetails\HqViewModel.cs" />
+    <Compile Include="SourceUpdateController.cs" />
+    <Compile Include="ViewModel\ComboBox\HqSourceLibrarySelectorViewModel.cs" />
+    <Compile Include="ViewModel\Details\DetailsViewModel.cs" />
+    <Compile Include="ViewModel\Download\DownloadListViewModel.cs" />
+    <Compile Include="ViewModel\HqStatus\HqStatusViewModel.cs" />
     <Compile Include="ViewModel\MainPage\NavigationViewModel.cs" />
-    <Compile Include="ViewModel\MyLibrary\DownloadDetailsViewModel.cs" />
-    <Compile Include="ViewModel\MyLibrary\KeepReadingViewModel.cs" />
+    <Compile Include="ViewModel\MyDownloads\DownloadDetailsViewModel.cs" />
+    <Compile Include="ViewModel\MyDownloads\EditDownloadViewModel.cs" />
+    <Compile Include="ViewModel\MyDownloads\MyLibraryViewModel.cs" />
     <Compile Include="ViewModel\Reader\ReaderViewModel.cs" />
-    <Compile Include="ViewModel\Shared\HqListViewModel.cs" />
     <Compile Include="ViewModel\Shared\NotificationViewModel.cs" />
+    <Compile Include="ViewModel\SourceLibrary\SourceLibraryViewModel.cs" />
+    <Compile Include="ViewModel\SourceUpdate\SourceUpdateViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <EmbeddedResource Include="Properties\HqDownloadManager.Controller.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.1</Version>
+      <Version>6.0.5</Version>
+    </PackageReference>
+    <PackageReference Include="WinRTXamlToolkit.UWP">
+      <Version>2.3.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModel\UpdatesPage\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj">
       <Project>{7b9a81f5-8004-4def-bc69-c9e390881448}</Project>
@@ -174,9 +169,9 @@
       <Project>{177f41d2-b3c4-425a-ab50-ef33df16ff8a}</Project>
       <Name>HqDownloadManager.Download</Name>
     </ProjectReference>
-    <ProjectReference Include="..\HqDownloadManager.FollowUpdate\HqDownloadManager.FollowUpdate.csproj">
-      <Project>{a09df8ff-3173-4be3-8aa2-e14bf858815f}</Project>
-      <Name>HqDownloadManager.FollowUpdate</Name>
+    <ProjectReference Include="..\HqManager\HqManager.csproj">
+      <Project>{045f301c-4bcc-46c7-be0d-5fb66d09e75a}</Project>
+      <Name>HqManager</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

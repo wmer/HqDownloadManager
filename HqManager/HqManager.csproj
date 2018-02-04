@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\Reflection.Optimization\Reflection.Optimization\Reflection.Optimization.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\Utils\Utils\Utils.csproj" />
+    <ProjectReference Include="..\HqDownloadManager.Core\HqDownloadManager.Core.csproj" />
+  </ItemGroup>
+
+</Project>

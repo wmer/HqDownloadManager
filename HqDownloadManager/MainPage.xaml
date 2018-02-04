@@ -21,8 +21,8 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Clock" Content="Atualizações" Tag="updates"/>
                 <NavigationViewItem Icon="AllApps"  Content="Todos as Hqs" Tag="allHqs"/>
-                <NavigationViewItem Icon="Library" Content="Meus Downloads" Tag="myDownloads"/>
-                <NavigationViewItem Icon="Favorite" Content="Meus Favoritos" Tag="myDownloads"/>
+                <NavigationViewItem Icon="Library" Content="Meus Downloads" Tag="myLibrary"/>
+                <NavigationViewItem Icon="Favorite" Content="Meus Favoritos" Tag="myFavorites"/>
                 <NavigationViewItem Icon="Download" Content="Gerenciador de Download" Tag="myDownloads"/>
             </NavigationView.MenuItems>
             <NavigationView.HeaderTemplate>
