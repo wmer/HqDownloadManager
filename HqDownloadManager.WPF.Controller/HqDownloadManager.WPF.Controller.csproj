@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9F26CCCE-1DFA-41D1-B41D-4D646938FC06}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HqDownloadManager.WPF.Controller</RootNamespace>
+    <AssemblyName>HqDownloadManager.WPF.Controller</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Aero">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConfigurationController.cs" />
+    <Compile Include="DownloadController.cs" />
+    <Compile Include="DownloadDetailsController.cs" />
+    <Compile Include="HqReaderController.cs" />
+    <Compile Include="MyLibraryController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SourceControllerBase.cs" />
+    <Compile Include="SourceLibraryController.cs" />
+    <Compile Include="SourceUpdatesController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj">
+      <Project>{0814704c-97b3-418a-b789-22583c4cd25e}</Project>
+      <Name>DependencyInjectionResolver</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\NetStandard\Reflection.Optimization\Reflection.Optimization\Reflection.Optimization.csproj">
+      <Project>{7b9d547d-97c9-40d0-9226-a85b08909ae7}</Project>
+      <Name>Reflection.Optimization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj">
+      <Project>{b6b3785e-9c5f-43ca-912a-21b5b093e4d1}</Project>
+      <Name>Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\NetStandard\Utils\Utils\Utils.csproj">
+      <Project>{918f6edb-f7e6-4b32-b368-3033a385c66d}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WPF.Tools\WPF.Tools.Navigation\WPF.Tools.Navigation.csproj">
+      <Project>{65d311b6-297c-4ad0-88dc-fa2e9d551ba4}</Project>
+      <Name>WPF.Tools.Navigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WPF.Tools\WPF.Tools.Xaml\WPF.Tools.Xaml.csproj">
+      <Project>{086c8fd9-5b8e-430b-98bd-007b715ce8ad}</Project>
+      <Name>WPF.Tools.Xaml</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HqDownloadManager.Core\HqDownloadManager.Core.csproj">
+      <Project>{4d121573-6788-4feb-aeb1-2abcd4e9ace9}</Project>
+      <Name>HqDownloadManager.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HqDownloadManager.Download\HqDownloadManager.Download.csproj">
+      <Project>{45cb9237-a838-43b8-8fa8-a8a43e8df19b}</Project>
+      <Name>HqDownloadManager.Download</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HqDownloadManager.Shared\HqDownloadManager.Shared.csproj">
+      <Project>{289b2866-a07c-4bf1-947f-53af9d7f7864}</Project>
+      <Name>HqDownloadManager.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HqManager\HqManager.csproj">
+      <Project>{045f301c-4bcc-46c7-be0d-5fb66d09e75a}</Project>
+      <Name>HqManager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

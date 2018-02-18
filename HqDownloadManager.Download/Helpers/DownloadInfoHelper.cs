@@ -13,6 +13,8 @@ using HqDownloadManager.Core.Configuration;
 using HqDownloadManager.Core.Helpers;
 using HqDownloadManager.Core.CustomEventArgs;
 using System.Text.RegularExpressions;
+using System.Threading;
+using HqDownloadManager.Download.Configuration;
 
 namespace HqDownloadManager.Download.Helpers {
     internal class DownloadInfoHelper {
@@ -55,45 +57,44 @@ namespace HqDownloadManager.Download.Helpers {
             lock (_lock3) {
                 CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Processando arquivos..."));
                 var list = new List<HqDownloadInfo>();
-                var drInfo = new DirectoryInfo($"{CoreConfiguration.DownloadLocation}\\Hqs");
-                if (drInfo != null) {
-                    var dirs = drInfo.GetDirectories();
-                    if (dirs != null && dirs.Count() > 0) {
-                        CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"{dirs.Count()} diretoórios encontrados"));
-                        foreach (var dir in dirs) {
-                            var downloadInfo = new HqDownloadInfo();
-                            CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {dir.Name}"));
-                            if (_downloadContext.HqDownloadInfo.Find().Where(x => x.Path == dir.FullName).Execute().FirstOrDefault() is HqDownloadInfo dwIfo) {
-                                downloadInfo = dwIfo;
-                            } else if (File.Exists($"{dir.FullName}\\DownloadInfo.Json")) {
-                                using (StreamReader file = File.OpenText($"{dir.FullName}\\DownloadInfo.Json")) {
-                                    JsonSerializer serializer = new JsonSerializer();
-                                    downloadInfo = (HqDownloadInfo)serializer.Deserialize(file, typeof(HqDownloadInfo));
-                                }
-                                if (!string.IsNullOrEmpty(downloadInfo.Hq.Link)) {
-                                    if (!(_downloadContext.Hq.FindOne(downloadInfo.Hq.Link) is Hq)) {
-                                        downloadInfo.Hq.IsDetailedInformation = false;
-                                        _downloadContext.Hq.Save(downloadInfo.Hq);
+                foreach (var loc in DownloadConfiguration.DownloadLocations) {
+                    var drInfo = new DirectoryInfo(loc);
+                    if (drInfo != null) {
+                        var dirs = drInfo.GetDirectories();
+                        if (dirs != null && dirs.Count() > 0) {
+                            CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"{dirs.Count()} diretoórios encontrados"));
+                            foreach (var dir in dirs) {
+                                var downloadInfo = new HqDownloadInfo();
+                                CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {dir.Name}"));
+                                if (File.Exists($"{dir.FullName}\\DownloadInfo.Json")) {
+                                    using (StreamReader file = File.OpenText($"{dir.FullName}\\DownloadInfo.Json")) {
+                                        JsonSerializer serializer = new JsonSerializer();
+                                        downloadInfo = (HqDownloadInfo)serializer.Deserialize(file, typeof(HqDownloadInfo));
                                     }
-                                    _downloadContext.HqDownloadInfo.Save(downloadInfo);
+                                    if (!string.IsNullOrEmpty(downloadInfo.Hq.Link)) {
+                                        if (_downloadContext.Hq.Find().Where(x => x.Link == downloadInfo.Hq.Link).Execute().FirstOrDefault() is Hq hq) {
+                                            downloadInfo.Hq = hq;
+                                            _downloadContext.HqDownloadInfo.Save(downloadInfo);
+                                        }
+                                    }
+                                } else {
+                                    var hq = new Hq {
+                                        Title = dir.Name
+                                    };
+                                    downloadInfo = new HqDownloadInfo {
+                                        Hq = hq, Path = dir.FullName
+                                    };
                                 }
-                            } else {
-                                var hq = new Hq {
-                                    Title = dir.Name
-                                };
-                                downloadInfo = new HqDownloadInfo {
-                                    Hq = hq, Path = dir.FullName
-                                };
-                            }
 
-                            CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"{downloadInfo.Hq.Title} adicionado!"));
-                            list.Add(downloadInfo);
+                                if (downloadInfo != null && downloadInfo.Hq != null) {
+                                    CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"{downloadInfo.Hq.Title} adicionado!"));
+                                    list.Add(downloadInfo);
+                                }
+                            }
                         }
                     }
                 }
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+                
                 return list;
             }
         }
@@ -104,6 +105,7 @@ namespace HqDownloadManager.Download.Helpers {
                 var subDirInfo = new DirectoryInfo(downloadInfo.Path);
                 if (subDirInfo != null) {
                     var subDirs = subDirInfo.GetDirectories();
+                    var index = 1;
                     if (subDirs != null && subDirs.Count() > 0) {
                         foreach (var chapDir in subDirs) {
                             CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Adiconando capitulo {chapDir.Name}..."));
@@ -118,7 +120,7 @@ namespace HqDownloadManager.Download.Helpers {
                                 return value;
                             });
 
-                            var chap = new Chapter { Title = chapName, Pages = new List<Page>() };
+                            var chap = new Chapter { Id= index, Title = chapName, Pages = new List<Page>() };
                             var pageFiles = chapDir.GetFiles();
                             if (pageFiles != null && pageFiles.Count() > 0) {
                                 foreach (var file in pageFiles) {
@@ -130,6 +132,7 @@ namespace HqDownloadManager.Download.Helpers {
                                     });
                                 }
                             }
+                            index++;
                             downloadInfo.Hq.Chapters.Add(chap);
                         }
 
@@ -137,9 +140,7 @@ namespace HqDownloadManager.Download.Helpers {
                         downloadInfo.LastDownloadedChapter = downloadInfo.Hq.Chapters.Last();
                     }
                 }
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+                
                 return downloadInfo;
             }
         }
@@ -151,9 +152,9 @@ namespace HqDownloadManager.Download.Helpers {
                 if (downloadInfo.Hq != null) {
                     _downloadContext.HqDownloadInfo.Delete(downloadInfo);
                     if (deleteFiles && !string.IsNullOrEmpty(downloadInfo.Path)) {
-                        Directory.Delete(downloadInfo.Path, true);
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
+                        Directory.Delete(downloadInfo.Path, true);
                     }
                 }
             }

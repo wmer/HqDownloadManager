@@ -1,16 +1,22 @@
-﻿using System;
+﻿using Repository.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace HqDownloadManager.Core.Models {
     public class Update {
-        public Hq Hq { get; set; }
-        public List<Chapter> Chapters { get; set; }
+        [PrimaryKey]
+        public virtual Hq Hq { get; set; }
+        public string Source { get; set; }
+        public DateTime TimeCache { get; set; }
+        public virtual List<Chapter> Chapters { get; set; }
 
         public override bool Equals(object obj) {
             if (obj.GetType() == typeof(Update)) {
                 var model = (Update)obj;
-                return Hq.Title == model.Hq.Title;
+                if (Hq != null && model.Hq != null) {
+                    return Hq.Title == model.Hq.Title;
+                }
             }
             return false;
         }

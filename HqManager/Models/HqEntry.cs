@@ -9,8 +9,7 @@ namespace HqManager.Models {
         [PrimaryKey]
         public virtual Hq Hq { get; set; }
         public string ReadStatus { get; set; }
-        [Required(false)]
-        public virtual Chapter LastChapterRead { get; set; }
+        public string LastChapterRead { get; set; }
         public double Score { get; set; }
         public string Review { get; set; }
         public DateTime StartedReading { get; set; }

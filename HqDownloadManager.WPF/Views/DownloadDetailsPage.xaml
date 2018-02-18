@@ -1,0 +1,636 @@
+﻿<Page x:Class="HqDownloadManager.WPF.Views.DownloadDetailsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:HqDownloadManager.WPF.Views"
+      xmlns:mydownloads="clr-namespace:HqDownloadManager.Shared.ViewModel.MyDownloads;assembly=HqDownloadManager.Shared"
+      xmlns:shared="clr-namespace:HqDownloadManager.Shared.ViewModel.Shared;assembly=HqDownloadManager.Shared"
+      xmlns:hqstatus="clr-namespace:HqDownloadManager.Shared.ViewModel.HqStatus;assembly=HqDownloadManager.Shared"
+      mc:Ignorable="d" 
+      Title="DownloadDetailsPage"
+      SizeChanged="Page_SizeChanged">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <mydownloads:DownloadDetailsViewModel x:Key="Details"  />
+        <shared:NotificationViewModel x:Key="Notification" />
+        <mydownloads:EditDownloadViewModel x:Key="Edit" />
+        <hqstatus:HqStatusViewModel x:Key="HqStatus" />
+    </Page.Resources>
+
+    <Grid
+        x:Name="Principal">
+        <ListView
+            x:Name="DownloadInfoChapters"
+            ItemsSource="{Binding DownloadInfo.Hq.Chapters, Source={StaticResource Details}}"
+            SelectedItem="{Binding SelectedChapter, Source={StaticResource Details}, Mode=TwoWay}"
+            ScrollViewer.VerticalScrollBarVisibility="Visible"
+            Grid.IsSharedSizeScope="True"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            Margin="0,35,420,0"
+            PreviewMouseLeftButtonUp="DownloadInfoChapters_PreviewMouseLeftButtonUp">
+
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate >
+                    <UniformGrid Columns="{Binding Columns, Source={StaticResource Details}}" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="MaxHeight" Value="250"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="1"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid >
+                        <Image 
+                            Source="{Binding Pages[0].Source}" 
+                            Stretch="Fill"
+                            ToolTipService.ToolTip="{Binding Title}"/>
+                        <TextBox 
+                            Visibility="Visible" 
+                            IsReadOnly="True" 
+                            Text="{Binding Title}" 
+                            TextWrapping="Wrap" 
+                            Height="50"
+                            VerticalAlignment="Bottom"
+                            BorderBrush="{x:Null}" 
+                            Foreground="White" 
+                            FontSize="16" >
+                            <TextBox.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#B2FFFFFF" Offset="0"/>
+                                    <GradientStop Color="#CC000000" Offset="0.277"/>
+                                </LinearGradientBrush>
+                            </TextBox.Background>
+                        </TextBox>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Grid
+           x:Name="DetailsManga"          
+           Width="420"
+           HorizontalAlignment="Right"
+           Background="#FFFFFF">
+            <Image 
+                Source="{Binding DownloadInfo.Hq.CoverSource, Source={StaticResource Details}}" 
+                Stretch="Fill"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Width="140" 
+                Height="200"
+                Margin="5"
+                ToolTipService.ToolTip="{Binding DownloadInfo.Hq.Title, Source={StaticResource Details}}"/>
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding DownloadInfo.Hq.Title, Source={StaticResource Details}}" 
+                TextWrapping="Wrap" 
+                Height="65"
+                VerticalAlignment="Top"
+                Margin="145,5,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="19" >
+            </TextBox>
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding DownloadInfo.Hq.Author, Source={StaticResource Details}}" 
+                TextWrapping="Wrap" 
+                Height="26"
+                VerticalAlignment="Top"
+                Margin="145,70,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" >
+            </TextBox>
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding DownloadInfo.Hq.Synopsis, Source={StaticResource Details}}" 
+                TextWrapping="Wrap" 
+                Width="310"
+                Height="104"
+                VerticalAlignment="Top"
+                Margin="145,100,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" >
+            </TextBox>
+            <Button 
+                x:Name="EditInfoBtn" 
+                Content="Buscar/Editar Informações"
+                FontSize="16"
+                Width="202"
+                Height="35"
+                HorizontalAlignment="Left"
+                VerticalContentAlignment="Center"
+                Margin="5,210,0,0" 
+                VerticalAlignment="Top"
+                Click="EditInfoBtn_Click"/>
+            <Button 
+                x:Name="DelHqBtn" 
+                Content="Apagar Hq"
+                FontSize="16"
+                Width="202"
+                Height="35"
+                VerticalContentAlignment="Center"
+                Margin="210,210,0,0" 
+                VerticalAlignment="Top"
+                Click="DelHqBtn_Click"/>
+            <Button 
+                x:Name="SearchUpdatesBtn" 
+                Content="Buscar Atualizações"
+                FontSize="16"
+                Width="202"
+                Height="35"
+                HorizontalAlignment="Left"
+                VerticalContentAlignment="Center"
+                Margin="5,250,0,0" 
+                VerticalAlignment="Top"
+                Click="SearchUpdatesBtn_Click"/>
+            <ComboBox 
+                x:Name="HqStatusCb"
+                ItemsSource="{Binding Status, Source={StaticResource HqStatus}}"
+                SelectedItem="{Binding SelectedStatus, Source={StaticResource HqStatus}, Mode=TwoWay}"                        
+                FontSize="16"
+                Width="202"
+                Height="35"
+                VerticalContentAlignment="Center"    
+                Margin="210,250,0,0" 
+                VerticalAlignment="Top" />
+
+            <TextBox 
+                IsReadOnly="True" 
+                Text="Ultimos Capitulos Lido" 
+                TextWrapping="Wrap" 
+                Height="26"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="0,290,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="19" />
+            <ListView
+                x:Name="ChapterReading" 
+                ItemsSource="{Binding Readings, Source={StaticResource Details}}"
+                SelectedItem="{Binding SelectedReading, Source={StaticResource Details}, Mode=TwoWay}"  
+                DisplayMemberPath="Hq.Title"
+                Margin="5,300,0,0"
+                FontSize="16"
+                PreviewMouseLeftButtonUp="ChapterReading_PreviewMouseLeftButtonUp">
+            </ListView>
+        </Grid>
+
+        <Grid 
+            Visibility="{Binding Visibility, Source={StaticResource Edit}, Converter={StaticResource BoolToVis}}"
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center"
+            Width="804" 
+            Height="506"
+            Background="#B2000000" >
+            <Image 
+                Source="{Binding Hq.CoverSource, Source={StaticResource Edit}, Mode=TwoWay}" 
+                Stretch="Fill"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Width="140" 
+                Height="200"
+                Margin="5"
+                ToolTipService.ToolTip="{Binding Hq.Title, Source={StaticResource Edit}}"/>
+            <TextBox 
+                Text="{Binding Hq.Title, Source={StaticResource Edit}, Mode=TwoWay}" 
+                TextWrapping="Wrap" 
+                Height="65"
+                VerticalAlignment="Top"
+                Margin="145,5,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="19" />
+            <TextBox 
+                Text="{Binding Hq.Author, Source={StaticResource Edit}, Mode=TwoWay}" 
+                TextWrapping="Wrap" 
+                Height="26"
+                VerticalAlignment="Top"
+                Margin="145,70,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+            <TextBox 
+                Text="{Binding Hq.Synopsis, Source={StaticResource Edit}, Mode=TwoWay}" 
+                TextWrapping="Wrap"
+                Height="107"
+                VerticalAlignment="Top"
+                Margin="145,100,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+            <TextBox 
+                Text="{Binding Hq.Link, Source={StaticResource Edit}, Mode=TwoWay}" 
+                TextWrapping="Wrap"
+                Width="380"
+                Height="35"
+                VerticalAlignment="Top"                      
+                HorizontalAlignment="Left" 
+                Margin="5,210,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+            <Button 
+                x:Name="SarchDetails" 
+                Content="Buscar Informações"
+                FontSize="16"
+                Width="202"
+                Height="35" 
+                Margin="385,210,0,0" 
+                VerticalAlignment="Top"             
+                HorizontalAlignment="Left" 
+                Background="#B2FFFFFF"
+                Click="SarchDetails_Click"/>
+            <Button 
+                x:Name="SaveDetails" 
+                Content="Salvar"
+                FontSize="16"
+                Width="202"
+                Height="35"
+                Margin="590,210,0,0" 
+                VerticalAlignment="Top"             
+                HorizontalAlignment="Left" 
+                Background="#B2FFFFFF"
+                Click="SaveDetails_Click"/>
+            <TextBox 
+                Visibility="{Binding ResultVisibility, Source={StaticResource Edit}}"
+                IsReadOnly="True" 
+                Text="Resultados:" 
+                TextWrapping="Wrap" 
+                Height="26"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="0,250,0,0"
+                Background="{x:Null}"
+                BorderBrush="{x:Null}" 
+                Foreground="White" 
+                FontSize="19" />
+            <ListView
+                Visibility="{Binding ResultVisibility, Source={StaticResource Edit}}"
+                x:Name="ResultList" 
+                ItemsSource="{Binding Results, Source={StaticResource Edit}}"
+                SelectedItem="{Binding Hq, Source={StaticResource Edit}, Mode=TwoWay}" 
+                DisplayMemberPath="Title"                    
+                Background="#B2FFFFFF"
+                FontSize="16"
+                Margin="5,285,0,0" />
+
+        </Grid>
+
+        <Grid 
+            Visibility="{Binding Visibility, Source={StaticResource HqStatus}, Converter={StaticResource BoolToVis}}"
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center"
+            Width="703" 
+            Height="575" 
+            Background="#B2000000" >
+            <Grid.Effect>
+                <DropShadowEffect />
+            </Grid.Effect>
+            <Image 
+                Source="{Binding Hq.CoverSource, Source={StaticResource HqStatus}}" 
+                Stretch="Fill"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Width="195" 
+                Height="255"
+                Margin="5"
+                ToolTipService.ToolTip="{Binding Hq.Title, Source={StaticResource HqStatus}}"/>
+            <TextBox 
+                IsReadOnly="True" 
+                Text="{Binding Hq.Title, Source={StaticResource HqStatus}}" 
+                TextWrapping="Wrap" 
+                Width="500"
+                Height="65"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="200,5,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="19" />
+
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding Hq.Author, Source={StaticResource HqStatus}}" 
+                TextWrapping="Wrap" 
+                Width="500"
+                Height="26"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="200,70,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding Hq.Synopsis, Source={StaticResource HqStatus}}" 
+                TextWrapping="Wrap" 
+                Width="500"
+                Height="163"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="200,100,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+            <ComboBox 
+                ItemsSource="{Binding Status, Source={StaticResource HqStatus}}"
+                SelectedItem="{Binding SelectedStatus, Source={StaticResource HqStatus}, Mode=TwoWay}"                        
+                FontSize="16"
+                Width="240"
+                Height="30"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"  
+                Margin="3,265,0,0" />
+            <Label 
+                Content="Score:" 
+                Width="50"
+                Height="30"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="245,265,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="White" 
+                FontSize="16" />
+            <ComboBox 
+                ItemsSource="{Binding Scores, Source={StaticResource HqStatus}}"
+                SelectedItem="{Binding Score, Source={StaticResource HqStatus}, Mode=TwoWay}"                        
+                FontSize="16"
+                Width="240"
+                Height="30"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"  
+                Margin="310,265,0,0" />
+            <Label 
+                Content="Começou a ler em:" 
+                Width="180"
+                Height="30"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="3,300,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="White" 
+                FontSize="16" />
+            <DatePicker 
+                FontSize="16"
+                Width="200"
+                SelectedDate="{Binding StartedReading, Source={StaticResource HqStatus}, Mode=TwoWay}" 
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"  
+                Margin="3,335,0,0" />
+            <Label 
+                Content="Terminou de ler em:" 
+                Width="180"
+                Height="30"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="220,300,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="White" 
+                FontSize="16" />
+            <DatePicker 
+                FontSize="16"
+                Width="200" 
+                SelectedDate="{Binding FinishedReading, Source={StaticResource HqStatus}, Mode=TwoWay}" 
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"  
+                Margin="220,335,0,0" />
+            <Label 
+                Content="Ultimo capitulo lido:" 
+                Width="180"
+                Height="30"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="420,300,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="White" 
+                FontSize="16" />
+            <ComboBox 
+                ItemsSource="{Binding Hq.Chapters, Source={StaticResource HqStatus}}"
+                SelectedItem="{Binding LastChapterRead, Source={StaticResource HqStatus}, Mode=TwoWay}"
+                DisplayMemberPath="Title"
+                FontSize="16"
+                Width="240"
+                Height="30"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left" 
+                Margin="430,335,0,0" />
+            <Label 
+                Content="Review:" 
+                Width="100"
+                Height="35"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="3,370,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="White" 
+                FontSize="16" />
+            <TextBox 
+                Visibility="Visible" 
+                Text="{Binding Review, Source={StaticResource HqStatus}, Mode=TwoWay}" 
+                TextWrapping="Wrap" 
+                Width="698"
+                Height="130"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="3,408,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+            <Button     
+                x:Name="BtnSaveStatus"
+                Content="Salvar"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="5"
+                Width="200"
+                Height="30"
+                Background="#B2CCCCCC"
+                Click="BtnSaveStatus_Click" />
+            <Button     
+                x:Name="BtnCloseStatus"
+                Content="Fechar"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="0,0,210,5"
+                Width="200"
+                Height="30"
+                Background="#B2CCCCCC"
+                Click="BtnCloseStatus_Click" />
+        </Grid>
+
+        <Grid    
+            Visibility="{Binding UpdateVisibility, Source={StaticResource Details}, Converter={StaticResource BoolToVis}}"
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center"
+            Width="709" 
+            Height="576" 
+            Background="#B2000000" >
+            <Image 
+                Source="{Binding DownloadInfo.Hq.CoverSource, Source={StaticResource Details}}" 
+                Stretch="Fill"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Width="195" 
+                Height="255"
+                Margin="5"
+                ToolTipService.ToolTip="{Binding DownloadInfo.Hq.Title, Source={StaticResource Details}}"/>
+            <TextBox 
+                IsReadOnly="True" 
+                Text="{Binding DownloadInfo.Hq.Title, Source={StaticResource Details}}" 
+                TextWrapping="Wrap" 
+                Width="500"
+                Height="65"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="200,5,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="19" />
+
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding DownloadInfo.Hq.Author, Source={StaticResource Details}}" 
+                TextWrapping="Wrap" 
+                Width="500"
+                Height="26"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="200,70,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding DownloadInfo.Hq.Synopsis, Source={StaticResource Details}}" 
+                TextWrapping="Wrap" 
+                Width="500"
+                Height="163"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="200,100,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+            <TextBox 
+                IsReadOnly="True" 
+                Text="Ultimo capitulo baixado:" 
+                TextWrapping="Wrap" 
+                Width="200"
+                Height="30"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="0,265,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="White" 
+                Background="{x:Null}"
+                FontSize="16" />
+            <TextBox 
+                IsReadOnly="True" 
+                Text="{Binding DownloadInfo.LastDownloadedChapter.Title, Source={StaticResource Details}}" 
+                TextWrapping="Wrap" 
+                Width="400"
+                Height="35"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="200,265,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+
+            <TextBox 
+                IsReadOnly="True" 
+                Text="Selecione os capitulos para download:" 
+                TextWrapping="Wrap" 
+                Width="400"
+                Height="30"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="0,295,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="White" 
+                Background="{x:Null}"
+                FontSize="16" />
+
+            <ListView
+                x:Name="Updates" 
+                ItemsSource="{Binding UpdateList, Source={StaticResource Details}}"   
+                VerticalAlignment="Bottom"
+                Height="205"
+                DisplayMemberPath="Title"                    
+                Background="#B2FFFFFF"
+                SelectionMode="Multiple"
+                FontSize="16"
+                Margin="0,0,0,40" />
+
+            <Button     
+                x:Name="BtnCloseUpdates"
+                Content="Fechar"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="0,0,210,5"
+                Width="200"
+                Height="30"
+                Background="#B2CCCCCC"
+                Click="BtnCloseUpdates_Click" />
+
+            <Button     
+                x:Name="BtnAddSelected"
+                Content="Baixar Selecionado"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="5"
+                Width="200"
+                Height="30"
+                Background="#B2CCCCCC"
+                Click="BtnAddSelected_Click" />
+        </Grid>
+
+        <Grid     
+            Visibility="{Binding Visibility, Source={StaticResource Notification}, Converter={StaticResource BoolToVis}}"
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center"
+            Width="600" 
+            Height="225" 
+            Background="#B2000000" >
+            <Grid.Effect>
+                <DropShadowEffect />
+            </Grid.Effect>
+            <TextBox 
+                IsReadOnly="True"  
+                Text="Aguarde..." 
+                FontSize="130" 
+                Background="{x:Null}" 
+                Foreground="White" 
+                BorderBrush="{x:Null}"/>
+            <TextBox 
+                IsReadOnly="True"  
+                Text="{Binding Message, Source={StaticResource Notification}}" 
+                FontSize="20" 
+                Background="{x:Null}" 
+                Foreground="White" 
+                VerticalAlignment="Bottom" 
+                VerticalContentAlignment="Bottom" 
+                BorderBrush="{x:Null}"/>
+        </Grid>
+    </Grid>
+</Page>

@@ -15,7 +15,7 @@ namespace HqDownloadManager.Core.Helpers {
         private string directory;
 
         public CoverCacheHelper() {
-            this.directory = $"{CoreConfiguration.DownloadLocation}\\CoverCache";
+            this.directory = CoreConfiguration.CacheLocation;
             if (!Directory.Exists(directory)) {
                 Directory.CreateDirectory(directory);
             }

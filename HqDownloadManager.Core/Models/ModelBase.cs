@@ -8,6 +8,7 @@ using Repository.Attributes;
 namespace HqDownloadManager.Core.Models {
     public class ModelBase {
         [PrimaryKey]
+        public int Id { get; set; }
         public String Link { get; set; }
         public String Title { get; set; }
         public DateTime TimeInCache { get; set; }

@@ -36,7 +36,7 @@ namespace HqDownloadManager.Core.Managers {
 
         public virtual IHqSourceManager GetUpdates(out List<Update> updates, double timeCache) {
             lock (_lockThis3) {
-                updates = _cacheManager.CacheManagement(UpdatePage, _hqSource.GetUpdates, timeCache);
+                updates = _cacheManager.UpdatesCache(UpdatePage, _hqSource.GetUpdates, timeCache);
                 return this;
             }
         }

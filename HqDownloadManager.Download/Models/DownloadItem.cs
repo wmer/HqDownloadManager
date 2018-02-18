@@ -7,12 +7,13 @@ using System.Text;
 namespace HqDownloadManager.Download.Models {
     public class DownloadItem {
         [PrimaryKey]
+        public int Id { get; set; }
         public virtual Hq Hq { get; set; }
         [Required(false)]
         public virtual Chapter LastDownloadedChapter { get; set; }
         [Required(false)]
         public virtual Page ActualPage { get; set; }
-        public string MainDirectory { get; set; }
+        public string DownloadLocation { get; set; }
         public bool IsDownloaded { get; set; }
         public DateTime DownloadStarted { get; set; }
         public DateTime DownloadFinished { get; set; }

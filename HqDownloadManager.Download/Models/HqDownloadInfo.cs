@@ -16,7 +16,7 @@ namespace HqDownloadManager.Download.Models {
             Hq = downloadItem.Hq;
             LastDownloadedChapter = downloadItem.LastDownloadedChapter;
             ActualPage = downloadItem.ActualPage;
-            MainDirectory = downloadItem.MainDirectory;
+            DownloadLocation = downloadItem.DownloadLocation;
             DownloadStarted = downloadItem.DownloadStarted;
             DownloadFinished = downloadItem.DownloadFinished;
         }

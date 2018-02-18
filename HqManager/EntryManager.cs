@@ -15,7 +15,7 @@ namespace HqManager {
         }
 
         public void AddTo(ReadStatus status, Hq hq) =>
-        _context.HqEntry.Save(new HqEntry {
+        _context.HqEntry.SaveOrReplace(new HqEntry {
             Hq = hq, ReadStatus = status.ToString()
         });
 

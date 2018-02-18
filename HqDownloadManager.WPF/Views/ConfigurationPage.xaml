@@ -1,0 +1,120 @@
+﻿<Page x:Class="HqDownloadManager.WPF.Views.ConfigurationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:HqDownloadManager.WPF.Views"
+      xmlns:configuration="clr-namespace:HqDownloadManager.Shared.ViewModel.COnfiguration;assembly=HqDownloadManager.Shared"
+      mc:Ignorable="d"
+      Title="ConfigurationPage">
+
+    <Page.Resources>
+        <configuration:ConfigurationViewModel x:Key="Configuration" />
+    </Page.Resources>
+
+    <Grid>
+        <Label 
+            VerticalAlignment="Top"
+            Content="Locations"
+            FontSize="30"/>
+        <Separator 
+            Height="6"
+            VerticalAlignment="Top"
+            Margin="0,45,0,0"/>
+        <Label 
+            Content="Database Location:"
+            FontSize="18"
+            Margin="0,55,0,0"/>
+        <TextBox
+            VerticalAlignment="Top"
+            Height="30"
+            FontSize="16"
+            Text="{Binding Configuartion.DatabaseLocation, Source={StaticResource Configuration}, Mode=TwoWay}"
+            Margin="160,55,120,0"/>
+        <Button 
+            x:Name="BtnDbLocChange"
+            Content="Alterar Local"
+            Width="100"
+            FontSize="16"
+            Height="30"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Right"
+            Margin="0,55,5,0"
+            Click="BtnDbLocChange_Click"/>
+
+        <Label 
+            Content="Cache Location:"
+            FontSize="18"
+            Margin="0,95,0,0"/>
+        <TextBox
+            VerticalAlignment="Top"
+            Height="30"
+            FontSize="16"
+            Text="{Binding Configuartion.CacheLocation, Source={StaticResource Configuration}, Mode=TwoWay}"
+            Margin="160,95,120,0"/>
+        <Button 
+            x:Name="BtnCacheLocChange"
+            Content="Alterar Local"
+            Width="100"
+            FontSize="16"
+            Height="30"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Right"
+            Margin="0,95,5,0"
+            Click="BtnCacheLocChange_Click"/>
+
+        <Label 
+            Content="WebDrivers Location:"
+            FontSize="18"
+            Margin="0,135,0,0"/>
+        <TextBox
+            VerticalAlignment="Top"
+            Height="30"
+            FontSize="16"
+            Text="{Binding Configuartion.WebdriverLocation, Source={StaticResource Configuration}, Mode=TwoWay}"
+            Margin="160,135,120,0"/>
+        <Button 
+            x:Name="BtnWDLocChange"
+            Content="Alterar Local"
+            Width="100"
+            FontSize="16"
+            Height="30"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Right"
+            Margin="0,135,5,0"
+            Click="BtnWDLocChange_Click"/>
+        <Label 
+            VerticalAlignment="Top"
+            Content="Biblioteca de Mangas"
+            FontSize="30"
+            Margin="0,175,120,0"/>
+        <Button 
+            x:Name="BtnDownloadLocChange"
+            Content="Adicionar Local"
+            Width="130"
+            FontSize="16"
+            Height="30"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Right"
+            Margin="0,190,5,0"
+            Click="BtnDownloadLocChange_Click"/>
+        <Separator 
+            Height="6"
+            VerticalAlignment="Top"
+            Margin="0,220,0,0"/>
+        <ListView
+            ItemsSource="{Binding Configuartion.DownloadLocations, Source={StaticResource Configuration}, Mode=TwoWay}"
+            SelectedItem="{Binding SelectedPath, Source={StaticResource Configuration}, Mode=TwoWay}"
+            FontSize="16"
+            VerticalAlignment="Top"
+            Height="150"
+            DisplayMemberPath="Location"
+            Margin="0,230,0,0" >
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="ApagarLoc" Header="Apagar" Click="ApagarLoc_Click" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+    </Grid>
+</Page>

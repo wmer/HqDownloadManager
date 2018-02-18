@@ -24,9 +24,7 @@ namespace HqDownloadManager.Core.Sources {
         protected object Lock7 = new object();
         protected object Lock8 = new object();
         protected object Lock9 = new object();
-
-        public event ProcessingEventHandler ProcessingProgress;
-        public event ProcessingErrorEventHandler ProcessingError;
+        
         protected object LockEvent1 = new object();
         protected object LockEvent2 = new object();
 

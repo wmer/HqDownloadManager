@@ -55,14 +55,12 @@ namespace HqDownloadManager.Download {
 
         public void AddToDownloadList(Hq hq, string directory) {
             lock (_lock1) {
-                if (hq.Chapters == null || hq.Chapters.Count == 0) {
-                    var hqInfo = new Hq();
-                    _sourceManager.GetSourceFromLink(hq.Link).GetInfo(hq.Link, out hqInfo);
-                    if (hqInfo != null)
-                        hq = hqInfo;
+                foreach (var chap in hq.Chapters) {
+                    chap.ToDownload = true;
                 }
+                _downloadContext.Chapter.Update(hq.Chapters);
                 if (hq != null && !string.IsNullOrEmpty(hq.Link)) {
-                    var downloaditem = new DownloadItem { Hq = hq, MainDirectory = directory, IsDownloaded = false };
+                    var downloaditem = new DownloadItem { Hq = hq, DownloadLocation = directory, IsDownloaded = false };
                     if (!_downloadList.Contains(downloaditem)) {
                         _downloadList.Add(downloaditem);
                         _downloadContext.DownloadList.Save(downloaditem);
@@ -73,8 +71,15 @@ namespace HqDownloadManager.Download {
 
         public void ExcludeFromDownloadList(DownloadItem item) {
             lock (_lock2) {
+                var hq = item.Hq;
                 _downloadList.Remove(item);
                 _downloadContext.DownloadList.Delete(item);
+                if ((_downloadContext.Chapter.Find().Where(x => x.Hq == hq && x.ToDownload == true).Execute() is List<Chapter> chaps) && chaps.Count > 0) {
+                    foreach (var chap in chaps) {
+                        chap.ToDownload = false;
+                    }
+                    _downloadContext.Chapter.Update(chaps);
+                }
             }
         }
 
@@ -85,7 +90,8 @@ namespace HqDownloadManager.Download {
                 Task.Run(() => {
                     _stop = false;
                     _paused = false;
-                    foreach (var item in _downloadList) {
+                    for(var i = 0; i < _downloadList.Count; i++) {
+                        var item = _downloadList[i];
                         if (_stop) {
                             break;
                         }
@@ -93,9 +99,6 @@ namespace HqDownloadManager.Download {
                             Download(item);
                         }
                     }
-
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
                 });
             }
         }
@@ -104,17 +107,22 @@ namespace HqDownloadManager.Download {
             lock (_lock4) {
                 var source = _sourceManager.GetSourceFromLink(downloadItem.Hq.Link);
                 if (downloadItem.Hq.Chapters == null || downloadItem.Hq.Chapters.Count() == 0) {
-                    var hq = new Hq();
-                    source.GetInfo(downloadItem.Hq.Link, out hq);
-                    if (hq != null) {
-                        downloadItem.Hq = hq;
+                    var hq = downloadItem.Hq;
+                    if ((_downloadContext.Chapter.Find().Where(x => x.Hq == hq && x.ToDownload == true).Execute() is List<Chapter> chaps) && chaps.Count > 0) {
+                        downloadItem.Hq.Chapters = chaps;
+                    }else {
+                        hq = new Hq();
+                        source.GetInfo(downloadItem.Hq.Link, out hq);
+                        if (hq != null) {
+                            downloadItem.Hq = hq;
+                        }
                     }
                 }
 
                 downloadItem.DownloadStarted = DateTime.Now;
                 DownloadEventHub.OnDownloadStart(this, new DownloadEventArgs(downloadItem));
 
-                var hqDirectory = _directoryHelper.CreateHqDirectory(downloadItem.MainDirectory, downloadItem.Hq.Title);
+                var hqDirectory = _directoryHelper.CreateHqDirectory(downloadItem.DownloadLocation, downloadItem.Hq.Title);
                 var numChapters = downloadItem.Hq.Chapters.Count();
                 var chapAtual = 1;
                 var failedToDownload = new List<String>();
@@ -133,12 +141,12 @@ namespace HqDownloadManager.Download {
                     chapAtual++;
                 }
                 downloadItem.DownloadFinished = DateTime.Now;
-                DownloadEventHub.OnDownloadEnd(this, new DownloadEventArgs(downloadItem, (downloadItem.DownloadFinished - downloadItem.DownloadStarted), failedToDownload));
                 var downloadInfo = new HqDownloadInfo(downloadItem);
                 downloadInfo.Path = hqDirectory;
                 downloadItem.IsDownloaded = true;
                 _downloadContext.DownloadList.SaveOrReplace(downloadItem);
                 _downloadInfoHelper.SaveDownloadInfo(downloadInfo);
+                DownloadEventHub.OnDownloadEnd(this, new DownloadEventArgs(downloadItem, (downloadItem.DownloadFinished - downloadItem.DownloadStarted), failedToDownload));
             }
         }
 

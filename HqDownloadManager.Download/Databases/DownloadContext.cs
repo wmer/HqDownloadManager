@@ -7,8 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HqDownloadManager.Download.Databases
-{
+namespace HqDownloadManager.Download.Databases {
     public class DownloadContext : LibraryContext {
         public Repository<HqDownloadInfo> HqDownloadInfo { get; set; }
         public Repository<DownloadItem> DownloadList { get; set; }
