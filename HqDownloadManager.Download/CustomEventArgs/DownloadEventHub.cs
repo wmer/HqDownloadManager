@@ -8,6 +8,7 @@ namespace HqDownloadManager.Download.CustomEventArgs {
         public static event DownloadEventHandler DownloadEnd;
         public static event ProgressEventHandler DownloadProgress;
         public static event ProgressEventHandler DownloadChapterStart;
+        public static event DownloadEventHandler DownloadChapterEnd;
         public static event ProgressEventHandler DownloadPause;
         public static event ProgressEventHandler DownloadResume;
         public static event DownloadEventHandler DownloadStop;
@@ -29,5 +30,7 @@ namespace HqDownloadManager.Download.CustomEventArgs {
         public static void OnDownloadError(object sender, DownloadErrorEventArgs ev) => DownloadError?.Invoke(sender, ev);
 
         public static void OnDownloadEnd(object sender, DownloadEventArgs ev) => DownloadEnd?.Invoke(sender, ev);
+
+        public static void OnDownloadChapterEnd(object sender, DownloadEventArgs ev) => DownloadChapterEnd?.Invoke(sender, ev);
     }
 }

@@ -106,19 +106,18 @@ namespace HqDownloadManager.Core.Managers {
             lock (_lockThis6) {
                 var updates = new List<Update>();
                 CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Buscando em DB"));
-                var time = DateTime.Now.AddHours(timeCache);
-                var timeC = DateTime.Now.AddDays(5);
-                if (_libraryContext.Update.Find().Where(x => x.Source == url && x.TimeCache < time).Execute() is List<Update> updt && updt.Count > 0) {
+                var time = DateTime.Now;
+                if (_libraryContext.Update.Find().Where(x => x.Source == url && x.TimeCache > time).Execute() is List<Update> updt && updt.Count > 0) {
                     CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Encontrado!"));
                     foreach (var up in updt) {
                         var hq = up.Hq;
                         if (hq != null) {
                             CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Adicionando {up.Hq.Title}"));
-                            up.Chapters = _libraryContext.Chapter.Find().Where(x => x.Hq == hq && x.IsUpdate == true && x.Date < timeC).Execute();
+                            up.Chapters = _libraryContext.Chapter.Find().Where(x => x.Hq == hq && x.IsUpdate == true && x.Date > time).Execute();
                             updates.Add(up);
                         }
                     }
-                    _libraryContext.Chapter.Update(x => x.IsUpdate, false).Where(x => x.IsUpdate == true && x.Date > timeC).Execute();
+                    _libraryContext.Chapter.Update(x => x.IsUpdate, false).Where(x => x.IsUpdate == true && x.Date < time).Execute();
                 } else {
                     CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Não encontrado!"));
                     if (InternetChecker.IsConnectedToInternet()) {
@@ -127,17 +126,17 @@ namespace HqDownloadManager.Core.Managers {
                             CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Criando Cache"));
                             foreach (var upd in updates) {
                                 upd.Source = url;
-                                upd.TimeCache = DateTime.Now;
+                                upd.TimeCache = DateTime.Now.AddMinutes(timeCache);
                                 var link = upd.Hq.Link;
                                 if (_libraryContext.Hq.Find().Where(x => x.Link == link).Execute().FirstOrDefault() is Hq hq) {
                                     upd.Hq = hq;
                                     foreach (var chap in upd.Chapters) {
                                         chap.Hq = upd.Hq;
                                         chap.IsUpdate = true;
-                                        chap.Date = DateTime.Now;
+                                        chap.Date = DateTime.Now.AddDays(3);
                                     }
 
-                                    _libraryContext.Chapter.Save(upd.Chapters);
+                                    _libraryContext.Chapter.SaveOrReplace(upd.Chapters);
                                 } else {
                                     CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Criando Cache para {upd.Hq.Title}"));
                                     upd.Hq.CoverSource = _coveCacheHelper.CreateCache(upd.Hq);
@@ -145,7 +144,7 @@ namespace HqDownloadManager.Core.Managers {
                                     foreach (var chap in upd.Chapters) {
                                         chap.Hq = upd.Hq;
                                         chap.IsUpdate = true;
-                                        chap.Date = DateTime.Now;
+                                        chap.Date = DateTime.Now.AddDays(3);
                                         chap.Id = Convert.ToInt32(_libraryContext.Chapter.SaveOrReplace(chap));
                                     }
 

@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using HqDownloadManager.Download.Databases;
 using System.Collections.ObjectModel;
 using HqDownloadManager.Core.Managers;
+using System.Net.Http;
 
 namespace HqDownloadManager.Download {
     internal class Downloader {
@@ -180,8 +181,17 @@ namespace HqDownloadManager.Download {
                     try {
                         var pageSource = $"{chapterDirectory}\\{page.Number.ToString().PadLeft(3, '0')}{FormatPage(page.Source)}";
                         if (!File.Exists(pageSource)) {
-                            using (var webClient = new WebClient()) {
-                                webClient.DownloadFile(page.Source, pageSource);
+                            ServicePointManager.DefaultConnectionLimit = 1000;
+                            using (var webClient = new HttpClient()) {
+                                //webClient.Proxy = null;
+                                //webClient.DownloadFile(page.Source, pageSource);
+                                using (var response = webClient.GetAsync(page.Source).Result) {
+                                    var imageByte = response.Content.ReadAsByteArrayAsync().Result;
+                                    using (var binaryWriter = new BinaryWriter(new FileStream(pageSource,
+                                                                                  FileMode.Append, FileAccess.Write))) {
+                                        binaryWriter.Write(imageByte);
+                                    }
+                                }
                             }
                         }
 
@@ -194,6 +204,7 @@ namespace HqDownloadManager.Download {
                     pageAtual++;
                 }
 
+                DownloadEventHub.OnDownloadChapterEnd(this, new DownloadEventArgs(downloadItem));
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }

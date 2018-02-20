@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using HqDownloadManager.Core.Configuration;
 using HqDownloadManager.Core.CustomEventArgs;
@@ -24,16 +25,25 @@ namespace HqDownloadManager.Core.Helpers {
         public string CreateCache(Hq hq) {
             lock (_lock1) {
                 if (string.IsNullOrEmpty((string)hq.CoverSource)) return hq.CoverSource;
-                using (var webClient = new WebClient()) {
-                    try {
-                        var pageSource = $"{directory}\\{StringHelper.RemoveSpecialCharacters((string)hq.Title)}{FormatPage((string)hq.CoverSource)}";
-                        if (!File.Exists(pageSource)) {
-                            webClient.DownloadFile((string)hq.CoverSource, pageSource);
+                try {
+                    var pageSource = $"{directory}\\{StringHelper.RemoveSpecialCharacters(hq.Title)}{FormatPage(hq.CoverSource)}";
+                    if (!File.Exists(pageSource)) {
+                        ServicePointManager.DefaultConnectionLimit = 1000;
+                        using (var webClient = new HttpClient()) {
+                            //webClient.Proxy = null;
+                            //webClient.DownloadFile(page.Source, pageSource);
+                            using (var response = webClient.GetAsync(hq.CoverSource).Result) {
+                                var imageByte = response.Content.ReadAsByteArrayAsync().Result;
+                                using (var binaryWriter = new BinaryWriter(new FileStream(pageSource,
+                                                                              FileMode.Append, FileAccess.Write))) {
+                                    binaryWriter.Write(imageByte);
+                                }
+                            }
                         }
-                        return pageSource;
-                    } catch {
-                        return hq.CoverSource;
                     }
+                    return pageSource;
+                } catch {
+                    return hq.CoverSource;
                 }
             }
         }

@@ -73,7 +73,7 @@ namespace HqDownloadManager.WPF.Controller {
         }
 
         public void ReadUpdate<T>(Chapter chapter) where T : System.Windows.Controls.Page {
-            var hq = _detailsViewModel.Hq;
+            var hq = _sourceUpdate.SelectedUpdate.Hq;
             hq.Chapters = _sourceUpdate.SelectedUpdate.Chapters;
             var readerModel = new ReaderViewModel {
                 Hq = hq,

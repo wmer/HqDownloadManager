@@ -32,6 +32,7 @@ namespace HqDownloadManager.WPF.Controller {
             DownloadEventHub.DownloadStart += OnDownloadStart;
             DownloadEventHub.DownloadEnd += OnDonwloadEnd;
             DownloadEventHub.DownloadChapterStart += OnDownloadChapterStart;
+            DownloadEventHub.DownloadChapterEnd += OnDownloadChapterEnd; ;
             DownloadEventHub.DownloadProgress += OnDownloadProgress;
 
             Task.Run(() => {
@@ -68,6 +69,10 @@ namespace HqDownloadManager.WPF.Controller {
                     _downloadList.UpdateLayout();
                 });
             });
+        }
+
+        private void OnDownloadChapterEnd(object sender, DownloadEventArgs ev) {
+
         }
 
         private void OnDownloadProgress(object sender, ProgressEventArgs ev) {

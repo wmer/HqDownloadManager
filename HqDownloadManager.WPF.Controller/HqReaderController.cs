@@ -84,31 +84,53 @@ namespace HqDownloadManager.WPF.Controller {
         }
 
         public void LoadChapter() {
-            var index = _collectionView.CurrentPosition;
-            var actualChap = _collectionView.CurrentItem as Chapter;
-            if (actualChap.Pages == null || actualChap.Pages.Count == 0) {
-                var source = _sourceManager.GetSourceFromLink(actualChap.Link);
-                var chap = new Chapter();
-                source.GetInfo(actualChap.Link, out chap);
-                _readerViewModel.ActualChapter = chap;
-            } else {
-                _readerViewModel.ActualChapter = actualChap;
-            }
-
-            if (_readerViewModel.Hq.Chapters.Count > 1 && _readerViewModel.Hq.Chapters.Count < _readerViewModel.ActualChapterIndex) {
-                var nextChap = _readerViewModel.Hq.Chapters[index + 1] as Chapter;
-                if (nextChap.Pages == null || nextChap.Pages.Count == 0) {
-                    var source = _sourceManager.GetSourceFromLink(nextChap.Link);
+            Task.Run(()=> {
+                int index = 0;
+                Chapter actualChap = new Chapter();
+                Dispatcher.Invoke(()=> {
+                    _notification.Visibility = true;
+                    index = _collectionView.CurrentPosition;
+                    actualChap = _collectionView.CurrentItem as Chapter;
+                });
+                if (actualChap.Pages == null || actualChap.Pages.Count == 0) {
+                    var source = _sourceManager.GetSourceFromLink(actualChap.Link);
                     var chap = new Chapter();
-                    source.GetInfo(nextChap.Link, out chap);
-                    _readerViewModel.NextChapter = chap;
+                    source.GetInfo(actualChap.Link, out chap);
+                    Dispatcher.Invoke(()=> {
+                        _readerViewModel.ActualChapter = chap;
+                    });
                 } else {
-                    _readerViewModel.NextChapter = nextChap;
+                    Dispatcher.Invoke(() => {
+                        _readerViewModel.ActualChapter = actualChap;
+                    });
                 }
-            }
 
-            _scroolOfReader.ScrollToTop();
-            _pageTitleView.PageTitle = _readerViewModel.ActualChapter.Title;
+                if (_readerViewModel.Hq.Chapters.Count > 1 && _readerViewModel.Hq.Chapters.Count < _readerViewModel.ActualChapterIndex) {
+                    var nextChap = new Chapter();
+                    Dispatcher.Invoke(() => {
+                        nextChap = _readerViewModel.Hq.Chapters[index + 1] as Chapter;
+                    });
+                    if (nextChap.Pages == null || nextChap.Pages.Count == 0) {
+                        var source = _sourceManager.GetSourceFromLink(nextChap.Link);
+                        var chap = new Chapter();
+                        source.GetInfo(nextChap.Link, out chap);
+                        Dispatcher.Invoke(() => {
+                            _readerViewModel.NextChapter = chap;
+                        });
+                    } else {
+                        Dispatcher.Invoke(() => {
+                            _readerViewModel.NextChapter = nextChap;
+                        });
+                    }
+                }
+
+
+                Dispatcher.Invoke(() => {
+                    _scroolOfReader.ScrollToTop();
+                    _pageTitleView.PageTitle = _readerViewModel.ActualChapter.Title;
+                    _notification.Visibility = false;
+                });
+            });
         }
 
         public void NextChapter() {
