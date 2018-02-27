@@ -1,5 +1,6 @@
 ﻿using HqDownloadManager.Core.Models;
 using HqDownloadManager.Download.Models;
+using HqDownloadManager.Shared.Models;
 using HqDownloadManager.Shared.ViewModel.Reader;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ namespace HqDownloadManager.Shared.ViewModel.MyDownloads {
     public class DownloadDetailsViewModel : ViewModelBase {
         private Chapter _selectedChapter;
         private HqDownloadInfo _downloadInfo;
-        private List<ReaderViewModel> _readings;
-        private ReaderViewModel _selectedReading;
+        private List<ReaderHistory> _readings;
+        private ReaderHistory _selectedReading;
         private List<Chapter> _updateList;
         private bool _updateVisibility;
         private double _width;
@@ -60,7 +61,7 @@ namespace HqDownloadManager.Shared.ViewModel.MyDownloads {
             }
         }
 
-        public List<ReaderViewModel> Readings {
+        public List<ReaderHistory> Readings {
             get => _readings;
             set {
                 _readings = value;
@@ -68,7 +69,7 @@ namespace HqDownloadManager.Shared.ViewModel.MyDownloads {
             }
         }
 
-        public ReaderViewModel SelectedReading {
+        public ReaderHistory SelectedReading {
             get => _selectedReading;
             set {
                 _selectedReading = value;

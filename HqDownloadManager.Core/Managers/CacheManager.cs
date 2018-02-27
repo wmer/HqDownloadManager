@@ -117,9 +117,9 @@ namespace HqDownloadManager.Core.Managers {
                             updates.Add(up);
                         }
                     }
-                    _libraryContext.Chapter.Update(x => x.IsUpdate, false).Where(x => x.IsUpdate == true && x.Date < time).Execute();
                 } else {
                     CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Não encontrado!"));
+                    _libraryContext.Chapter.Update(x => x.IsUpdate, false).Where(x => x.IsUpdate == true && x.Date < time).Execute();
                     if (InternetChecker.IsConnectedToInternet()) {
                         updates = method.Invoke(url);
                         if (updates != null) {
@@ -134,9 +134,12 @@ namespace HqDownloadManager.Core.Managers {
                                         chap.Hq = upd.Hq;
                                         chap.IsUpdate = true;
                                         chap.Date = DateTime.Now.AddDays(3);
+                                        if (_libraryContext.Chapter.Find(x => x.Id).Where(x => x.Link == chap.Link).Execute().FirstOrDefault() is Chapter chapDb) {
+                                            chap.Id = chapDb.Id;
+                                        } else {
+                                            chap.Id = Convert.ToInt32(_libraryContext.Chapter.Save(chap));
+                                        }
                                     }
-
-                                    _libraryContext.Chapter.SaveOrReplace(upd.Chapters);
                                 } else {
                                     CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Criando Cache para {upd.Hq.Title}"));
                                     upd.Hq.CoverSource = _coveCacheHelper.CreateCache(upd.Hq);
@@ -145,11 +148,15 @@ namespace HqDownloadManager.Core.Managers {
                                         chap.Hq = upd.Hq;
                                         chap.IsUpdate = true;
                                         chap.Date = DateTime.Now.AddDays(3);
-                                        chap.Id = Convert.ToInt32(_libraryContext.Chapter.SaveOrReplace(chap));
+                                        if (_libraryContext.Chapter.Find(x => x.Id).Where(x => x.Link == chap.Link).Execute().FirstOrDefault() is Chapter chapDb) {
+                                            chap.Id = chapDb.Id;
+                                        }else {
+                                            chap.Id = Convert.ToInt32(_libraryContext.Chapter.Save(chap));
+                                        }
                                     }
-
-                                    _libraryContext.Update.SaveOrReplace(upd);
                                 }
+                                
+                                _libraryContext.Update.Save(upd);
                             }
                         }
                     }

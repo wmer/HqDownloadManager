@@ -55,6 +55,11 @@ namespace HqDownloadManager.Core.Sources {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Preparando para retornar mangas!"));
                     foreach (var hq in hqsEl) {
                         var title = hq.QuerySelector("div b")?.TextContent;
+                        title = title.Replace("(BR)", "").Trim();
+                        title = title.Replace("(PT-BR)", "").Trim();
+                        title = title.Replace("(Novel)", "").Trim();
+                        title = title.Replace("(Manhwa)", "").Trim();
+                        title = title.Replace("(Manhua)", "").Trim();
                         var img = hq.QuerySelector("a img")?.GetAttribute("src");
                         var link = hq.QuerySelector("a")?.GetAttribute("href");
                         if (!string.IsNullOrEmpty(link)) {
@@ -85,6 +90,11 @@ namespace HqDownloadManager.Core.Sources {
                     var hqInfo = new Hq();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
                     var title = source.QuerySelector(".tamanho-bloco-perfil h2")?.TextContent;
+                    title = title.Replace("(BR)", "").Trim();
+                    title = title.Replace("(PT-BR)", "").Trim();
+                    title = title.Replace("(Novel)", "").Trim();
+                    title = title.Replace("(Manhwa)", "").Trim();
+                    title = title.Replace("(Manhua)", "").Trim();
                     var img = source.QuerySelector("img.img-thumbnail");
                     var synopsis = source.QuerySelector(".tamanho-bloco-perfil div.panel-body")?.TextContent;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {title}"));

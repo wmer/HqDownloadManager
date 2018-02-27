@@ -181,11 +181,35 @@
             <ListView
                 x:Name="ChapterReading" 
                 ItemsSource="{Binding Readings, Source={StaticResource Details}}"
-                SelectedItem="{Binding SelectedReading, Source={StaticResource Details}, Mode=TwoWay}"  
-                DisplayMemberPath="Hq.Title"
+                SelectedItem="{Binding SelectedReading, Source={StaticResource Details}, Mode=TwoWay}"
                 Margin="5,300,0,0"
                 FontSize="16"
                 PreviewMouseLeftButtonUp="ChapterReading_PreviewMouseLeftButtonUp">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="MaxHeight" Value="250"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Label 
+                                Content="{Binding Date}"
+                                Margin="10,0,0,0"
+                                FontSize="16"
+                                VerticalAlignment="Top"/>
+                            <Label 
+                                Content="{Binding Reader.ActualChapter.Title}"
+                                Height="40"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left"
+                                Margin="0,30,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
             </ListView>
         </Grid>
 

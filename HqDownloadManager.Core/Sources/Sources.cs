@@ -8,6 +8,7 @@ namespace HqDownloadManager.Core.Sources {
         UnionMangas,
         YesMangas,
         MangasProject,
+        MangaLivre,
         Hipercool,
         HqUltimate
     }

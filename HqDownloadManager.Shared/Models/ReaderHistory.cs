@@ -10,6 +10,7 @@ namespace HqDownloadManager.Shared.Models {
     public class ReaderHistory {
         [PrimaryKey]
         public int Id { get; set; }
+        public string Link { get; set; }
         public DateTime Date { get; set; }
         public virtual ReaderViewModel Reader { get; set; }
     }

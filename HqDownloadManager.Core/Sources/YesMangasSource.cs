@@ -18,7 +18,7 @@ namespace HqDownloadManager.Core.Sources {
         public override List<Update> GetUpdates(string url) {
             lock (Lock1) {
                 try {
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Atualizaçõs..."));
                     var driver = BrowserHelper.GetDriver(url);
                     var pageSource = driver.PageSource;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
@@ -33,6 +33,10 @@ namespace HqDownloadManager.Core.Sources {
                         var title = update.QuerySelector("td a h4")?.TextContent;
                         if (!string.IsNullOrEmpty(title)) {
                             title = title.Replace("(BR)", "").Trim();
+                            title = title.Replace("(PT-BR)", "").Trim();
+                            title = title.Replace("(Novel)", "").Trim();
+                            title = title.Replace("(Manhwa)", "").Trim();
+                            title = title.Replace("(Manhua)", "").Trim();
                             OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados de {title}"));
                             var img = update.QuerySelector("td a img")?.GetAttribute("src");
                             var link = update.QuerySelector("td div a")?.GetAttribute("href");
@@ -66,7 +70,7 @@ namespace HqDownloadManager.Core.Sources {
         public override LibraryPage GetLibrary(String linkPage) {
             lock (Lock2) {
                 try {
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Biblioteca..."));
                     var driver = BrowserHelper.GetDriver(linkPage);
                     var pageSource = driver.PageSource;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
@@ -93,6 +97,11 @@ namespace HqDownloadManager.Core.Sources {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Preparando para retornar mangas!"));
                     foreach (var hq in hqsEl) {
                         var title = hq.QuerySelector("h3")?.TextContent;
+                        title = title.Replace("(BR)", "").Trim();
+                        title = title.Replace("(PT-BR)", "").Trim();
+                        title = title.Replace("(Novel)", "").Trim();
+                        title = title.Replace("(Manhwa)", "").Trim();
+                        title = title.Replace("(Manhua)", "").Trim();
                         var img = hq.QuerySelector("a img")?.GetAttribute("src");
                         var link = hq.QuerySelector("h3 a")?.GetAttribute("href");
                         if (!string.IsNullOrEmpty(link)) {
@@ -128,6 +137,11 @@ namespace HqDownloadManager.Core.Sources {
                     var hqInfo = new Hq();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
                     var title = source.QuerySelector("h1.title")?.TextContent;
+                    title = title.Replace("(BR)", "").Trim();
+                    title = title.Replace("(PT-BR)", "").Trim();
+                    title = title.Replace("(Novel)", "").Trim();
+                    title = title.Replace("(Manhwa)", "").Trim();
+                    title = title.Replace("(Manhua)", "").Trim();
                     var img = source.QuerySelector("#descricao img");
                     var synopsis = source.QuerySelector("#descricao article")?.TextContent;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {title}"));

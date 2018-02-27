@@ -74,7 +74,7 @@ namespace HqDownloadManager.Download.Helpers {
                                     if (!string.IsNullOrEmpty(downloadInfo.Hq.Link)) {
                                         if (_downloadContext.Hq.Find().Where(x => x.Link == downloadInfo.Hq.Link).Execute().FirstOrDefault() is Hq hq) {
                                             downloadInfo.Hq = hq;
-                                            _downloadContext.HqDownloadInfo.Save(downloadInfo);
+                                            _downloadContext.HqDownloadInfo.SaveOrReplace(downloadInfo);
                                         }
                                     }
                                 } else {
@@ -127,6 +127,7 @@ namespace HqDownloadManager.Download.Helpers {
                                     var num = int.Parse(Path.GetFileNameWithoutExtension(file.Name));
                                     CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Adiconando página {num}..."));
                                     chap.Pages.Add(new Page {
+                                        Id = num,
                                         Number = num,
                                         Source = file.FullName
                                     });

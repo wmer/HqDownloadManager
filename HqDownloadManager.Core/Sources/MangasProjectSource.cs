@@ -27,7 +27,7 @@ namespace HqDownloadManager.Core.Sources {
         public override List<Update> GetUpdates(string url) {
             lock (Lock1) {
                 try {
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Atualizações..."));
                     Uri site = new Uri(url);
                     BaseAdress = $"{site.Scheme}://{site.Host}";
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Abrindo Internet Explorer"));
@@ -51,6 +51,10 @@ namespace HqDownloadManager.Core.Sources {
                         var title = update.QuerySelector(".lancamento-title")?.TextContent;
                         if (!string.IsNullOrEmpty(title)) {
                             title = title.Replace("(BR)", "").Trim();
+                            title = title.Replace("(PT-BR)", "").Trim();
+                            title = title.Replace("(Novel)", "").Trim();
+                            title = title.Replace("(Manhwa)", "").Trim();
+                            title = title.Replace("(Manhua)", "").Trim();
                             var imgEl = update.QuerySelector(".cover-image")?.GetAttribute("style");
                             imgEl = imgEl?.Replace("background-image: url(", "");
                             imgEl = imgEl?.Replace(")", "");
@@ -120,6 +124,11 @@ namespace HqDownloadManager.Core.Sources {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Preparando para retornar mangas!"));
                     foreach (var hq in hqsEl) {
                         var title = hq.QuerySelector(".series-title h1")?.TextContent;
+                        title = title.Replace("(BR)", "").Trim();
+                        title = title.Replace("(PT-BR)", "").Trim();
+                        title = title.Replace("(Novel)", "").Trim();
+                        title = title.Replace("(Manhwa)", "").Trim();
+                        title = title.Replace("(Manhua)", "").Trim();
                         var imgEl = hq.QuerySelector(".cover-image")?.GetAttribute("style");
                         imgEl = imgEl?.Replace("background-image: url(", "");
                         imgEl = imgEl?.Replace(")", "");
@@ -171,6 +180,11 @@ namespace HqDownloadManager.Core.Sources {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
                     var title = source.QuerySelector("div#series-data div.series-info span.series-title h1")?.TextContent;
+                    title = title.Replace("(BR)", "").Trim();
+                    title = title.Replace("(PT-BR)", "").Trim();
+                    title = title.Replace("(Novel)", "").Trim();
+                    title = title.Replace("(Manhwa)", "").Trim();
+                    title = title.Replace("(Manhua)", "").Trim();
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {title}"));
                     var img = source.QuerySelector("div.series-img div.cover img");
                     var author = source.QuerySelector("div#series-data div.series-info span.series-author")?.TextContent;

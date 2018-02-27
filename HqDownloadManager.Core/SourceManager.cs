@@ -21,6 +21,7 @@ namespace HqDownloadManager.Core {
         private UnionMangasSourceManager _unionManager;
         private YesMangasSourceManager _yesManager;
         private MangasProjectSourceManager _projectManager;
+        private MangaLivreSourceManager _mangaLivreManager;
         private HipercoolSourceManager _hipercoolManager;
         private HqUltimateSourceManager _hqUltimateManager;
         private Dictionary<SourcesEnum, IHqSourceManager> _sources;
@@ -31,6 +32,7 @@ namespace HqDownloadManager.Core {
                     UnionMangasSourceManager unionManager,
                     YesMangasSourceManager yesManager,
                     MangasProjectSourceManager projectManager,
+                    MangaLivreSourceManager mangaLivreManager,
                     HipercoolSourceManager hipercoolManager,
                     HqUltimateSourceManager hqUltimateManager, 
                     SiteHelper siteHelper) {
@@ -38,6 +40,7 @@ namespace HqDownloadManager.Core {
             _unionManager = unionManager;
             _yesManager = yesManager;
             _projectManager = projectManager;
+            _mangaLivreManager = mangaLivreManager;
             _hipercoolManager = hipercoolManager;
             _hqUltimateManager = hqUltimateManager;
             _siteHelper = siteHelper;
@@ -46,6 +49,7 @@ namespace HqDownloadManager.Core {
                 [SourcesEnum.UnionMangas] = _unionManager,
                 [SourcesEnum.YesMangas] = _yesManager,
                 [SourcesEnum.MangasProject] = _projectManager,
+                [SourcesEnum.MangaLivre] = _mangaLivreManager,
                 [SourcesEnum.Hipercool] = _hipercoolManager,
                 [SourcesEnum.HqUltimate] = _hqUltimateManager
             };
@@ -59,6 +63,7 @@ namespace HqDownloadManager.Core {
                     ["UnionMangas"] = _unionManager,
                     ["YesMangas"] = _yesManager,
                     ["MangasProject"] = _projectManager,
+                    ["MangaLivre"] = _mangaLivreManager,
                     ["Hipercool"] = _hipercoolManager,
                     ["HqUltimate"] = _hqUltimateManager
                 };

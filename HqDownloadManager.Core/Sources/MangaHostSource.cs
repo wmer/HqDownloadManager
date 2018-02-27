@@ -33,6 +33,10 @@ namespace HqDownloadManager.Core.Sources {
                         var title = hqEl.QuerySelector("td h3.entry-title")?.TextContent;
                         if (!string.IsNullOrEmpty(title)) {
                             title = title.Replace("(BR)", "").Trim();
+                            title = title.Replace("(PT-BR)", "").Trim();
+                            title = title.Replace("(Novel)", "").Trim();
+                            title = title.Replace("(Manhwa)", "").Trim();
+                            title = title.Replace("(Manhua)", "").Trim();
                             var sinopse = hqEl.QuerySelector("td div.entry-content")?.TextContent;
                             var img = hqEl.QuerySelector("td a img.manga")?.GetAttribute("src");
                             var link = hqEl.QuerySelector("td h3.entry-title a")?.GetAttribute("href");
@@ -53,7 +57,7 @@ namespace HqDownloadManager.Core.Sources {
         public override List<Update> GetUpdates(string url) {
             lock (Lock7) {
                 try {
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Atualizações..."));
                     var driver = BrowserHelper.GetDriver(url);
                     var pageSource = driver.PageSource;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
@@ -67,6 +71,10 @@ namespace HqDownloadManager.Core.Sources {
                         var title = update.QuerySelector("td h3.entry-title")?.TextContent;
                         if (!string.IsNullOrEmpty(title)) {
                             title = title.Replace("(BR)", "").Trim();
+                            title = title.Replace("(PT-BR)", "").Trim();
+                            title = title.Replace("(Novel)", "").Trim();
+                            title = title.Replace("(Manhwa)", "").Trim();
+                            title = title.Replace("(Manhua)", "").Trim();
                             var img = update.QuerySelector("td a img.manga")?.GetAttribute("src");
                             var link = update.QuerySelector("td h3.entry-title a")?.GetAttribute("href");
                             var chaptersEl = update.QuerySelectorAll(".chapters a.btn");
@@ -98,7 +106,7 @@ namespace HqDownloadManager.Core.Sources {
         public override LibraryPage GetLibrary(String linkPage) {
             lock (Lock6) {
                 try {
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Biblioteca..."));
                     var driver = BrowserHelper.GetDriver(linkPage);
                     var pageSource = driver.PageSource;
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
@@ -126,6 +134,11 @@ namespace HqDownloadManager.Core.Sources {
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Preparando para retornar mangas!"));
                     foreach (var hq in hqsEl) {
                         var title = hq.QuerySelector("h3")?.TextContent;
+                        title = title.Replace("(BR)", "").Trim();
+                        title = title.Replace("(PT-BR)", "").Trim();
+                        title = title.Replace("(Novel)", "").Trim();
+                        title = title.Replace("(Manhwa)", "").Trim();
+                        title = title.Replace("(Manhua)", "").Trim();
                         var img = hq.QuerySelector("a img")?.GetAttribute("src");
                         var link = hq.QuerySelector("h3 a")?.GetAttribute("href");
                         if (!string.IsNullOrEmpty(link)) {
@@ -156,6 +169,11 @@ namespace HqDownloadManager.Core.Sources {
                     var hqInfo = new Hq();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
                     var title = source.QuerySelector(".title-widget .entry-title")?.TextContent;
+                    title = title.Replace("(BR)", "").Trim();
+                    title = title.Replace("(PT-BR)", "").Trim();
+                    title = title.Replace("(Novel)", "").Trim();
+                    title = title.Replace("(Manhwa)", "").Trim();
+                    title = title.Replace("(Manhua)", "").Trim();
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {title}"));
                     var img = source.QuerySelector("div#page img");
                     var synopsis = source.QuerySelector(".pull-left article")?.TextContent;

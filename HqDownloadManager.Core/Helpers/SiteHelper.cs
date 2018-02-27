@@ -29,6 +29,8 @@ namespace HqDownloadManager.Core.Helpers {
                 ["unionmangas"] = typeof(UnionMangasSourceManager),
                 ["mangas"] = typeof(MangasProjectSourceManager),
                 ["mangastream"] = typeof(MangasProjectSourceManager),
+                ["leitor"] = typeof(MangasProjectSourceManager),
+                ["mangalivre"] = typeof(MangaLivreSourceManager),
                 ["hiper"] = typeof(HipercoolSourceManager)
             };
         }

@@ -12,7 +12,7 @@ namespace HqDownloadManager.Shared.ViewModel.ComboBox {
         public HqSourceLibrarySelectorViewModel() {
             Sources = new string[]{
                 "MangaHost", "YesMangas",
-                "UnionMangas", "MangasProject",
+                "UnionMangas", "MangasProject", "MangaLivre",
                 "Hipercool", "HqUltimate"
             };
             SelectedSource = Sources[0];

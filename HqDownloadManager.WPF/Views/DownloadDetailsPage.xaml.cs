@@ -1,4 +1,5 @@
 ﻿using HqDownloadManager.Core.Models;
+using HqDownloadManager.Shared.Models;
 using HqDownloadManager.Shared.ViewModel.HqStatus;
 using HqDownloadManager.Shared.ViewModel.MyDownloads;
 using HqDownloadManager.WPF.Controller;
@@ -37,9 +38,7 @@ namespace HqDownloadManager.WPF.Views {
 
         private void SearchUpdatesBtn_Click(object sender, RoutedEventArgs e) => _controller.SearchUpdates();
 
-        private void ChapterReading_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
-
-        }
+        private void ChapterReading_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e) => _controller.Read<HqReaderPage>(ChapterReading.SelectedItem as ReaderHistory);
 
         private void SarchDetails_Click(object sender, RoutedEventArgs e) => _controller.SearchDetails();
 

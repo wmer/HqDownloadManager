@@ -21,6 +21,7 @@ namespace HqDownloadManager.Shared.ViewModel.MainWindow {
                 new MenuButton{ Icon = "\uf017", Label = "Atualizações"},
                 new MenuButton{ Icon = "\uf02d", Label = "Biblioteca"},
                 new MenuButton{ Icon = "\uf019", Label = "Meus Downloads"},
+                new MenuButton{ Icon = "\uf1da", Label = "Histórico de Leitura"},
                 new MenuButton{ Icon = "\uf03a", Label = "Minha Lista de Mangás"},
                 new MenuButton{ Icon = "\uf309", Label = "Gerenciador de Downloads"},
                 new MenuButton{ Icon = "\uf085", Label = "Configurações"},

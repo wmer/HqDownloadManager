@@ -7,6 +7,7 @@ using HqDownloadManager.Core.Sources;
 using HqDownloadManager.Download;
 using HqDownloadManager.Download.Configuration;
 using HqDownloadManager.Download.Models;
+using HqDownloadManager.Shared.Database;
 using HqDownloadManager.Shared.Models;
 using HqDownloadManager.Shared.ViewModel.HqStatus;
 using HqDownloadManager.Shared.ViewModel.MyDownloads;
@@ -32,6 +33,7 @@ namespace HqDownloadManager.WPF.Controller {
         protected DownloadManager _downloadManager;
         private SourceManager _sourceManager;
         protected EntryManager _entryManager;
+        private UserContext _userContext;
         private NavigationManager _navigationManager;
         protected DownloadDetailsViewModel _detailsViewModel;
         protected NotificationViewModel _notification;
@@ -43,10 +45,12 @@ namespace HqDownloadManager.WPF.Controller {
              DownloadManager downloadManager,
              SourceManager sourceManager,
              EntryManager entryManager,
+             UserContext userContext,
              NavigationManager navigationManager) {
             _downloadManager = downloadManager;
             _sourceManager = sourceManager;
             _entryManager = entryManager;
+            _userContext = userContext;
             _navigationManager = navigationManager;
             NavigationEventHub.Navigated += NavigationEventHub_Navigated;
             CoreEventHub.ProcessingProgress += CoreEventHub_ProcessingProgress;
@@ -90,7 +94,7 @@ namespace HqDownloadManager.WPF.Controller {
                         _editModel.Results = result;
                         _editModel.ResultVisibility = true;
                     });
-                } else if(!string.IsNullOrEmpty(title)) {
+                } else if (!string.IsNullOrEmpty(title)) {
                     var source = _sourceManager.GetSpurce(SourcesEnum.MangaHost) as MangaHostSourceManager;
                     source.Search(title, out result);
                     Dispatcher.Invoke(() => {
@@ -135,10 +139,10 @@ namespace HqDownloadManager.WPF.Controller {
             _hqStatus.Hq = null;
             _detailsViewModel.DownloadInfo = null;
             _list = null;
-            var info = new HqDownloadInfo { Hq =  hq, Path = path };
-            Task.Run(()=> {
+            var info = new HqDownloadInfo { Hq = hq, Path = path };
+            Task.Run(() => {
                 _downloadManager.DeleteDownloadInfo(info, true);
-                Dispatcher.Invoke(()=> {
+                Dispatcher.Invoke(() => {
                     NavigationManager.GoBack();
                 });
             });
@@ -172,7 +176,7 @@ namespace HqDownloadManager.WPF.Controller {
         public void AddSelectedsToDownload() {
             var listView = ControlsHelper.Find<System.Windows.Controls.ListView>("Updates");
             var hq = _detailsViewModel.DownloadInfo.Hq;
-            hq.Chapters = new List<Chapter>(); 
+            hq.Chapters = new List<Chapter>();
             foreach (var item in listView.SelectedItems) {
                 hq.Chapters.Add(item as Chapter);
             }
@@ -209,6 +213,8 @@ namespace HqDownloadManager.WPF.Controller {
             _navigationManager.Navigate<T>("Reader", readerModel);
         }
 
+        public void Read<T>(ReaderHistory history) where T : System.Windows.Controls.Page => _navigationManager.Navigate<T>("Reader", history.Reader);
+
         private void NavigationEventHub_Navigated(object sender, NavigationEventArgs e) {
             _detailsViewModel = ControlsHelper.FindResource<DownloadDetailsViewModel>("Details");
             if (_detailsViewModel != null && e.ExtraContent is HqDownloadInfo extraContent) {
@@ -217,7 +223,17 @@ namespace HqDownloadManager.WPF.Controller {
                 if (_detailsViewModel.DownloadInfo.Hq != null && !string.IsNullOrEmpty(_detailsViewModel.DownloadInfo.Hq.Link)) {
                     _hqStatus.Entry = _entryManager.GetHqEntry(_detailsViewModel.DownloadInfo.Hq);
                     _hqStatus.Hq = _detailsViewModel.DownloadInfo.Hq;
+                    if (_userContext.ReaderHistory.Find().Where(x => x.Link == _hqStatus.Hq.Link).Execute() is List<ReaderHistory> list) {
+                        var listM = new List<ReaderHistory>();
+                        foreach (var item in list) {
+                            item.Reader.Hq = _detailsViewModel.DownloadInfo.Hq;
+                            item.Reader.ActualChapter = _hqStatus.Hq.Chapters[item.Reader.ActualChapterIndex];
+                            listM.Add(item);
+                        }
+                        _detailsViewModel.Readings = listM.Reverse<ReaderHistory>().ToList();
+                    }
                 }
+
             }
         }
 

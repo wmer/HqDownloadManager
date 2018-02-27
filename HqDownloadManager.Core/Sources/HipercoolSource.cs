@@ -23,7 +23,7 @@ namespace HqDownloadManager.Core.Sources {
                 try {
                     Site = new Uri(url);
                     BaseAdress = $"{Site.Scheme}://{Site.Host}";
-                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Lançamentos..."));
+                    OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando Atualizações..."));
                     var source = HtmlHelper.GetSourceCodeFromUrl(url);
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Pegando dados da página"));
                     var updates = new List<Update>();
@@ -37,12 +37,16 @@ namespace HqDownloadManager.Core.Sources {
                         if (!string.IsNullOrEmpty(chapterTitle)) {
                             chapterTitle = chapterTitle.Replace("\n", "").Trim();
                             var lastIndex = chapterTitle.LastIndexOf("-");
-                            var hqTitle = "";
+                            var title = "";
                             if (lastIndex == -1) {
-                                hqTitle = chapterTitle;
+                                title = chapterTitle;
                             }else {
-                                hqTitle = chapterTitle.Substring(0, lastIndex).Trim();
-                                hqTitle = hqTitle.Replace("(BR)", "").Trim();
+                                title = chapterTitle.Substring(0, lastIndex).Trim();
+                                title = title.Replace("(BR)", "").Trim();
+                                title = title.Replace("(PT-BR)", "").Trim();
+                                title = title.Replace("(Novel)", "").Trim();
+                                title = title.Replace("(Manhwa)", "").Trim();
+                                title = title.Replace("(Manhua)", "").Trim();
                             }
                             var hqLink = update.QuerySelector("a.container")?.GetAttribute("href");
                             var chapterLink = update.QuerySelector("a.read-wrapper")?.GetAttribute("href");
@@ -53,7 +57,7 @@ namespace HqDownloadManager.Core.Sources {
                                     dic[hqLink].Chappters.Add(chap);
                                 } else {
                                     var img = update.QuerySelector("a.container img")?.GetAttribute("src");
-                                    var hq = new Hq { Link = $"{BaseAdress}{hqLink}", Title = hqTitle, CoverSource = $"{Site.Scheme}:{img}" };
+                                    var hq = new Hq { Link = $"{BaseAdress}{hqLink}", Title = title, CoverSource = $"{Site.Scheme}:{img}" };
                                     var chap = new Chapter { Title = chapterTitle, Link = $"{BaseAdress}{chapterLink}" };
                                     chapters = new List<Chapter>();
                                     chapters.Add(chap);
@@ -79,7 +83,7 @@ namespace HqDownloadManager.Core.Sources {
 
         public override LibraryPage GetLibrary(String linkPage) {
             lock (Lock6) {
-                throw new NotImplementedException();
+                return new LibraryPage();
             }
         }
 
@@ -92,6 +96,11 @@ namespace HqDownloadManager.Core.Sources {
                     var hqInfo = new Hq();
                     if (source == null) throw new Exception("Ocorreu um erro ao buscar informaçoes da Hq");
                     var title = source.QuerySelector(".manga-card .infos-wrapper .title")?.TextContent;
+                    title = title.Replace("(BR)", "").Trim();
+                    title = title.Replace("(PT-BR)", "").Trim();
+                    title = title.Replace("(Novel)", "").Trim();
+                    title = title.Replace("(Manhwa)", "").Trim();
+                    title = title.Replace("(Manhua)", "").Trim();
                     OnProcessingProgress(new ProcessingEventArgs(DateTime.Now, $"Buscando informações de {title}"));
                     var coverEl = source.QuerySelector(".manga-card .cover-wrapper img");
                     var synopsis = source.QuerySelector(".manga-card .infos-wrapper .sinopse")?.TextContent;

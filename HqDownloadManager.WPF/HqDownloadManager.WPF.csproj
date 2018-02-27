@@ -97,11 +97,17 @@
     <Compile Include="Views\DownloadPage.xaml.cs">
       <DependentUpon>DownloadPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HqListPage.xaml.cs">
+      <DependentUpon>HqListPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HqReaderPage.xaml.cs">
       <DependentUpon>HqReaderPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MyLibraryPage.xaml.cs">
       <DependentUpon>MyLibraryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReaderHistoryPage.xaml.cs">
+      <DependentUpon>ReaderHistoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SourceLibraryPage.xaml.cs">
       <DependentUpon>SourceLibraryPage.xaml</DependentUpon>
@@ -133,11 +139,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HqListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\HqReaderPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MyLibraryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReaderHistoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -52,7 +52,11 @@ namespace HqDownloadManager.WPF {
                     case "Meus Downloads":
                         _navigationManager.Navigate<MyLibraryPage>("Meus Downloads");
                         break;
+                    case "Histórico de Leitura":
+                        _navigationManager.Navigate<ReaderHistoryPage>("Meus Downloads");
+                        break;
                     case "Minha Lista de Mangás":
+                        _navigationManager.Navigate<HqListPage>("Lista de Hqs");
                         break;
                     case "Gerenciador de Downloads":
                         _navigationManager.Navigate<DownloadPage>("Lista de Download");
