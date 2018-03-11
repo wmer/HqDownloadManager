@@ -13,8 +13,8 @@ namespace HqDownloadManager.Shared.ViewModel.MyDownloads {
     public class DownloadDetailsViewModel : ViewModelBase {
         private Chapter _selectedChapter;
         private HqDownloadInfo _downloadInfo;
-        private List<ReaderHistory> _readings;
-        private ReaderHistory _selectedReading;
+        private List<ReadingHistory> _readings;
+        private ReadingHistory _selectedReading;
         private List<Chapter> _updateList;
         private bool _updateVisibility;
         private double _width;
@@ -61,7 +61,7 @@ namespace HqDownloadManager.Shared.ViewModel.MyDownloads {
             }
         }
 
-        public List<ReaderHistory> Readings {
+        public List<ReadingHistory> Readings {
             get => _readings;
             set {
                 _readings = value;
@@ -69,7 +69,7 @@ namespace HqDownloadManager.Shared.ViewModel.MyDownloads {
             }
         }
 
-        public ReaderHistory SelectedReading {
+        public ReadingHistory SelectedReading {
             get => _selectedReading;
             set {
                 _selectedReading = value;

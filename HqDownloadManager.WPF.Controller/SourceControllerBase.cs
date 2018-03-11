@@ -28,8 +28,8 @@ namespace HqDownloadManager.WPF.Controller {
     public class SourceControllerBase : System.Windows.Controls.Page {
         protected delegate IHqSourceManager LibraryOperation(out LibraryPage library, double timeCache = 4320);
 
-        private SourceManager _sourceManager;
-        private ConfigurationContext _configurationContext;
+        protected SourceManager _sourceManager;
+        protected ConfigurationContext _configurationContext;
         protected EntryManager _entryManager;
         protected DownloadManager _downloadManager;
         protected NavigationManager _navigationManager;
@@ -97,7 +97,7 @@ namespace HqDownloadManager.WPF.Controller {
             var downloadLocation = SetDefaultPath();
             if (!string.IsNullOrEmpty(downloadLocation)) {
                 if (!(_configurationContext.DownloadLocation.Find().Where(x => x.Location == downloadLocation).Execute().FirstOrDefault() is DownloadLocation)) {
-                    _configurationContext.DownloadLocation.SaveOrReplace(new DownloadLocation { Location = downloadLocation });
+                    _configurationContext.DownloadLocation.Save(new DownloadLocation { Location = downloadLocation });
                 }
                 _downloadManager.AddToDownloadList(hq, downloadLocation);
             }

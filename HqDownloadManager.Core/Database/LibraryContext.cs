@@ -1,7 +1,7 @@
 ﻿using HqDownloadManager.Core.Configuration;
 using HqDownloadManager.Core.Models;
 using Repository;
-using Repository.Core;
+using Repository.SQLite.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;

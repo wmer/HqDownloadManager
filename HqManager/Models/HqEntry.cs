@@ -1,5 +1,5 @@
 ﻿using HqDownloadManager.Core.Models;
-using Repository.Attributes;
+using Repository.Shared.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +13,7 @@ namespace HqManager.Models {
         public double Score { get; set; }
         public string Review { get; set; }
         public DateTime StartedReading { get; set; }
+        public DateTime LastChapterReadDate { get; set; }
         public DateTime FinishedReading { get; set; }
     }
 }

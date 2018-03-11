@@ -131,7 +131,7 @@ namespace HqDownloadManager.Core.Managers {
                                 if (_libraryContext.Hq.Find().Where(x => x.Link == link).Execute().FirstOrDefault() is Hq hq) {
                                     upd.Hq = hq;
                                     foreach (var chap in upd.Chapters) {
-                                        chap.Hq = upd.Hq;
+                                        chap.Hq = hq;
                                         chap.IsUpdate = true;
                                         chap.Date = DateTime.Now.AddDays(3);
                                         if (_libraryContext.Chapter.Find(x => x.Id).Where(x => x.Link == chap.Link).Execute().FirstOrDefault() is Chapter chapDb) {
@@ -227,7 +227,7 @@ namespace HqDownloadManager.Core.Managers {
                 if (isFinalized) {
                     hq.TimeInCache = new DateTime(2100, 1, 1);
                 }
-                var id = _libraryContext.Hq.SaveOrReplace(hq);
+                var id = _libraryContext.Hq.Save(hq);
                 hq.Id = Convert.ToInt32(id);
                 SaveChaptersInDb(hq);
                 hq.Chapters = _libraryContext.Chapter.Find().Where(x => x.Hq == hq).Execute();
@@ -264,7 +264,7 @@ namespace HqDownloadManager.Core.Managers {
                         pg.Chapter = chapter;
                     }
 
-                    _libraryContext.Page.SaveOrReplace(chapter.Pages);
+                    _libraryContext.Page.Save(chapter.Pages);
                 }
             }
         }

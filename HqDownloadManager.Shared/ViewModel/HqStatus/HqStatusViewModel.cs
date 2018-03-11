@@ -44,8 +44,9 @@ namespace HqDownloadManager.Shared.ViewModel.HqStatus {
             set {
                 var entry = value;
                 if (entry == null) {
-                    entry = new HqEntry();
-                    entry.ReadStatus = "Add to...";
+                    entry = new HqEntry {
+                        ReadStatus = "Add to..."
+                    };
                 }
                 Hq = entry.Hq;
                 SelectedStatus = entry.ReadStatus;

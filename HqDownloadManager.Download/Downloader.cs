@@ -142,10 +142,11 @@ namespace HqDownloadManager.Download {
                     chapAtual++;
                 }
                 downloadItem.DownloadFinished = DateTime.Now;
-                var downloadInfo = new HqDownloadInfo(downloadItem);
-                downloadInfo.Path = hqDirectory;
+                var downloadInfo = new HqDownloadInfo(downloadItem) {
+                    Path = hqDirectory
+                };
                 downloadItem.IsDownloaded = true;
-                _downloadContext.DownloadList.SaveOrReplace(downloadItem);
+                _downloadContext.DownloadList.Save(downloadItem);
                 _downloadInfoHelper.SaveDownloadInfo(downloadInfo);
                 DownloadEventHub.OnDownloadEnd(this, new DownloadEventArgs(downloadItem, (downloadItem.DownloadFinished - downloadItem.DownloadStarted), failedToDownload));
             }

@@ -1,7 +1,7 @@
 ﻿using HqDownloadManager.Shared.Models;
 using HqDownloadManager.Shared.ViewModel.Reader;
 using Repository;
-using Repository.Core;
+using Repository.SQLite.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

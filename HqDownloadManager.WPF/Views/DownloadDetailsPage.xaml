@@ -32,7 +32,7 @@
             PreviewMouseLeftButtonUp="DownloadInfoChapters_PreviewMouseLeftButtonUp">
 
             <ListView.ItemsPanel>
-                <ItemsPanelTemplate >
+                <ItemsPanelTemplate>
                     <UniformGrid Columns="{Binding Columns, Source={StaticResource Details}}" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>

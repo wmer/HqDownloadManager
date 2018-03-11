@@ -50,9 +50,11 @@
     <Compile Include="ConfigurationController.cs" />
     <Compile Include="DownloadController.cs" />
     <Compile Include="DownloadDetailsController.cs" />
+    <Compile Include="HqListController.cs" />
     <Compile Include="HqReaderController.cs" />
     <Compile Include="MyLibraryController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadingHistoryController.cs" />
     <Compile Include="SourceControllerBase.cs" />
     <Compile Include="SourceLibraryController.cs" />
     <Compile Include="SourceUpdatesController.cs" />
@@ -66,9 +68,21 @@
       <Project>{7b9d547d-97c9-40d0-9226-a85b08909ae7}</Project>
       <Name>Reflection.Optimization</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository.Shared\Repository.Shared.csproj">
+      <Project>{2354de5a-6d9c-433a-8bb1-81666fa4d08c}</Project>
+      <Name>Repository.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository.SQLite\Repository.SQLite.csproj">
+      <Project>{0af4b547-a417-49be-b74f-b7d415eecaf8}</Project>
+      <Name>Repository.SQLite</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj">
       <Project>{b6b3785e-9c5f-43ca-912a-21b5b093e4d1}</Project>
       <Name>Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\NetStandard\Repository\SqlCreator\SqlCreator.csproj">
+      <Project>{cbc4d526-dacd-4d89-a2d0-bffe57e4f490}</Project>
+      <Name>SqlCreator</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\NetStandard\Utils\Utils\Utils.csproj">
       <Project>{918f6edb-f7e6-4b32-b368-3033a385c66d}</Project>

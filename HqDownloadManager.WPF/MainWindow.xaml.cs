@@ -53,7 +53,7 @@ namespace HqDownloadManager.WPF {
                         _navigationManager.Navigate<MyLibraryPage>("Meus Downloads");
                         break;
                     case "Histórico de Leitura":
-                        _navigationManager.Navigate<ReaderHistoryPage>("Meus Downloads");
+                        _navigationManager.Navigate<ReaderHistoryPage>("Meu Histórico");
                         break;
                     case "Minha Lista de Mangás":
                         _navigationManager.Navigate<HqListPage>("Lista de Hqs");

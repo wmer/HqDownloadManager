@@ -1,5 +1,4 @@
 ﻿using HqDownloadManager.Core.Models;
-using Repository.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;

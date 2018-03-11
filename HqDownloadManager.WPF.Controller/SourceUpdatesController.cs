@@ -11,6 +11,7 @@ using HqDownloadManager.Core.Models;
 using HqDownloadManager.Download;
 using HqDownloadManager.Download.Configuration;
 using HqDownloadManager.Shared.Database;
+using HqDownloadManager.Shared.Models;
 using HqDownloadManager.Shared.ViewModel.Reader;
 using HqDownloadManager.Shared.ViewModel.SourceUpdate;
 using HqManager;
@@ -53,9 +54,15 @@ namespace HqDownloadManager.WPF.Controller {
          
         public void Downloadupdates() {
             var hq = _hqStatusView.Hq;
-            hq.Chapters = _sourceUpdate.SelectedUpdate.Chapters;
-            _entryManager.AddTo(ReadStatus.LENDO, hq);
-            _downloadManager.AddToDownloadList(hq, DownloadConfiguration.DownloadLocations[0]);
+            var downloadLocation = SetDefaultPath();
+            if (!string.IsNullOrEmpty(downloadLocation) && hq != null && hq.Id > 0) {
+                if (!(_configurationContext.DownloadLocation.Find().Where(x => x.Location == downloadLocation).Execute().FirstOrDefault() is DownloadLocation)) {
+                    _configurationContext.DownloadLocation.Save(new DownloadLocation { Location = downloadLocation });
+                }
+                _entryManager.AddTo(ReadStatus.LENDO, hq);
+                hq.Chapters = _sourceUpdate.SelectedUpdate.Chapters;
+                _downloadManager.AddToDownloadList(hq, downloadLocation);
+            }
         }
 
         private void ShowUpdates() {

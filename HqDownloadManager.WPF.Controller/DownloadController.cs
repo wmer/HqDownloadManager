@@ -18,6 +18,7 @@ namespace HqDownloadManager.WPF.Controller {
         protected ListView _downloadList;
         protected ListView _chapterList;
         protected List<ProgressBar> _progressBars;
+        protected TextBlock _progress;
 
         public DownloadController(
                 DownloadManager downloadManager) {
@@ -61,7 +62,6 @@ namespace HqDownloadManager.WPF.Controller {
                     _chapterList.ScrollIntoView(ev.Item.LastDownloadedChapter);
                     _chapterList.SelectedItem = ev.Item.LastDownloadedChapter;
 
-
                     _progressBars[0].Maximum = ev.Total;
                     _progressBars[0].Value = ev.NumAtual;
                     _progressBars[1].Value = 0;
@@ -82,6 +82,8 @@ namespace HqDownloadManager.WPF.Controller {
                     _progressBars[1].Maximum = ev.Total;
                     _progressBars[1].Value = ev.NumAtual;
 
+                    _progress.Text = $"Baixando página {ev.NumAtual} de {ev.Total}...";
+
                     _downloadList.UpdateLayout();
                 });
             });
@@ -91,6 +93,7 @@ namespace HqDownloadManager.WPF.Controller {
             Task.Run(() => {
                 Dispatcher.Invoke(() => {
                     Shutdown();
+                    _progress.Text = $"Download Concluido";
                 });
             });
         }
@@ -102,6 +105,7 @@ namespace HqDownloadManager.WPF.Controller {
                     _downloadList.ScrollIntoView(ev.Item);
                     var template = _downloadList.ItemContainerGenerator.ContainerFromItem(ev.Item);
                     _progressBars = template.Find<ProgressBar>();
+                    _progress = template.Find<TextBlock>("Progress");
                 });
             });
         }

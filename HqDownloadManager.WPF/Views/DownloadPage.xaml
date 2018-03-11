@@ -68,22 +68,29 @@
                             Stretch="Fill"
                             VerticalAlignment="Top"
                             HorizontalAlignment="Left"
-                            Width="80" 
-                            Height="110"
+                            Width="100" 
+                            Height="140"
                             Margin="3,0,0,5"
                             ToolTipService.ToolTip="{Binding Hq.Title}"/>
-                        <TextBox 
-                            IsReadOnly="True" 
+                        <TextBlock 
                             Text="{Binding Hq.Title}" 
                             TextWrapping="Wrap" 
                             Width="600"
                             Height="75"
                             VerticalAlignment="Top"
                             HorizontalAlignment="Left"
-                            Margin="85,0,0,0"
-                            BorderBrush="{x:Null}" 
+                            Margin="105,0,0,0"
                             Foreground="Black" 
                             FontSize="19" />
+                        <TextBlock 
+                            x:Name="Progress"
+                            Width="600"
+                            Height="35"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Left"
+                            Margin="105,75,0,0"
+                            Foreground="Black" 
+                            FontSize="19"/>
                         <ProgressBar
                             x:Name="ChapterProgress"
                             Width="600"
@@ -91,7 +98,7 @@
                             Minimum="0"
                             VerticalAlignment="Bottom"
                             HorizontalAlignment="Left"
-                            Margin="85,0,0,25"/>
+                            Margin="105,0,0,25"/>
                         <ProgressBar
                             x:Name="PageProgress"
                             Width="600"
@@ -99,7 +106,7 @@
                             Minimum="0"
                             VerticalAlignment="Bottom"
                             HorizontalAlignment="Left"
-                            Margin="85,0,0,5" />
+                            Margin="105,0,0,5" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -47,8 +47,6 @@ namespace HqDownloadManager.Download.Helpers {
                         JsonSerializer serializer = new JsonSerializer();
                         serializer.Serialize(file, downloadInfo);
                     }
-
-                    _downloadContext.HqDownloadInfo.SaveOrReplace(downloadInfo);
                 }           
             }
         }
@@ -74,7 +72,6 @@ namespace HqDownloadManager.Download.Helpers {
                                     if (!string.IsNullOrEmpty(downloadInfo.Hq.Link)) {
                                         if (_downloadContext.Hq.Find().Where(x => x.Link == downloadInfo.Hq.Link).Execute().FirstOrDefault() is Hq hq) {
                                             downloadInfo.Hq = hq;
-                                            _downloadContext.HqDownloadInfo.SaveOrReplace(downloadInfo);
                                         }
                                     }
                                 } else {
@@ -151,7 +148,6 @@ namespace HqDownloadManager.Download.Helpers {
         public void DeleteDownloadInfo(HqDownloadInfo downloadInfo, bool deleteFiles = false) {
             lock (_lock) {
                 if (downloadInfo.Hq != null) {
-                    _downloadContext.HqDownloadInfo.Delete(downloadInfo);
                     if (deleteFiles && !string.IsNullOrEmpty(downloadInfo.Path)) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();

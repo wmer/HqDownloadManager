@@ -2,7 +2,6 @@
 using HqDownloadManager.Core.Database;
 using HqManager.Models;
 using Repository;
-using Repository.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;

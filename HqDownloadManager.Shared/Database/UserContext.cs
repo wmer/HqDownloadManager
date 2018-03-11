@@ -12,6 +12,6 @@ using System.Threading.Tasks;
 namespace HqDownloadManager.Shared.Database {
     public class UserContext : HqManagerContext {
         public Repository<ReaderViewModel> Reader { get; set; }
-        public Repository<ReaderHistory> ReaderHistory { get; set; }
+        public Repository<ReadingHistory> ReaderHistory { get; set; }
     }
 }

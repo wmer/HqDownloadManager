@@ -15,12 +15,12 @@ namespace HqManager {
         }
 
         public void AddTo(ReadStatus status, Hq hq) =>
-        _context.HqEntry.SaveOrReplace(new HqEntry {
+        _context.HqEntry.Save(new HqEntry {
             Hq = hq, ReadStatus = status.ToString()
         });
 
         public void SaveEntry(HqEntry entry) =>
-                        _context.HqEntry.SaveOrReplace(entry);
+                        _context.HqEntry.Save(entry);
 
         public string GetReadStatus(Hq hq) {
             if (_context.HqEntry.Find().Where(x => x.Hq == hq).GetOne() is HqEntry entry) {

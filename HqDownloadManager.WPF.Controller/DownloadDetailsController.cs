@@ -110,11 +110,22 @@ namespace HqDownloadManager.WPF.Controller {
 
         public void SaveDetails() {
             Task.Run(() => {
+                if (_editModel.Hq == null || string.IsNullOrEmpty(_editModel.Hq.Link)) return;
+
+                if (_editModel.Hq != null && _editModel.Hq.Id == 0 && !string.IsNullOrEmpty(_editModel.Hq.Link)) {
+                    if (_userContext.Hq.Find().Where(x => x.Link == _editModel.Hq.Link).Execute().FirstOrDefault() is Hq hq) {
+                        _editModel.Hq = hq;
+                    } else {
+                        _editModel.Hq.IsDetailedInformation = false;
+                        _editModel.Hq.Id = Convert.ToInt32(_userContext.Hq.Save(_editModel.Hq));
+                    }
+                }
+
                 var info = new HqDownloadInfo();
                 Dispatcher.Invoke(() => {
-                    info = _detailsViewModel.DownloadInfo;
-                    info.Hq = _editModel.Hq;
-                    info.Hq.Chapters = _detailsViewModel.DownloadInfo.Hq.Chapters;
+                    var chapters = _detailsViewModel.DownloadInfo.Hq.Chapters;
+                    _detailsViewModel.DownloadInfo.Hq = _editModel.Hq;
+                    info.Hq.Chapters = chapters;
                 });
                 _downloadManager.SaveDownloadInfo(info);
                 Dispatcher.Invoke(() => {
@@ -123,14 +134,25 @@ namespace HqDownloadManager.WPF.Controller {
                     _editModel.Visibility = false;
                     _editModel.ResultVisibility = false;
                 });
+
             });
         }
 
         public void SaveEntry() {
-            var entry = _hqStatus.Entry;
+            if (_hqStatus.Entry.Hq == null || string.IsNullOrEmpty(_hqStatus.Entry.Hq.Link)) return;
+
+            if (_hqStatus.Entry.Hq != null && _hqStatus.Entry.Hq.Id == 0 && !string.IsNullOrEmpty(_hqStatus.Entry.Hq.Link)) {
+                if (_userContext.Hq.Find().Where(x => x.Link == _hqStatus.Entry.Hq.Link).Execute().FirstOrDefault() is Hq hq) {
+                    _hqStatus.Entry.Hq = hq;
+                } else {
+                    _hqStatus.Entry.Hq.IsDetailedInformation = false;
+                    _hqStatus.Entry.Hq.Id = Convert.ToInt32(_userContext.Hq.Save(_hqStatus.Entry.Hq));
+                }
+            }
+            
             _entryManager.SaveEntry(_hqStatus.Entry);
             _hqStatus.Visibility = false;
-        }
+        } 
 
         public void DeleteHq() {
             var id = _detailsViewModel.DownloadInfo.Hq.Id;
@@ -213,7 +235,7 @@ namespace HqDownloadManager.WPF.Controller {
             _navigationManager.Navigate<T>("Reader", readerModel);
         }
 
-        public void Read<T>(ReaderHistory history) where T : System.Windows.Controls.Page => _navigationManager.Navigate<T>("Reader", history.Reader);
+        public void Read<T>(ReadingHistory history) where T : System.Windows.Controls.Page => _navigationManager.Navigate<T>("Reader", history.Reader);
 
         private void NavigationEventHub_Navigated(object sender, NavigationEventArgs e) {
             _detailsViewModel = ControlsHelper.FindResource<DownloadDetailsViewModel>("Details");
@@ -223,14 +245,14 @@ namespace HqDownloadManager.WPF.Controller {
                 if (_detailsViewModel.DownloadInfo.Hq != null && !string.IsNullOrEmpty(_detailsViewModel.DownloadInfo.Hq.Link)) {
                     _hqStatus.Entry = _entryManager.GetHqEntry(_detailsViewModel.DownloadInfo.Hq);
                     _hqStatus.Hq = _detailsViewModel.DownloadInfo.Hq;
-                    if (_userContext.ReaderHistory.Find().Where(x => x.Link == _hqStatus.Hq.Link).Execute() is List<ReaderHistory> list) {
-                        var listM = new List<ReaderHistory>();
+                    if (_userContext.ReaderHistory.Find().Where(x => x.Link == _hqStatus.Hq.Link).Execute() is List<ReadingHistory> list) {
+                        var listM = new List<ReadingHistory>();
                         foreach (var item in list) {
                             item.Reader.Hq = _detailsViewModel.DownloadInfo.Hq;
                             item.Reader.ActualChapter = _hqStatus.Hq.Chapters[item.Reader.ActualChapterIndex];
                             listM.Add(item);
                         }
-                        _detailsViewModel.Readings = listM.Reverse<ReaderHistory>().ToList();
+                        _detailsViewModel.Readings = listM.Reverse<ReadingHistory>().ToList();
                     }
                 }
 

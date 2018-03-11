@@ -1,4 +1,4 @@
-﻿using Repository.Attributes;
+﻿using Repository.Shared.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;

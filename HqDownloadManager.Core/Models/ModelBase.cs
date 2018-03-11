@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Repository.Shared.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Repository.Attributes;
 
 namespace HqDownloadManager.Core.Models {
     public class ModelBase {

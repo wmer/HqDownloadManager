@@ -37,7 +37,7 @@ namespace HqDownloadManager.WPF.Controller {
         private ScrollViewer _scroolOfReader;
         private ICollectionView _collectionView;
         private readonly object _lock = new object();
-        private ReaderHistory _actualReaderHistory;
+        private ReadingHistory _actualReading;
         private int _actualPage;
 
         public HqReaderController(
@@ -206,9 +206,9 @@ namespace HqDownloadManager.WPF.Controller {
                         var id = _userContext.Reader.Save(_readerViewModel);
                         _readerViewModel.Id = Convert.ToInt32(id);
                     });
-                    if (_actualReaderHistory != null) {
+                    if (_actualReading != null) {
                         _userContext.ReaderHistory.Update(x => new { x.Date, x.Reader }, DateTime.Now, _readerViewModel)
-                                                  .Where(x => x.Id == _actualReaderHistory.Id)
+                                                  .Where(x => x.Id == _actualReading.Id)
                                                   .Execute();
                     } else {
                         if (_userContext.ReaderHistory.Find()
@@ -216,15 +216,15 @@ namespace HqDownloadManager.WPF.Controller {
                                          .Execute()
                                          .FirstOrDefault(x =>
                                            x.Reader.ActualChapterIndex == _readerViewModel.ActualChapterIndex
-                                         ) is ReaderHistory readerHistory) {
-                            _actualReaderHistory = readerHistory;
+                                         ) is ReadingHistory readerHistory) {
+                            _actualReading = readerHistory;
                             _userContext.ReaderHistory.Update(x => new { x.Date, x.Reader }, DateTime.Now, _readerViewModel)
-                                                      .Where(x => x.Id == _actualReaderHistory.Id)
+                                                      .Where(x => x.Id == _actualReading.Id)
                                                       .Execute();
 
                         } else {
-                            _actualReaderHistory = new ReaderHistory { Link = _readerViewModel.Hq.Link, Date = DateTime.Now, Reader = _readerViewModel };
-                            _actualReaderHistory.Id = Convert.ToInt32(_userContext.ReaderHistory.Save(_actualReaderHistory));
+                            _actualReading = new ReadingHistory { Link = _readerViewModel.Hq.Link, Date = DateTime.Now, Reader = _readerViewModel };
+                            _actualReading.Id = Convert.ToInt32(_userContext.ReaderHistory.Save(_actualReading));
                         }
                     }
 
@@ -245,9 +245,10 @@ namespace HqDownloadManager.WPF.Controller {
             }
             var id = _userContext.Reader.Save(_readerViewModel);
             _readerViewModel.Id = Convert.ToInt32(id);
-            _actualReaderHistory = new ReaderHistory { Link = hq.Link, Date = DateTime.Now, Reader = _readerViewModel };
+            _actualReading = new ReadingHistory { Link = hq.Link, Date = DateTime.Now, Reader = _readerViewModel };
             if (_userContext.HqEntry.Find().Where(x => x.Hq == hq).Execute().FirstOrDefault() is HqEntry entry) {
                 entry.LastChapterRead = _readerViewModel.ActualChapter.Title;
+                entry.Hq = hq;
                 _userContext.HqEntry.Update(entry);
             } else {
                 var hqEntry = new HqEntry {
@@ -255,7 +256,7 @@ namespace HqDownloadManager.WPF.Controller {
                 };
                 _userContext.HqEntry.Save(hqEntry);
             }
-            _actualReaderHistory.Id = Convert.ToInt32(_userContext.ReaderHistory.Save(_actualReaderHistory));
+            _actualReading.Id = Convert.ToInt32(_userContext.ReaderHistory.Save(_actualReading));
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
