@@ -14,7 +14,6 @@
     <ProjectReference Include="..\..\..\NetStandard\DependencyInjectionResolver\DependencyInjectionResolver\DependencyInjectionResolver.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\Reflection.Optimization\Reflection.Optimization\Reflection.Optimization.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\Repository\Repository.Shared\Repository.Shared.csproj" />
-    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository.SQLite\Repository.SQLite.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\Repository\SqlCreator\SqlCreator.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\Utils\Utils\Utils.csproj" />

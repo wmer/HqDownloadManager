@@ -1,13 +1,13 @@
 ﻿using HqDownloadManager.Core.Configuration;
 using HqDownloadManager.Core.Models;
 using Repository;
-using Repository.SQLite.Core;
+using Repository.Core.SqLite;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace HqDownloadManager.Core.Database {
-    public class LibraryContext : DBContext {
+    public class LibraryContext : SqLiteContext {
         public LibraryContext() : base($"{CoreConfiguration.DatabaseLocation}", "libraryCache.db") {
         }
 
