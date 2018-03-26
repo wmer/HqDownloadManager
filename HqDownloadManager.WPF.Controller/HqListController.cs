@@ -4,7 +4,7 @@ using HqDownloadManager.Shared.Database;
 using HqDownloadManager.Shared.Models;
 using HqDownloadManager.Shared.ViewModel.List;
 using HqManager.Models;
-using Repository.Shared.Enumerators;
+using SqlCreator.Enumerators;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,14 +1,15 @@
 ﻿using HqDownloadManager.Core.Configuration;
 using HqDownloadManager.Core.Models;
 using Repository;
+using Repository.Core.MySql;
 using Repository.Core.SqLite;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace HqDownloadManager.Core.Database {
-    public class LibraryContext : SqLiteContext {
-        public LibraryContext() : base($"{CoreConfiguration.DatabaseLocation}", "libraryCache.db") {
+    public class LibraryContext : MySqlContext {
+        public LibraryContext() : base("localhost", 3306, "library", "root", "EWSantanas3120") {
         }
 
         public Repository<Cache> Cache { get; set; }

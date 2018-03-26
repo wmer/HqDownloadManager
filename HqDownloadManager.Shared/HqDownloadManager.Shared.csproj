@@ -67,10 +67,6 @@
     <Compile Include="ViewModel\ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NetStandard\Repository\Repository.Shared\Repository.Shared.csproj">
-      <Project>{2354de5a-6d9c-433a-8bb1-81666fa4d08c}</Project>
-      <Name>Repository.Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\NetStandard\Repository\Repository\Repository.csproj">
       <Project>{b6b3785e-9c5f-43ca-912a-21b5b093e4d1}</Project>
       <Name>Repository</Name>
