@@ -1,5 +1,4 @@
-﻿using HqDownloadManager.WPF.Controller;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,11 +18,8 @@ namespace HqDownloadManager.WPF.Views {
     /// Interação lógica para ReaderHistoryPage.xam
     /// </summary>
     public partial class ReaderHistoryPage : Page {
-        private ReadingHistoryController _controller;
-        public ReaderHistoryPage(ReadingHistoryController controller) {
-            _controller = controller;
+        public ReaderHistoryPage() {
             InitializeComponent();
-            this.Loaded += _controller.OnLoaded;
         }
     }
 }

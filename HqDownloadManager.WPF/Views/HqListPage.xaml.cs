@@ -1,6 +1,4 @@
-﻿using HqDownloadManager.Shared.ViewModel.List;
-using HqDownloadManager.WPF.Controller;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,19 +18,8 @@ namespace HqDownloadManager.WPF.Views {
     /// Interação lógica para HqListPage.xam
     /// </summary>
     public partial class HqListPage : Page {
-        private HqListController _controller;
-        public HqListPage(HqListController controller) {
-            _controller = controller;
+        public HqListPage() {
             InitializeComponent();
-            this.Loaded += _controller.OnLoaded;
         }
-
-        private void BtnCloseDetails_Click(object sender, RoutedEventArgs e) => (Resources["MyList"] as HqListViewModel).ShowDetails = false;
-
-        private void SaveBtn_Click(object sender, RoutedEventArgs e) => _controller.SaveEntry();
-
-        private void DownloadAllBtn_Click(object sender, RoutedEventArgs e) => _controller.DownloadUpdates();
-
-        private void DownloadSelectedBtn_Click(object sender, RoutedEventArgs e) => _controller.AddSelectedsToDownload();
     }
 }

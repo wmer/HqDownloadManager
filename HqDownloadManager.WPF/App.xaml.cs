@@ -1,9 +1,5 @@
 ﻿using DependencyInjectionResolver;
-using HqDownloadManager.Core.Configuration;
 using HqDownloadManager.Download;
-using HqDownloadManager.Download.Configuration;
-using HqDownloadManager.Shared.Database;
-using HqDownloadManager.Shared.Models;
 using HqDownloadManager.WPF.Views;
 using System;
 using System.Collections.Generic;
@@ -14,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using Windows.UI.Core;
 using WPF.Tools.Navigation;
 using WPF.Tools.Navigation.Events;
 
@@ -41,7 +36,7 @@ namespace HqDownloadManager.WPF {
             NavigationEventHub.Navigated += OnNavigated;
             NavigationEventHub.Navigating += OnNavigating;
             NavigationEventHub.NavigationFailed += OnNavigationFailed; ;
-            
+
             if (_rootFrame.Content == null) {
                 _rootFrame.Navigate(_dependemcyInjection.Resolve<SourceUpdatesPage>());
                 NavigationEventHub.OnNavigated(this, new global::WPF.Tools.Navigation.Events.NavigationEventArgs("Updates", null));
@@ -50,31 +45,31 @@ namespace HqDownloadManager.WPF {
         }
 
         private void DefineConfigurations() {
-            var context = _dependemcyInjection.Resolve<ConfigurationContext>();
-            if (context.Configuration.FindOne("1") is Configuration config) {
-                config.DownloadLocations = context.DownloadLocation.FindAll();
-                CoreConfiguration.CacheLocation = config.CacheLocation;
-                CoreConfiguration.DatabaseLocation = config.DatabaseLocation;
-                CoreConfiguration.WebDriversLocation = config.WebdriverLocation;
-                var list = new List<string>();
-                foreach (var loc in config.DownloadLocations) { 
-                    list.Add(loc.Location);
-                }
-                DownloadConfiguration.DownloadLocations = list;
-            } else {
-                var list = new List<DownloadLocation>();
-                var configuration = new Configuration {
-                    CacheLocation = CoreConfiguration.CacheLocation,
-                    DatabaseLocation = CoreConfiguration.DatabaseLocation,
-                    WebdriverLocation = CoreConfiguration.WebDriversLocation
-                };
-                foreach (var loc in  DownloadConfiguration.DownloadLocations) {
-                    list.Add(new DownloadLocation { Location = loc });
-                }
-                context.DownloadLocation.Save(list);
-                configuration.DownloadLocations = list;
-                context.Configuration.Save(configuration);
-            }
+            //var context = _dependemcyInjection.Resolve<ConfigurationContext>();
+            //if (context.Configuration.FindOne("1") is Configuration config) {
+            //    config.DownloadLocations = context.DownloadLocation.FindAll();
+            //    CoreConfiguration.CacheLocation = config.CacheLocation;
+            //    CoreConfiguration.DatabaseLocation = config.DatabaseLocation;
+            //    CoreConfiguration.WebDriversLocation = config.WebdriverLocation;
+            //    var list = new List<string>();
+            //    foreach (var loc in config.DownloadLocations) { 
+            //        list.Add(loc.Location);
+            //    }
+            //    DownloadConfiguration.DownloadLocations = list;
+            //} else {
+            //    var list = new List<DownloadLocation>();
+            //    var configuration = new Configuration {
+            //        CacheLocation = CoreConfiguration.CacheLocation,
+            //        DatabaseLocation = CoreConfiguration.DatabaseLocation,
+            //        WebdriverLocation = CoreConfiguration.WebDriversLocation
+            //    };
+            //    foreach (var loc in  DownloadConfiguration.DownloadLocations) {
+            //        list.Add(new DownloadLocation { Location = loc });
+            //    }
+            //    context.DownloadLocation.Save(list);
+            //    configuration.DownloadLocations = list;
+            //    context.Configuration.Save(configuration);
+            //}
         }
 
         private void OnNavigating(object sender, global::WPF.Tools.Navigation.Events.NavigationEventArgs e) {

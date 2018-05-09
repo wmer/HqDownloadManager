@@ -1,6 +1,7 @@
-﻿using HqDownloadManager.Shared.Models;
-using HqDownloadManager.Shared.ViewModel.MainWindow;
+﻿using HqDownloadManager.WPF.Models;
+using HqDownloadManager.WPF.ViewModels;
 using HqDownloadManager.WPF.Views;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace HqDownloadManager.WPF {
     /// <summary>
     /// Interação lógica para MainWindow.xam
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : MetroWindow {
         private NavigationManager _navigationManager;
 
         public MainWindow(Frame rootFrame, NavigationManager navigationManager) {

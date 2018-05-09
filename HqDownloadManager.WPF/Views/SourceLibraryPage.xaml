@@ -4,26 +4,27 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HqDownloadManager.WPF.Views"
-      xmlns:sourcelibrary="clr-namespace:HqDownloadManager.Shared.ViewModel.SourceLibrary;assembly=HqDownloadManager.Shared"
-      xmlns:details="clr-namespace:HqDownloadManager.Shared.ViewModel.Details;assembly=HqDownloadManager.Shared"
-      xmlns:shared="clr-namespace:HqDownloadManager.Shared.ViewModel.Shared;assembly=HqDownloadManager.Shared"
-      xmlns:combobox="clr-namespace:HqDownloadManager.Shared.ViewModel.ComboBox;assembly=HqDownloadManager.Shared"
-      xmlns:hqstatus="clr-namespace:HqDownloadManager.Shared.ViewModel.HqStatus;assembly=HqDownloadManager.Shared"
+      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+      xmlns:viewmodels="clr-namespace:HqDownloadManager.WPF.ViewModels"
+      xmlns:converters="clr-namespace:HqDownloadManager.WPF.Converters"
+      xmlns:commands="clr-namespace:WPF.Tools.Commands;assembly=WPF.Tools"
       mc:Ignorable="d" 
-      Title="SourceLibraryPage"
-      SizeChanged="Page_SizeChanged">
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="SourceLibraryPage">
 
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <sourcelibrary:SourceLibraryViewModel x:Key="Libraries" />
-        <details:DetailsViewModel x:Key="DetailsView" />
-        <shared:NotificationViewModel x:Key="Notification" />
-        <combobox:HqSourceLibrarySelectorViewModel x:Key="SourceSelector" />
-        <hqstatus:HqStatusViewModel x:Key="HqStatus" />
+        <viewmodels:SourceLibraryViewModel x:Key="Libraries" />
+        <converters:GetDetailsConverter x:Key="DetailsConverter" />
+        <converters:WidthToColumnConverter x:Key="WidthTiColumn" />
+        <viewmodels:DetailsViewModel x:Key="DetailsView" />
+        <viewmodels:NotificationViewModel x:Key="Notification" />
+        <viewmodels:HqSourceLibrarySelectorViewModel x:Key="SourceSelector" />
+        <viewmodels:HqStatusViewModel x:Key="HqStatus" />
     </Page.Resources>
 
-    <Grid
-        x:Name="Principal">
+    <Grid  
+      x:Name="Principal">
         <StackPanel
             Orientation="Horizontal"
             VerticalAlignment="Top"
@@ -33,144 +34,116 @@
                 x:Name="BtnAll"
                 Content="Todos"
                 Margin="1" 
-                Width="70"
-                Click="BtnAll_Click"/>
+                Width="70" />
             <Button
                 Content="A"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30" />
             <Button
                 Content="B"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30" />
             <Button
                 Content="C"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30" />
             <Button
                 Content="D"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="E"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="F"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30" />
             <Button
                 Content="G"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30" />
             <Button
                 Content="H"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="I"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="J"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30" />
             <Button
                 Content="K"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30" />
             <Button
                 Content="L"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="M"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="N"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30"/>
             <Button
                 Content="O"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30"/>
             <Button
                 Content="P"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="Q"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30"/>
             <Button
                 Content="R"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30"/>
             <Button
                 Content="S"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="T"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="U"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30"/>
             <Button
                 Content="V"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="W"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="X"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30" />
             <Button
                 Content="Y"
                 Margin="1"
-                Width="30"
-                Click="Button_Click_1" />
+                Width="30" />
             <Button
                 Content="Z"
                 Margin="1" 
-                Width="30"
-                Click="Button_Click_1"/>
+                Width="30" />
             <Button
                 x:Name="BtnFinalized"
                 Content="Finalizados"
                 Margin="1" 
-                Width="70"
-                Click="BtnFinalized_Click"/>
+                Width="70" />
         </StackPanel>
         <ComboBox        
             x:Name="SourceSelectorCB"
@@ -189,14 +162,13 @@
             SelectedItem="{Binding SelectedHq, Source={StaticResource Libraries}, Mode=TwoWay}"
             ScrollViewer.VerticalScrollBarVisibility="Visible"
             Grid.IsSharedSizeScope="True"
+            
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            ScrollViewer.ScrollChanged="HqLibraryGrid_ScrollChanged"
-            Margin="0,35,0,0"
-            PreviewMouseLeftButtonUp="HqLibraryGrid_PreviewMouseLeftButtonUp">
+            Margin="0,35,0,0" >
 
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate >
-                    <UniformGrid Columns="{Binding Columns, Source={StaticResource Libraries}}" />
+                    <UniformGrid Columns="{Binding ElementName=Principal, Path=ActualWidth, Converter={StaticResource WidthTiColumn}}" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemContainerStyle>
@@ -233,338 +205,20 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            
+            <i:Interaction.Triggers>
+                <commands:RoutedEventTrigger RoutedEvent="ScrollViewer.ScrollChanged">
+                    <i:InvokeCommandAction Command="{Binding InfiniteScroll, Source={StaticResource Libraries}}">
+                        <i:InvokeCommandAction.CommandParameter>
+                            <MultiBinding Converter="{StaticResource DetailsConverter}">
+                                <Binding Path="SelectedSource" Source="{StaticResource SourceSelector}"/>
+                                <Binding Path="SelectedHq" Source="{StaticResource Libraries}"/>
+                                <Binding Source="{StaticResource DetailsView}"/>
+                            </MultiBinding>
+                        </i:InvokeCommandAction.CommandParameter>
+                    </i:InvokeCommandAction>
+                </commands:RoutedEventTrigger>
+            </i:Interaction.Triggers>
         </ListView>
-
-        <Grid
-           x:Name="DetailsManga"
-           Visibility="{Binding Opened, Source={StaticResource DetailsView}, Converter={StaticResource BoolToVis}}"            
-           Width="500"
-           HorizontalAlignment="Right"
-           Background="#FFFFFF">
-            <Image 
-                Source="{Binding Hq.CoverSource, Source={StaticResource DetailsView}}" 
-                Stretch="Fill"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Width="180" 
-                Height="240"
-                Margin="5"
-                ToolTipService.ToolTip="{Binding Hq.Title, Source={StaticResource DetailsView}}"/>
-            <Button                        
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Background="Gray"
-                Foreground="Black"
-                Content="&#xf061;"
-                Width="30"
-                Height="30"
-                FontFamily="{StaticResource FontAwesomeSolid}"
-                Click="Button_Click" />
-            <TextBox 
-                Visibility="Visible" 
-                IsReadOnly="True" 
-                Text="{Binding Hq.Title, Source={StaticResource DetailsView}}" 
-                TextWrapping="Wrap" 
-                Width="310"
-                Height="65"
-                VerticalAlignment="Top"
-                Margin="180,5,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="Black" 
-                FontSize="19" >
-            </TextBox>
-            <TextBox 
-                Visibility="Visible" 
-                IsReadOnly="True" 
-                Text="{Binding Hq.Author, Source={StaticResource DetailsView}}" 
-                TextWrapping="Wrap" 
-                Width="310"
-                Height="26"
-                VerticalAlignment="Top"
-                Margin="180,70,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="Black" 
-                FontSize="16" >
-            </TextBox>
-            <TextBox 
-                Visibility="Visible" 
-                IsReadOnly="True" 
-                Text="{Binding Hq.Synopsis, Source={StaticResource DetailsView}}" 
-                TextWrapping="Wrap" 
-                Width="310"
-                Height="148"
-                VerticalAlignment="Top"
-                Margin="180,100,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="Black" 
-                FontSize="16" >
-            </TextBox>
-            <Button 
-                x:Name="AddAll" 
-                Content="Baixar Tudo"
-                FontSize="16"
-                Width="240"
-                Height="30"
-                VerticalContentAlignment="Center"
-                Margin="5,250,0,0" 
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Click="AddAll_Click" />
-            <Button 
-                x:Name="AddSelected" 
-                Content="Baixar Selecionado"
-                FontSize="16"
-                Width="240"
-                Height="30"
-                VerticalContentAlignment="Center"
-                Margin="250,250,0,0" 
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Click="AddSelected_Click" />
-            <ComboBox 
-                x:Name="HqStatusCb"
-                ItemsSource="{Binding Status, Source={StaticResource HqStatus}}"
-                SelectedItem="{Binding SelectedStatus, Source={StaticResource HqStatus}, Mode=TwoWay}"                        
-                FontSize="16"
-                Width="240"
-                Height="30"
-                VerticalContentAlignment="Center"    
-                Margin="5,285,0,0" 
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" />
-
-            <ListView
-                x:Name="HqChapters" 
-                ItemsSource="{Binding Hq.Chapters, Source={StaticResource DetailsView}}" 
-                SelectedItem="{Binding SelectedChapter, Source={StaticResource DetailsView}, Mode=TwoWay}" 
-                SelectedIndex="{Binding SelectedIndex, Source={StaticResource DetailsView}, Mode=TwoWay}"
-                VerticalAlignment="Top"
-                FontSize="18"
-                Margin="5,340,0,0"
-                SelectionMode="Multiple">
-                <ListView.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem 
-                            x:Name="ReadNow" 
-                            Header="Ler Agora" 
-                            Click="ReadNow_Click" 
-                            CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
-                    </ContextMenu>
-                </ListView.ContextMenu>
-            </ListView>
-        </Grid>
-
-        <Grid 
-            Visibility="{Binding Visibility, Source={StaticResource HqStatus}, Converter={StaticResource BoolToVis}}"
-            HorizontalAlignment="Center" 
-            VerticalAlignment="Center"
-            Width="703" 
-            Height="575" 
-            Background="#B2000000" >
-            <Grid.Effect>
-                <DropShadowEffect />
-            </Grid.Effect>
-            <Image 
-                Source="{Binding Hq.CoverSource, Source={StaticResource HqStatus}}" 
-                Stretch="Fill"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Width="195" 
-                Height="255"
-                Margin="5"
-                ToolTipService.ToolTip="{Binding Hq.Title, Source={StaticResource HqStatus}}"/>
-            <TextBox 
-                IsReadOnly="True" 
-                Text="{Binding Hq.Title, Source={StaticResource HqStatus}}" 
-                TextWrapping="Wrap" 
-                Width="500"
-                Height="65"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="200,5,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="Black" 
-                FontSize="19" />
-
-            <TextBox 
-                Visibility="Visible" 
-                IsReadOnly="True" 
-                Text="{Binding Hq.Author, Source={StaticResource HqStatus}}" 
-                TextWrapping="Wrap" 
-                Width="500"
-                Height="26"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="200,70,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="Black" 
-                FontSize="16" />
-
-            <TextBox 
-                Visibility="Visible" 
-                IsReadOnly="True" 
-                Text="{Binding Hq.Synopsis, Source={StaticResource HqStatus}}" 
-                TextWrapping="Wrap" 
-                Width="500"
-                Height="163"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="200,100,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="Black" 
-                FontSize="16" />
-            <ComboBox 
-                ItemsSource="{Binding Status, Source={StaticResource HqStatus}}"
-                SelectedItem="{Binding SelectedStatus, Source={StaticResource HqStatus}, Mode=TwoWay}"                        
-                FontSize="16"
-                Width="240"
-                Height="30"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"  
-                Margin="3,265,0,0" />
-            <Label 
-                Content="Score:" 
-                Width="50"
-                Height="30"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="245,265,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="White" 
-                FontSize="16" />
-            <ComboBox 
-                ItemsSource="{Binding Scores, Source={StaticResource HqStatus}}"
-                SelectedItem="{Binding Score, Source={StaticResource HqStatus}, Mode=TwoWay}"                        
-                FontSize="16"
-                Width="240"
-                Height="30"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"  
-                Margin="310,265,0,0" />
-            <Label 
-                Content="Começou a ler em:" 
-                Width="180"
-                Height="30"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="3,300,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="White" 
-                FontSize="16" />
-            <DatePicker 
-                FontSize="16"
-                Width="200"
-                SelectedDate="{Binding StartedReading, Source={StaticResource HqStatus}, Mode=TwoWay}" 
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"  
-                Margin="3,335,0,0" />
-            <Label 
-                Content="Terminou de ler em:" 
-                Width="180"
-                Height="30"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="220,300,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="White" 
-                FontSize="16" />
-            <DatePicker 
-                FontSize="16"
-                Width="200" 
-                SelectedDate="{Binding FinishedReading, Source={StaticResource HqStatus}, Mode=TwoWay}" 
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"  
-                Margin="220,335,0,0" />
-            <Label 
-                Content="Ultimo capitulo lido:" 
-                Width="180"
-                Height="30"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="420,300,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="White" 
-                FontSize="16" />
-            <ComboBox 
-                ItemsSource="{Binding Hq.Chapters, Source={StaticResource HqStatus}}"
-                SelectedItem="{Binding LastChapterRead, Source={StaticResource HqStatus}, Mode=TwoWay}"
-                DisplayMemberPath="Title"
-                FontSize="16"
-                Width="240"
-                Height="30"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Margin="430,335,0,0" />
-            <Label 
-                Content="Review:" 
-                Width="100"
-                Height="35"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="3,370,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="White" 
-                FontSize="16" />
-            <TextBox 
-                Visibility="Visible" 
-                Text="{Binding Review, Source={StaticResource HqStatus}, Mode=TwoWay}" 
-                TextWrapping="Wrap" 
-                Width="698"
-                Height="130"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="3,408,0,0"
-                BorderBrush="{x:Null}" 
-                Foreground="Black" 
-                FontSize="16" />
-            <Button     
-                x:Name="BtnSaveStatus"
-                Content="Salvar"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Right"
-                Margin="5"
-                Width="200"
-                Height="30"
-                Background="#B2CCCCCC"
-                Click="BtnSaveStatus_Click" />
-            <Button     
-                x:Name="BtnCloseStatus"
-                Content="Fechar"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Right"
-                Margin="0,0,210,5"
-                Width="200"
-                Height="30"
-                Background="#B2CCCCCC"
-                Click="BtnCloseStatus_Click" />
-        </Grid>
-
-        <Grid     
-            Visibility="{Binding Visibility, Source={StaticResource Notification}, Converter={StaticResource BoolToVis}}"
-            HorizontalAlignment="Center" 
-            VerticalAlignment="Center"
-            Width="600" 
-            Height="225" 
-            Background="#B2000000" >
-            <Grid.Effect>
-                <DropShadowEffect />
-            </Grid.Effect>
-            <TextBox 
-                IsReadOnly="True"  
-                Text="Aguarde..." 
-                FontSize="130" 
-                Background="{x:Null}" 
-                Foreground="White" 
-                BorderBrush="{x:Null}"/>
-            <TextBox 
-                IsReadOnly="True"  
-                Text="{Binding Message, Source={StaticResource Notification}}" 
-                FontSize="20" 
-                Background="{x:Null}" 
-                Foreground="White" 
-                VerticalAlignment="Bottom" 
-                VerticalContentAlignment="Bottom" 
-                BorderBrush="{x:Null}"/>
-        </Grid>
     </Grid>
 </Page>

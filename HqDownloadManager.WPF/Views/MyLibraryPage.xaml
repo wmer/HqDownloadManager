@@ -4,98 +4,11 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HqDownloadManager.WPF.Views"
-      xmlns:mydownloads="clr-namespace:HqDownloadManager.Shared.ViewModel.MyDownloads;assembly=HqDownloadManager.Shared"
-      xmlns:shared="clr-namespace:HqDownloadManager.Shared.ViewModel.Shared;assembly=HqDownloadManager.Shared"
       mc:Ignorable="d" 
-      Title="MyLibraryPage"
-      SizeChanged="Page_SizeChanged">
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="MyLibraryPage">
 
-    <Page.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <mydownloads:MyLibraryViewModel x:Key="MyLibrary" />
-        <shared:NotificationViewModel x:Key="Notification" />
-    </Page.Resources>
-    
-    <Grid
-        x:Name="Principal">
-        <ListView
-            x:Name="HqLibraryGrid"
-            ItemsSource="{Binding DownloadInfos, Source={StaticResource MyLibrary}}"
-            SelectedItem="{Binding SelectedDownloadInfo, Source={StaticResource MyLibrary}, Mode=TwoWay}"
-            ScrollViewer.VerticalScrollBarVisibility="Visible"
-            Grid.IsSharedSizeScope="True"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            Margin="0,35,0,0"
-            PreviewMouseLeftButtonUp="HqLibraryGrid_PreviewMouseLeftButtonUp">
-
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate >
-                    <UniformGrid Columns="{Binding Columns, Source={StaticResource MyLibrary}}" />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="1"/>
-                    <Setter Property="BorderThickness" Value="0"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid >
-                        <Image 
-                            Source="{Binding Hq.CoverSource}" 
-                            Stretch="Fill"
-                            ToolTipService.ToolTip="{Binding Hq.Title}"/>
-                        <TextBox 
-                            IsReadOnly="True" 
-                            Text="{Binding Hq.Title}" 
-                            TextWrapping="Wrap"
-                            Height="50"
-                            Margin="0,0,0,0"
-                            VerticalAlignment="Bottom"
-                            HorizontalAlignment="Stretch"
-                            BorderBrush="{x:Null}" 
-                            Foreground="White" 
-                            FontSize="16" >
-                            <TextBox.Background>
-                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                    <GradientStop Color="#B2FFFFFF" Offset="0"/>
-                                    <GradientStop Color="#CC000000" Offset="0.277"/>
-                                </LinearGradientBrush>
-                            </TextBox.Background>
-                        </TextBox>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-
-        <Grid     
-            Visibility="{Binding Visibility, Source={StaticResource Notification}, Converter={StaticResource BoolToVis}}"
-            HorizontalAlignment="Center" 
-            VerticalAlignment="Center"
-            Width="600" 
-            Height="225" 
-            Background="#B2000000" >
-            <Grid.Effect>
-                <DropShadowEffect />
-            </Grid.Effect>
-            <TextBox 
-                IsReadOnly="True"  
-                Text="Aguarde..." 
-                FontSize="130" 
-                Background="{x:Null}" 
-                Foreground="White" 
-                BorderBrush="{x:Null}"/>
-            <TextBox 
-                IsReadOnly="True"  
-                Text="{Binding Message, Source={StaticResource Notification}}" 
-                FontSize="20" 
-                Background="{x:Null}" 
-                Foreground="White" 
-                VerticalAlignment="Bottom" 
-                VerticalContentAlignment="Bottom" 
-                BorderBrush="{x:Null}"/>
-        </Grid>
+    <Grid>
+        
     </Grid>
 </Page>

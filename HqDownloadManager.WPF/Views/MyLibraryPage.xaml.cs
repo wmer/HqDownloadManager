@@ -1,6 +1,4 @@
-﻿using HqDownloadManager.Shared.ViewModel.MyDownloads;
-using HqDownloadManager.WPF.Controller;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,16 +18,8 @@ namespace HqDownloadManager.WPF.Views {
     /// Interação lógica para MyLibraryPage.xam
     /// </summary>
     public partial class MyLibraryPage : Page {
-        private MyLibraryController _controller;
-
-        public MyLibraryPage(MyLibraryController controoller) {
-            _controller = controoller;
-            this.InitializeComponent();
-            this.Loaded += _controller.OnLoaded;
+        public MyLibraryPage() {
+            InitializeComponent();
         }
-
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e) => (Resources["MyLibrary"] as MyLibraryViewModel).Columns = _controller.ChangeNumCollumns();
-
-        private void HqLibraryGrid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e) => _controller.OpenDetails<DownloadDetailsPage>();
     }
 }

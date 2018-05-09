@@ -1,5 +1,4 @@
-﻿using HqDownloadManager.WPF.Controller;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,19 +18,8 @@ namespace HqDownloadManager.WPF.Views {
     /// Interação lógica para DownloadPage.xam
     /// </summary>
     public partial class DownloadPage : Page {
-        private DownloadController _controller;
-        public DownloadPage(DownloadController controller) {
-            _controller = controller;
-            this.InitializeComponent();
-            this.Loaded += _controller.OnLoaded;
+        public DownloadPage() {
+            InitializeComponent();
         }
-
-        private void BtnInitDownload_Click(object sender, RoutedEventArgs e) => _controller.Download();
-
-        private void BtnPauseDownload_Click(object sender, RoutedEventArgs e) => _controller.PauseResumeDownload();
-
-        private void BtnStopDownload_Click(object sender, RoutedEventArgs e) => _controller.StopDownload();
-
-        private void Deleteitem_Click(object sender, RoutedEventArgs e) => _controller.ExcludeItem();
     }
 }
