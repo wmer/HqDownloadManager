@@ -11,7 +11,7 @@ namespace HqDownloadManager.WPF.Converters {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             var dic = new Dictionary<string, object> {
                 ["SelectedSource"] = values[0],
-                ["SelectedUpdate"] = values[1],
+                ["SelectedItem"] = values[1],
                 ["DetailsViewModel"] = values[2]
             };
             return dic;
@@ -19,7 +19,7 @@ namespace HqDownloadManager.WPF.Converters {
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
             if (value is Dictionary<string, object> dic) {
-                return new object[] { dic["SelectedSource"], dic["SelectedUpdate"], dic["DetailsViewModel"] };
+                return new object[] { dic["SelectedSource"], dic["SelectedItem"], dic["DetailsViewModel"] };
             }
             return new object[3];
         }

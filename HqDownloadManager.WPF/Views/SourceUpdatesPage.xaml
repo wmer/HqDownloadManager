@@ -9,18 +9,21 @@
       xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
       xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
       xmlns:commands="clr-namespace:HqDownloadManager.WPF.Commands"
+      xmlns:extra="clr-namespace:HqDownloadManager.WPF.Extra"
       mc:Ignorable="d"
       Title="SourceUpdatesPage">
 
     <Page.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <converters:WidthToColumnConverter x:Key="WidthTiColumn" />
-        <converters:GetDetailsConverter x:Key="DetailsConverter" />
-        <viewmodels:NotificationViewModel x:Key="Notification"/>
-        <viewmodels:SourceUpdateViewModel x:Key="Updates" />
-        <viewmodels:DetailsViewModel x:Key="DetailsView" />
-        <viewmodels:HqSourceLibrarySelectorViewModel x:Key="SourceSelector" />
-        <viewmodels:HqStatusViewModel x:Key="HqStatus" />
+        <extra:CustomResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <converters:WidthToColumnConverter x:Key="WidthTiColumn" />
+            <converters:GetDetailsConverter x:Key="DetailsConverter" />
+            <viewmodels:NotificationViewModel x:Key="Notification"/>
+            <viewmodels:SourceUpdateViewModel x:Key="Updates" />
+            <viewmodels:DetailsViewModel x:Key="DetailsView" />
+            <viewmodels:HqSourceLibrarySelectorViewModel x:Key="SourceSelector" />
+            <viewmodels:HqStatusViewModel x:Key="HqStatus" />
+        </extra:CustomResourceDictionary>
     </Page.Resources>
 
     <Grid  
@@ -176,7 +179,15 @@
                 VerticalContentAlignment="Center"
                 Margin="5,250,0,0" 
                 HorizontalAlignment="Left"
-                VerticalAlignment="Top"/>
+                VerticalAlignment="Top">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction 
+                        CommandParameter="{Binding Hq, Source={StaticResource DetailsView}}"
+                        Command="{Binding AddToDownload, Source={StaticResource Updates}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
             <Button 
                 x:Name="AddSelected" 
                 Content="Baixar Selecionado"

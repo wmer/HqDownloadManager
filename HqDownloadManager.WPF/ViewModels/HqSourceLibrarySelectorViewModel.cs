@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WPF.Tools.MVVM.ViewModel;
 
 namespace HqDownloadManager.WPF.ViewModels {
     public class HqSourceLibrarySelectorViewModel : ViewModelBase {

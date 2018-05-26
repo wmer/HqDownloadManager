@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WPF.Tools.Commands;
+using WPF.Tools.MVVM.Commands;
 
 namespace HqDownloadManager.WPF.Commands {
     public class CloseDetailsCommand : CommandBase {

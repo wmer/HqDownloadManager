@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WPF.Tools.Commands;
+using WPF.Tools.MVVM.Commands;
+using WPF.Tools.MVVM.ViewModel;
 
 namespace HqDownloadManager.WPF.ViewModels {
     public class DetailsViewModel : ViewModelBase {
@@ -15,8 +16,8 @@ namespace HqDownloadManager.WPF.ViewModels {
         private int _selectedIndex;
         private bool _opened;
         
-        public DetailsViewModel() {
-            _closeDetailsCommand = new CloseDetailsCommand();
+        public DetailsViewModel(CloseDetailsCommand closeDetailsCommand) {
+            _closeDetailsCommand = closeDetailsCommand;
             SelectedIndex = -1;
         }
 

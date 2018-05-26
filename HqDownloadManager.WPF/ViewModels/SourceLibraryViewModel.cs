@@ -9,24 +9,33 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WPF.Tools.Commands;
+using WPF.Tools.MVVM.Commands;
+using WPF.Tools.MVVM.ViewModel;
 
 namespace HqDownloadManager.WPF.ViewModels {
     public class SourceLibraryViewModel : ViewModelBase {
         private SourceManager _sourceManager;
         private InfiniteScrollCommand _infiniteScrollCommand;
+        private OpenDetailsCommand _openDetailsCommand;
+        private GetDetailsCommand _getDetailsCommand;
+        private AddToDownloadListCommand _addToDownloadList;
 
         private ObservableCollection<Hq> _hqLibrary;
         private Dictionary<string, string> _lethers;
         private Hq _selectedHq;
-        private double _width;
-        private double _height;
         private int _columns;
 
-        public SourceLibraryViewModel() {
-            var injectionResolver = new DependencyInjection();
-            _infiniteScrollCommand = new InfiniteScrollCommand();
-            _sourceManager = injectionResolver.Resolve<SourceManager>();
+        public SourceLibraryViewModel(
+                    InfiniteScrollCommand infiniteScrollCommand, 
+                    OpenDetailsCommand openDetailsCommand, 
+                    AddToDownloadListCommand addToDownloadList, 
+                    GetDetailsCommand getDetailsCommand, 
+                    SourceManager sourceManager) {
+            _infiniteScrollCommand = infiniteScrollCommand;
+            _openDetailsCommand = openDetailsCommand;
+            _addToDownloadList = addToDownloadList;
+            _getDetailsCommand = getDetailsCommand;
+            _sourceManager = sourceManager;
             var mangaHostSource = _sourceManager.GetSpurce(SourcesEnum.MangaHost);
             Task.Run(() => {
                 mangaHostSource.GetLibrary(out List<Hq> library);
@@ -65,23 +74,20 @@ namespace HqDownloadManager.WPF.ViewModels {
             }
         }
 
-        public double Width {
-            get => _width;
-            set {
-                _width = value;
-                OnPropertyChanged("Width");
-            }
-        }
-        public double Height {
-            get => _height;
-            set {
-                _height = value;
-                OnPropertyChanged("Height");
-            }
-        }
-
         public DelegateCommand<Dictionary<string, object>> InfiniteScroll {
             get { return _infiniteScrollCommand.Command; }
+        }
+
+        public DelegateCommand<DetailsViewModel> OpenDetails {
+            get { return _openDetailsCommand.Command; }
+        }
+
+        public DelegateCommand<Dictionary<string, object>> GetDetails {
+            get { return _getDetailsCommand.Command; }
+        }
+
+        public DelegateCommand<Hq> AddToDownload {
+            get { return _addToDownloadList.Command; }
         }
     }
 }

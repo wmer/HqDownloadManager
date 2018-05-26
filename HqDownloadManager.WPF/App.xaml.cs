@@ -39,8 +39,9 @@ namespace HqDownloadManager.WPF {
 
             if (_rootFrame.Content == null) {
                 _rootFrame.Navigate(_dependemcyInjection.Resolve<SourceUpdatesPage>());
-                NavigationEventHub.OnNavigated(this, new global::WPF.Tools.Navigation.Events.NavigationEventArgs("Updates", null));
+                NavigationEventHub.OnNavigated(this, new global::WPF.Tools.Navigation.Events.NavigationEventArgs("Updates", new object[] { }));
             }
+            
             window.Show();
         }
 

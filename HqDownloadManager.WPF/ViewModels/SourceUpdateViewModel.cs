@@ -9,7 +9,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WPF.Tools.Commands;
+using WPF.Tools.MVVM.Commands;
+using WPF.Tools.MVVM.ViewModel;
 using WPF.Tools.Xaml;
 
 namespace HqDownloadManager.WPF.ViewModels {
@@ -17,6 +18,7 @@ namespace HqDownloadManager.WPF.ViewModels {
         private SourceManager _sourceManager;
         private OpenDetailsCommand _openDetailsCommand;
         private GetDetailsCommand _getDetailsCommand;
+        private AddToDownloadListCommand _addToDownloadList;
 
         private ObservableCollection<Update> _updates;
         private Update _selectedUpdate;
@@ -24,10 +26,13 @@ namespace HqDownloadManager.WPF.ViewModels {
         private int _selectedIndex;
         private int _columns;
 
-        public SourceUpdateViewModel() {
+        public SourceUpdateViewModel(
+                        GetDetailsCommand getDetailsCommand, 
+                        AddToDownloadListCommand addToDownloadList) {
             var injectionResolver = new DependencyInjection();
             _openDetailsCommand = new OpenDetailsCommand();
-            _getDetailsCommand = new GetDetailsCommand();
+            _getDetailsCommand = getDetailsCommand;
+            _addToDownloadList = addToDownloadList;
             _sourceManager = injectionResolver.Resolve<SourceManager>();
             var mangaHostSource = _sourceManager.GetSpurce(SourcesEnum.MangaHost);
             Task.Run(() => {
@@ -82,6 +87,10 @@ namespace HqDownloadManager.WPF.ViewModels {
 
         public DelegateCommand<Dictionary<string, object>> GetDetails {
             get { return _getDetailsCommand.Command; }
+        }
+
+        public DelegateCommand<Hq> AddToDownload {
+            get { return _addToDownloadList.Command; }
         }
     }
 }

@@ -22,7 +22,7 @@ namespace HqDownloadManager.Download {
         public void ExcludeFromDownloadList(Hq item) =>
                         _downloader.ExcludeFromDownloadList(item);
 
-        public ObservableCollection<Hq> GetDownloadList() =>
+        public ObservableCollection<DownloadItem> GetDownloadList() =>
                         _downloader.GetDownloadList();
 
         public void Download() =>
