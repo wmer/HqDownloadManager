@@ -21,8 +21,6 @@
             <viewmodels:NotificationViewModel x:Key="Notification"/>
             <viewmodels:SourceUpdateViewModel x:Key="Updates" />
             <viewmodels:DetailsViewModel x:Key="DetailsView" />
-            <viewmodels:HqSourceLibrarySelectorViewModel x:Key="SourceSelector" />
-            <viewmodels:HqStatusViewModel x:Key="HqStatus" />
         </extra:CustomResourceDictionary>
     </Page.Resources>
 
@@ -30,8 +28,8 @@
         x:Name="Principal">
         <ComboBox        
             x:Name="SourceSelectorCB"
-            ItemsSource="{Binding Sources, Source={StaticResource SourceSelector}}"
-            SelectedItem="{Binding SelectedSource, Source={StaticResource SourceSelector}, Mode=TwoWay}"                        
+            ItemsSource="{Binding Sources, Source={StaticResource Updates}}"
+            SelectedItem="{Binding SelectedSource, Source={StaticResource Updates}, Mode=TwoWay}"                        
             FontSize="16"
             Width="200"
             Height="30"
@@ -85,17 +83,18 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            
             <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectionChanged">
+                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                     <i:InvokeCommandAction 
                         CommandParameter="{Binding Source={StaticResource DetailsView}}"
                         Command="{Binding OpenDetails, Source={StaticResource Updates}}"/>
                 </i:EventTrigger>
-                <i:EventTrigger EventName="SelectionChanged">
+                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                     <i:InvokeCommandAction Command="{Binding GetDetails, Source={StaticResource Updates}}">
                         <i:InvokeCommandAction.CommandParameter>
                             <MultiBinding Converter="{StaticResource DetailsConverter}">
-                                <Binding Path="SelectedSource" Source="{StaticResource SourceSelector}"/>
+                                <Binding Path="SelectedSource" Source="{StaticResource Updates}"/>
                                 <Binding Path="SelectedUpdate" Source="{StaticResource Updates}"/>
                                 <Binding Source="{StaticResource DetailsView}"/>
                             </MultiBinding>
@@ -104,6 +103,7 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </ListView>
+        
         <Grid
            x:Name="DetailsManga"
            Visibility="{Binding Opened, Source={StaticResource DetailsView}, Converter={StaticResource BoolToVis}}"            
@@ -179,15 +179,9 @@
                 VerticalContentAlignment="Center"
                 Margin="5,250,0,0" 
                 HorizontalAlignment="Left"
-                VerticalAlignment="Top">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <i:InvokeCommandAction 
-                        CommandParameter="{Binding Hq, Source={StaticResource DetailsView}}"
-                        Command="{Binding AddToDownload, Source={StaticResource Updates}}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Button>
+                VerticalAlignment="Top"
+                CommandParameter="{Binding Hq, Source={StaticResource DetailsView}}"
+                Command="{Binding AddToDownload, Source={StaticResource Updates}}" />
             <Button 
                 x:Name="AddSelected" 
                 Content="Baixar Selecionado"
@@ -208,17 +202,6 @@
                 Margin="5,285,0,0" 
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left" />
-            <ComboBox 
-                x:Name="HqStatusCb"
-                ItemsSource="{Binding Status, Source={StaticResource HqStatus}}"
-                SelectedItem="{Binding SelectedStatus, Source={StaticResource HqStatus}, Mode=TwoWay}"                        
-                FontSize="16"
-                Width="240"
-                Height="30"
-                VerticalContentAlignment="Center"    
-                Margin="250,285,0,0" 
-                VerticalAlignment="Top" />
-
             <Label 
                 Content="Updates" 
                 Width="310"

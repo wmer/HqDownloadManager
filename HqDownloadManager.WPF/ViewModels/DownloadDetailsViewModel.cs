@@ -15,7 +15,7 @@ using WPF.Tools.Navigation.Events;
 namespace HqDownloadManager.WPF.ViewModels {
     public class DownloadDetailsViewModel : ViewModelBase {
         private ReaderContext _readerContext;
-        private OpenReaderCommand _openReaderCommand;
+        private OpenReaderCommand _openReaderCommand; 
 
         private DownloadedHq downloadedHq;
 
@@ -40,6 +40,7 @@ namespace HqDownloadManager.WPF.ViewModels {
             get { return _selectedChapter; }
             set { _selectedChapter = value;
                 OnPropertyChanged("SelectedChapter");
+                _openReaderCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -66,12 +67,14 @@ namespace HqDownloadManager.WPF.ViewModels {
 
         private void OnNavigated(object sender, NavigationEventArgs e) {
             var downloadedHq = e.ExtraContent.FirstOrDefault() as object[];
-            DownloadedHq = (DownloadedHq)downloadedHq[0];
-            //var chapterProgress = _readerContext.ChapterReadingProgress
-            //                                    .Find()
-            //                                    .Where(x => x.HqLocation == DownloadedHq.Location)
-            //                                    .Execute();
-            //ChapterProgressHistory = new ObservableCollection<ChapterReadingProgress>(chapterProgress);
+            if (downloadedHq[0] is DownloadedHq dw) {
+                DownloadedHq = dw;
+                //var chapterProgress = _readerContext.ChapterReadingProgress
+                //                                    .Find()
+                //                                    .Where(x => x.HqLocation == DownloadedHq.Location)
+                //                                    .Execute();
+                //ChapterProgressHistory = new ObservableCollection<ChapterReadingProgress>(chapterProgress);
+            }
         }
     }
 }

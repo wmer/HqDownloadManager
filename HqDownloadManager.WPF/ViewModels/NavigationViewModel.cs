@@ -1,21 +1,25 @@
-﻿using HqDownloadManager.WPF.Models;
+﻿using HqDownloadManager.WPF.Commands;
+using HqDownloadManager.WPF.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WPF.Tools.MVVM.Commands;
 using WPF.Tools.MVVM.ViewModel;
 
 namespace HqDownloadManager.WPF.ViewModels {
     public class NavigationViewModel : ViewModelBase {
+        private PageNavigationCommand _pageNavigationCommand;
         private ObservableCollection<MenuButton> _buttons;
         private MenuButton _selectedButton;
-        private string _pageTitle;
         private bool _opened;
         private bool _menuVisibility;
 
-        public NavigationViewModel() {
+        public NavigationViewModel(PageNavigationCommand pageNavigationCommand) {
+            _pageNavigationCommand = pageNavigationCommand;
+
             Buttons = new ObservableCollection<MenuButton> {
                 new MenuButton{ Icon = "\uf0c9", Label = "Menu"},
                 new MenuButton{ Icon = "\uf017", Label = "Atualizações"},
@@ -44,13 +48,7 @@ namespace HqDownloadManager.WPF.ViewModels {
             }
         }
 
-        public string PageTitle {
-            get => _pageTitle;
-            set {
-                _pageTitle = value;
-                OnPropertyChanged("PageTitle");
-            }
-        }
+
 
         public MenuButton SelectedButton {
             get => _selectedButton;
@@ -67,6 +65,8 @@ namespace HqDownloadManager.WPF.ViewModels {
                 OnPropertyChanged("Buttons");
             }
         }
+
+        public DelegateCommand<NavigationViewModel> GoToPage { get => _pageNavigationCommand.Command; }
 
     }
 }

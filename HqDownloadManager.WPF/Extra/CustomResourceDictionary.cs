@@ -19,6 +19,8 @@ namespace HqDownloadManager.WPF.Extra {
             Register<DownloadListViewModel>("DownloadListView");
             Register<ChapterReadingProgress>("ReadingProgress");
             Register<ReaderViewModel>("ReaderViewModel");
+            Register<MainWindowViewModel>("MainWindow");
+            Register<NavigationViewModel>("NavigationView");
         }
     }
 }

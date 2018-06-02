@@ -22,6 +22,15 @@ namespace HqDownloadManager.WPF.ViewModels {
             }
         }
 
+        private Page _actualPage;
+
+        public Page ActualPage {
+            get { return _actualPage; }
+            set { _actualPage = value;
+                OnPropertyChanged("ActualPage");
+            }
+        }
+            
 
         public ReaderViewModel() {
             NavigationEventHub.Navigated += OnNavigated;

@@ -92,12 +92,13 @@ namespace HqDownloadManager.WPF.Models {
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e) {
-            string messageBoxText = "Você quer continuar de onde parou?";
-            string caption = "Leitor";
-            MessageBoxButton button = MessageBoxButton.YesNoCancel;
-            MessageBoxImage icon = MessageBoxImage.Warning;
-            MessageBoxResult result = MessageBox.Show(messageBoxText, caption, button, icon);
-            if (e.ExtraContent[0] is ChapterReadingProgress readingProgress) {
+            var extras = e.ExtraContent[0] as object[];
+            if (extras[1] is ChapterReadingProgress readingProgress) {
+                string messageBoxText = "Você quer continuar de onde parou?";
+                string caption = "Leitor";
+                MessageBoxButton button = MessageBoxButton.YesNoCancel;
+                MessageBoxImage icon = MessageBoxImage.Warning;
+                MessageBoxResult result = MessageBox.Show(messageBoxText, caption, button, icon);
             }  
         }
     }

@@ -11,10 +11,9 @@ namespace HqDownloadManager.WPF.Converters {
     public class InfiniteScrollParametersConverter : IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             var dic = new Dictionary<string, object> {
-                ["SelectedSource"] = values[0],
-                ["LibraryViewModel"] = values[1],
+                ["LibraryViewModel"] = values[0],
             };
-            if (values[2] is ScrollChangedEventArgs eventArgs) {
+            if (values[1] is ScrollChangedEventArgs eventArgs) {
                 var scrollViwer = eventArgs.OriginalSource as ScrollViewer;
                 dic["VerticalOffset"] = scrollViwer.VerticalOffset;
                 dic["ScrollableHeight"] = scrollViwer.ScrollableHeight;

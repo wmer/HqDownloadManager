@@ -1,4 +1,5 @@
-﻿using HqDownloadManager.WPF.Databases;
+﻿using HqDownloadManager.Models;
+using HqDownloadManager.WPF.Databases;
 using HqDownloadManager.WPF.Models;
 using HqDownloadManager.WPF.ViewModels;
 using System;
@@ -10,21 +11,22 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace HqDownloadManager.WPF.Converters {
-    public class DetailsToChapterReadingProgressConverter : IValueConverter {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (value is DownloadDetailsViewModel downloadDetails) {
+    public class DetailsToChapterReadingProgressConverter : IMultiValueConverter {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+            if (values[1] is DownloadedChapter downloadedChapter) {
                 var readingProgress = new ChapterReadingProgress(new ReaderContext()) {
-                    ChapterTitle = downloadDetails.SelectedChapter?.Chapter.Title,
-                    HqLocation = downloadDetails.DownloadedHq?.Location,
-                    Location = downloadDetails.SelectedChapter?.Location
+                    ChapterTitle = downloadedChapter.Chapter.Title,
+                    HqLocation = (values[0] as DownloadedHq).Location,
+                    Location = downloadedChapter.Location
                 };
 
                 return readingProgress;
             }
-            return null;
+
+            return values;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
             throw new NotImplementedException();
         }
     }

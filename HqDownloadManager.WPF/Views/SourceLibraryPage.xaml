@@ -23,8 +23,6 @@
             <converters:WidthToColumnConverter x:Key="WidthTiColumn" />
             <viewmodels:DetailsViewModel x:Key="DetailsView" />
             <viewmodels:NotificationViewModel x:Key="Notification" />
-            <viewmodels:HqSourceLibrarySelectorViewModel x:Key="SourceSelector" />
-            <viewmodels:HqStatusViewModel x:Key="HqStatus" />
         </extra:CustomResourceDictionary>
     </Page.Resources>
 
@@ -152,8 +150,8 @@
         </StackPanel>
         <ComboBox        
             x:Name="SourceSelectorCB"
-            ItemsSource="{Binding Sources, Source={StaticResource SourceSelector}}"
-            SelectedItem="{Binding SelectedSource, Source={StaticResource SourceSelector}, Mode=TwoWay}"                        
+            ItemsSource="{Binding Sources, Source={StaticResource Libraries}}"
+            SelectedItem="{Binding SelectedSource, Source={StaticResource Libraries}, Mode=TwoWay}"                        
             FontSize="16"
             Width="200"
             Height="30"
@@ -217,23 +215,22 @@
                         Command="{Binding InfiniteScroll, Source={StaticResource Libraries}}">
                         <commands:EventToCommand.CommandParameter>
                             <MultiBinding Converter="{StaticResource ParametersConverter}">
-                                <Binding Path="SelectedSource" Source="{StaticResource SourceSelector}"/>
                                 <Binding Source="{StaticResource Libraries}"/>
                                 <Binding Path="EventArgs" RelativeSource="{RelativeSource Self}" />
                             </MultiBinding>
                         </commands:EventToCommand.CommandParameter>
                     </commands:EventToCommand>
                 </commands:RoutedEventTrigger>
-                <i:EventTrigger EventName="SelectionChanged">
+                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                     <i:InvokeCommandAction 
                         CommandParameter="{Binding Source={StaticResource DetailsView}}"
                         Command="{Binding OpenDetails, Source={StaticResource Libraries}}"/>
                 </i:EventTrigger>
-                <i:EventTrigger EventName="SelectionChanged">
+                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                     <i:InvokeCommandAction Command="{Binding GetDetails, Source={StaticResource Libraries}}">
                         <i:InvokeCommandAction.CommandParameter>
                             <MultiBinding Converter="{StaticResource DetailsConverter}">
-                                <Binding Path="SelectedSource" Source="{StaticResource SourceSelector}"/>
+                                <Binding Path="SelectedSource" Source="{StaticResource Libraries}"/>
                                 <Binding Path="SelectedHq" Source="{StaticResource Libraries}"/>
                                 <Binding Source="{StaticResource DetailsView}"/>
                             </MultiBinding>
@@ -334,17 +331,6 @@
                 Height="30"
                 VerticalContentAlignment="Center"
                 Margin="250,250,0,0" 
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" />
-            <ComboBox 
-                x:Name="HqStatusCb"
-                ItemsSource="{Binding Status, Source={StaticResource HqStatus}}"
-                SelectedItem="{Binding SelectedStatus, Source={StaticResource HqStatus}, Mode=TwoWay}"                        
-                FontSize="16"
-                Width="240"
-                Height="30"
-                VerticalContentAlignment="Center"    
-                Margin="5,285,0,0" 
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left" />
 

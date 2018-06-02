@@ -114,8 +114,15 @@
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
                     <i:InvokeCommandAction 
-                        Command="{Binding OpenReader, Source={StaticResource DownloadDetails}}"
-                        CommandParameter="{Binding Source={StaticResource DownloadDetails}, Converter={StaticResource DeetaisToReading}}">
+                        Command="{Binding OpenReader, Source={StaticResource DownloadDetails}}">
+                        <i:InvokeCommandAction.CommandParameter>
+                            <MultiBinding Converter="{StaticResource DeetaisToReading}">
+                                <Binding Path="DownloadedHq" 
+                                     Source="{StaticResource DownloadDetails}" />
+                                <Binding Path="SelectedChapter" 
+                                     Source="{StaticResource DownloadDetails}" />
+                            </MultiBinding>
+                        </i:InvokeCommandAction.CommandParameter>
                     </i:InvokeCommandAction>
                 </i:EventTrigger>
             </i:Interaction.Triggers>

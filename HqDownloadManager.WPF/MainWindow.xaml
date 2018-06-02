@@ -5,16 +5,33 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HqDownloadManager.WPF"
-        xmlns:mainwindow="clr-namespace:HqDownloadManager.WPF.ViewModels"
+        xmlns:viewModels="clr-namespace:HqDownloadManager.WPF.ViewModels"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:commands="clr-namespace:WPF.Tools.MVVM.Commands;assembly=WPF.Tools"
+        xmlns:extra="clr-namespace:HqDownloadManager.WPF.Extra"
         mc:Ignorable="d"
-        Title="MainWindow"
-        KeyDown="Window_KeyDown">
-
+        Title="HqDownloadManager">
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <mainwindow:NavigationViewModel x:Key="NavigationView" />
+        <extra:CustomResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <viewModels:NavigationViewModel x:Key="NavigationView" />
+            <viewModels:MainWindowViewModel x:Key="MainWindow" />
+        </extra:CustomResourceDictionary>
     </Window.Resources>
 
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="KeyDown">
+            <commands:EventToCommand
+                Command="{Binding FullScreen, Source={StaticResource MainWindow}}"
+                CommandParameter="{Binding EventArgs, RelativeSource={RelativeSource self}}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="KeyDown">
+            <commands:EventToCommand
+                Command="{Binding ExitFullScreen, Source={StaticResource MainWindow}}"
+                CommandParameter="{Binding EventArgs, RelativeSource={RelativeSource self}}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Grid>
         <Label 
             Margin="40,0,0,0"
@@ -24,7 +41,7 @@
             FontSize="25"
             Height="40"
             Padding="0"
-            Content="{Binding PageTitle, Source={StaticResource NavigationView}}"/>
+            Content="{Binding PageTitle, Source={StaticResource MainWindow}}"/>
         <Grid
             x:Name="Content"
             Margin="40,40,0,0"/>
@@ -32,8 +49,7 @@
             ItemsSource="{Binding Buttons, Source={StaticResource NavigationView}}"
             SelectedItem="{Binding SelectedButton, Source={StaticResource NavigationView}}"
             HorizontalAlignment="Left"
-            Background="#CCFFFFFF"
-            PreviewMouseLeftButtonUp="OnPreviewMouseLeftButtonUp">
+            Background="#CCFFFFFF">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Padding" Value="0"/>
@@ -65,6 +81,13 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                    <commands:EventToCommand
+                Command="{Binding GoToPage, Source={StaticResource NavigationView}}"
+                CommandParameter="{Binding Source={StaticResource NavigationView}}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
         </ListView>
     </Grid>
 </mah:MetroWindow>

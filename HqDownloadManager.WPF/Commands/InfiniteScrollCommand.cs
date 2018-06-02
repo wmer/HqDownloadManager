@@ -22,7 +22,7 @@ namespace HqDownloadManager.WPF.Commands {
 
         public override void Execute(Dictionary<string, object> dic) {
             var sourceLibraries = dic["LibraryViewModel"] as SourceLibraryViewModel;
-            var source = _sourceManager.GetSources()[((string)dic["SelectedSource"])];
+            var source = _sourceManager.GetSources()[sourceLibraries.SelectedSource];
             if (dic.ContainsKey("VerticalOffset") && dic.ContainsKey("ScrollableHeight")) {
                 var verticalOffset = Convert.ToInt32(dic["VerticalOffset"]);
                 var scrollable = Convert.ToInt32(dic["ScrollableHeight"]);

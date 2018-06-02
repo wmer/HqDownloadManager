@@ -66,11 +66,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commands\AddToDownloadListCommand.cs" />
-    <Compile Include="Commands\CloseDetailsCommand.cs" />
+    <Compile Include="Commands\AddToDownloadListSelectedChapters.cs" />
+    <Compile Include="Commands\FullScreenCommand.cs" />
     <Compile Include="Commands\GetDetailsCommand.cs" />
     <Compile Include="Commands\InfiniteScrollCommand.cs" />
     <Compile Include="Commands\OpenDownloadDetailsCommand.cs" />
     <Compile Include="Commands\OpenReaderCommand.cs" />
+    <Compile Include="Commands\PageNavigationCommand.cs" />
     <Compile Include="Commands\StartDownloadCommand.cs" />
     <Compile Include="Converters\DetailsToChapterReadingProgressConverter.cs" />
     <Compile Include="Converters\DownloadItemHqConverter.cs" />
@@ -85,8 +87,7 @@
     <Compile Include="ViewModels\DetailsViewModel.cs" />
     <Compile Include="ViewModels\DownloadDetailsViewModel.cs" />
     <Compile Include="ViewModels\DownloadListViewModel.cs" />
-    <Compile Include="ViewModels\HqSourceLibrarySelectorViewModel.cs" />
-    <Compile Include="ViewModels\HqStatusViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MyLibraryViewModel.cs" />
     <Compile Include="ViewModels\NavigationViewModel.cs" />
     <Compile Include="ViewModels\NotificationViewModel.cs" />

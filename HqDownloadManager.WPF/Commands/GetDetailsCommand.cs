@@ -17,21 +17,24 @@ namespace HqDownloadManager.WPF.Commands {
             _sourceManager = sourceManager;
         }
 
+        public override bool CanExecute(Dictionary<string, object> dic) => dic != null && dic.Count() > 0;
+
         public override void Execute(Dictionary<string, object> dic) {
             var hq = new Hq();
             var link = "";
+            var detailsViewModel = dic["DetailsViewModel"] as DetailsViewModel;
             var source = _sourceManager.GetSources()[((string)dic["SelectedSource"])];
             if (dic["SelectedItem"] is Update update) {
+                detailsViewModel.Hq = update.Hq;
                 link = update.Hq.Link;
             } else if (dic["SelectedItem"] is Hq hqSelected) {
+                detailsViewModel.Hq = hqSelected;
                 link = hqSelected.Link;
             }
             if (!string.IsNullOrEmpty(link)) {
                 Task.Run(() => {
                     source.GetInfo<Hq>(link, out hq);
-                    if (dic["DetailsViewModel"] is DetailsViewModel detailsViewModel) {
-                        detailsViewModel.Hq = hq;
-                    }
+                    detailsViewModel.Hq = hq;
                 });
             }
         }

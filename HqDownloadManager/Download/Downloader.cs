@@ -134,7 +134,7 @@ namespace HqDownloadManager.Download {
                 hq.CoverSource = coverSource;
 
                 foreach (var chapter in hq.Chapters) {
-                    downloadItem.ActualChapterIndex = chapAtual - 1;
+                    downloadItem.ActualChapterIndex = chapAtual;
                     if (_stop) {
                         DownloadEventHub.OnDownloadStop(this, new DownloadEventArgs(downloadItem, (downloadItem.DownloadFinished - downloadItem.DownloadStarted), failedToDownload));
                         break;
@@ -178,7 +178,7 @@ namespace HqDownloadManager.Download {
                 var totalPages = chapter.Pages.Count();
                 downloadItem.NumPages = totalPages;
                 foreach (var page in chapter.Pages) {
-                    downloadItem.ActualPageIndex = pageAtual - 1;
+                    downloadItem.ActualPageIndex = pageAtual;
                     if (_stop) {
                         break;
                     }

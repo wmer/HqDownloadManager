@@ -2,6 +2,7 @@
 using HqDownloadManager.WPF.Commands;
 using MangaScraping;
 using MangaScraping.Enumerators;
+using MangaScraping.Managers;
 using MangaScraping.Models;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using WPF.Tools.MVVM.ViewModel;
 
 namespace HqDownloadManager.WPF.ViewModels {
     public class SourceLibraryViewModel : ViewModelBase {
+        private Dictionary<string, IHqSourceManager> _hqsources;
         private SourceManager _sourceManager;
         private InfiniteScrollCommand _infiniteScrollCommand;
         private OpenDetailsCommand _openDetailsCommand;
@@ -23,7 +25,8 @@ namespace HqDownloadManager.WPF.ViewModels {
         private ObservableCollection<Hq> _hqLibrary;
         private Dictionary<string, string> _lethers;
         private Hq _selectedHq;
-        private int _columns;
+        private string[] _sources;
+        private string _selectedSource;
 
         public SourceLibraryViewModel(
                     InfiniteScrollCommand infiniteScrollCommand, 
@@ -36,19 +39,13 @@ namespace HqDownloadManager.WPF.ViewModels {
             _addToDownloadList = addToDownloadList;
             _getDetailsCommand = getDetailsCommand;
             _sourceManager = sourceManager;
-            var mangaHostSource = _sourceManager.GetSpurce(SourcesEnum.MangaHost);
-            Task.Run(() => {
-                mangaHostSource.GetLibrary(out List<Hq> library);
-                HqLibrary = new ObservableCollection<Hq>(library);
-            });
-        }
-
-        public int Columns {
-            get => _columns;
-            set {
-                _columns = value;
-                OnPropertyChanged("Columns");
-            }
+            _hqsources = _sourceManager.GetSources();
+            Sources = new string[]{
+                "MangaHost", "YesMangas",
+                "UnionMangas", "MangasProject",
+                "MangaLivre"
+            };
+            SelectedSource = Sources[0];
         }
 
         public Hq SelectedHq {
@@ -74,6 +71,24 @@ namespace HqDownloadManager.WPF.ViewModels {
             }
         }
 
+        public string SelectedSource {
+            get => _selectedSource;
+            set {
+                _selectedSource = value;
+                OnPropertyChanged("SelectedSource");
+                GetSource(_selectedSource);
+            }
+        }
+
+
+        public string[] Sources {
+            get => _sources;
+            set {
+                _sources = value;
+                OnPropertyChanged("Sources");
+            }
+        }
+
         public DelegateCommand<Dictionary<string, object>> InfiniteScroll {
             get { return _infiniteScrollCommand.Command; }
         }
@@ -88,6 +103,14 @@ namespace HqDownloadManager.WPF.ViewModels {
 
         public DelegateCommand<Hq> AddToDownload {
             get { return _addToDownloadList.Command; }
+        }
+
+        private void GetSource(string source) {
+            var hqSource = _hqsources[source];
+            Task.Run(() => {
+                hqSource.GetLibrary(out List<Hq> library);
+                HqLibrary = new ObservableCollection<Hq>(library);
+            });
         }
     }
 }

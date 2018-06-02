@@ -15,4 +15,13 @@ namespace HqDownloadManager.WPF.Commands {
 
         public override void Execute(DetailsViewModel viewModel) => viewModel.Opened = true;
     }
+
+    public class CloseDetailsCommand : CommandBase {
+        public override bool CanExecute(object parameter) {
+            return parameter is DetailsViewModel viewModel && viewModel.Opened == true;
+        }
+
+        public override void Execute(object parameter) =>
+                            (parameter as DetailsViewModel).Opened = false;
+    }
 }
