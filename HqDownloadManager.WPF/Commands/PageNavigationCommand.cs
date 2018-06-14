@@ -17,6 +17,10 @@ namespace HqDownloadManager.WPF.Commands {
             _navigationManager = navigationManager;
         }
 
+        public override bool CanExecute(NavigationViewModel parameter) =>
+                                    parameter is NavigationViewModel navigationViewModel &&
+                                    navigationViewModel.SelectedButton is MenuButton;
+
         public override void Execute(NavigationViewModel navigationView) {
             var menuButton = navigationView.SelectedButton;
             switch (menuButton.Label) {
@@ -26,24 +30,24 @@ namespace HqDownloadManager.WPF.Commands {
                 case "Atualizações":
                     _navigationManager.Navigate<SourceUpdatesPage>("Updates");
                     break;
-                case "Biblioteca":
-                    _navigationManager.Navigate<SourceLibraryPage>("Biblioteca");
-                    break;
-                case "Meus Downloads":
-                    _navigationManager.Navigate<MyLibraryPage>("Meus Downloads");
-                    break;
-                case "Histórico de Leitura":
-                    _navigationManager.Navigate<ReaderHistoryPage>("Meu Histórico");
-                    break;
-                case "Minha Lista de Mangás":
-                    _navigationManager.Navigate<HqListPage>("Lista de Hqs");
-                    break;
-                case "Gerenciador de Downloads":
-                    _navigationManager.Navigate<DownloadPage>("Lista de Download");
-                    break;
-                case "Configurações":
-                    _navigationManager.Navigate<ConfigurationPage>("Configurações");
-                    break;
+                //case "Biblioteca":
+                //    _navigationManager.Navigate<SourceLibraryPage>("Biblioteca");
+                //    break;
+                //case "Meus Downloads":
+                //    _navigationManager.Navigate<MyLibraryPage>("Meus Downloads");
+                //    break;
+                //case "Histórico de Leitura":
+                //    _navigationManager.Navigate<ReaderHistoryPage>("Meu Histórico");
+                //    break;
+                //case "Minha Lista de Mangás":
+                //    _navigationManager.Navigate<HqListPage>("Lista de Hqs");
+                //    break;
+                //case "Gerenciador de Downloads":
+                //    _navigationManager.Navigate<DownloadPage>("Lista de Download");
+                //    break;
+                //case "Configurações":
+                //    _navigationManager.Navigate<ConfigurationPage>("Configurações");
+                //    break;
             }
         }
     }

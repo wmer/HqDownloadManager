@@ -55,7 +55,7 @@ namespace HqDownloadManager.Download {
         public void AddToDownloadList(Hq hq, string directory) {
             lock (_lock1) {
                 if (!string.IsNullOrWhiteSpace(directory) && hq != null && !string.IsNullOrEmpty(hq.Link)) {
-                    hq.Chapters = null;
+                    ExcludeParent(hq);
                     var downloaditem = new DownloadItem { Hq = hq.ToBytes(), DownloadLocation = directory, IsDownloaded = false };
                     if (!_downloadList.Contains(downloaditem)) {
                         _downloadList.Add(downloaditem);
@@ -69,13 +69,23 @@ namespace HqDownloadManager.Download {
             }
         }
 
-        public void ExcludeFromDownloadList(Hq item) {
-            lock (_lock2) {
-                foreach (var itemToDownload in _downloadList) {
-                    if (itemToDownload.Hq.ToObject<Hq>() == item) {
-                        _downloadContext.DownloadList.Delete(itemToDownload);
+        private static void ExcludeParent(Hq hq) {
+            foreach (var chap in hq.Chapters) {
+                chap.Hq = null;
+                if (chap.Pages != null && chap.Pages.Count() > 0) {
+                    foreach (var page in chap.Pages) {
+                        page.Chapter = null;
                     }
                 }
+            }
+        }
+
+        public void ExcludeFromDownloadList(DownloadItem item) {
+            lock (_lock2) {
+                _downloadList.Remove(item);
+                _downloadContext.DownloadList.Delete()
+                                            .Where(x => x.DownloadLocation == item.DownloadLocation)
+                                            .Execute();
             }
         }
 
@@ -104,7 +114,7 @@ namespace HqDownloadManager.Download {
                 var hq = downloadItem.Hq.ToObject<Hq>();
                 var source = _sourceManager.GetSourceFromLink(hq.Link);
                 if (hq.Chapters == null || hq.Chapters.Count() == 0) {
-                    source.GetInfo(hq.Link, out hq);
+                    source.GetInfo(hq.Link, out hq, 5);
                 }
 
                 downloadItem.DownloadStarted = DateTime.Now;

@@ -14,7 +14,7 @@ namespace HqDownloadManager.Helpers {
         public string CreateHqDirectory(string rootPath, string hqTitle) {
             lock (lock1) {
                 var mainDirectory = FormatMainDirectory(rootPath, hqTitle);
-                CreateDirectory(mainDirectory);
+                mainDirectory = CreateDirectory(mainDirectory).Item2;
                 return mainDirectory;
             }
         }
@@ -44,14 +44,15 @@ namespace HqDownloadManager.Helpers {
             }
         }
 
-        private bool CreateDirectory(String directory) {
+        private (bool, string) CreateDirectory(String directory) {
             lock (lock6) {
-                var path = directory;
-                if (!Directory.Exists(path)) {
-                    Directory.CreateDirectory(path);
-                    return true;
+                DirectoryInfo dir = null;
+                if (!Directory.Exists(directory)) {
+                    dir = Directory.CreateDirectory(directory);
+                    return (true, dir.FullName);
                 }
-                return false;
+                dir = new DirectoryInfo(directory);
+                return (true, dir.FullName);
             }
         }
     }

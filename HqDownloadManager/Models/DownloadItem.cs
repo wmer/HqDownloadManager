@@ -73,7 +73,7 @@ namespace HqDownloadManager.Models {
 
         public int NumPages {
             get { return _numPages; }
-            set { _numPages = value;
+            set { _numPages = value; 
                 OnPropertyChanged("NumPages");
             }
         }

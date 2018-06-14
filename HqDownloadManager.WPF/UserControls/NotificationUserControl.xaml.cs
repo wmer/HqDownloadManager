@@ -13,12 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace HqDownloadManager.WPF.Views {
+namespace HqDownloadManager.WPF.UserControls
+{
     /// <summary>
-    /// Interação lógica para HqListPage.xam
+    /// Interação lógica para NotificationUserControl.xam
     /// </summary>
-    public partial class HqListPage : Page {
-        public HqListPage() {
+    public partial class NotificationUserControl : UserControl
+    {
+        public NotificationUserControl()
+        {
             InitializeComponent();
         }
     }

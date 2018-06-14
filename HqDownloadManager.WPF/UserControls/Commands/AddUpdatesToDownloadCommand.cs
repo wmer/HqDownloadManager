@@ -1,8 +1,6 @@
-﻿using DependencyInjectionResolver;
-using HqDownloadManager.Database;
+﻿using HqDownloadManager.Database;
 using HqDownloadManager.Download;
 using HqDownloadManager.WPF.Helpers;
-using MangaScraping.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +9,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using WPF.Tools.MVVM.Commands;
 
-namespace HqDownloadManager.WPF.Commands {
-    public class AddToDownloadListCommand : CommandBase<Hq> {
+namespace HqDownloadManager.WPF.UserControls.Commands {
+    public class AddUpdatesToDownloadCommand : CommandBase<DetailsUserControl> {
         private DownloadManager _downloadManager;
         private DownloadHelper _downloadHelper;
         private DownloadManagerContext _downloadContext;
 
-        public AddToDownloadListCommand(
-                        DownloadManager downloadManager, 
+        public AddUpdatesToDownloadCommand(
+                        DownloadManager downloadManager,
                         DownloadHelper downloadHelper,
                         DownloadManagerContext downloadContext) {
             _downloadManager = downloadManager;
@@ -26,11 +24,16 @@ namespace HqDownloadManager.WPF.Commands {
             _downloadContext = downloadContext;
         }
 
-        public override bool CanExecute(Hq parameter) => parameter is Hq;
+        public override bool CanExecute(DetailsUserControl parameter) =>
+                            parameter.Update != null &&
+                            parameter.Update.Chapters != null &&
+                            parameter.Update.Chapters.Count > 0;
 
-        public override void Execute(Hq parameter) {
+        public override void Execute(DetailsUserControl parameter) {
             var locais = _downloadContext.DownloadLocation.FindAll();
             var location = "";
+            var hq = parameter.Hq;
+            hq.Chapters = parameter.Update.Chapters;
             if (locais != null && locais.Count() > 0) {
                 var lastLocation = locais.LastOrDefault();
                 string messageBoxText = $"Salvar em: {lastLocation.Location}?";
@@ -46,11 +49,10 @@ namespace HqDownloadManager.WPF.Commands {
                         location = _downloadHelper.SelectFolder();
                         break;
                 }
-            }else {
+            } else {
                 location = _downloadHelper.SelectFolder();
             }
-            _downloadManager.AddToDownloadList(parameter, location);
+            _downloadManager.AddToDownloadList(hq, location);
         }
     }
 }
- 

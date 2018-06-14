@@ -19,7 +19,7 @@ namespace HqDownloadManager.Download {
         public void AddToDownloadList(Hq hq, string directory) =>
                         _downloader.AddToDownloadList(hq, directory);
 
-        public void ExcludeFromDownloadList(Hq item) =>
+        public void ExcludeFromDownloadList(DownloadItem item) =>
                         _downloader.ExcludeFromDownloadList(item);
 
         public ObservableCollection<DownloadItem> GetDownloadList() =>

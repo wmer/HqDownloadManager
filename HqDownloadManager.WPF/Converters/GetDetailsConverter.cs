@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HqDownloadManager.WPF.UserControls;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,19 +10,11 @@ using System.Windows.Data;
 namespace HqDownloadManager.WPF.Converters {
     public class GetDetailsConverter : IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-            var dic = new Dictionary<string, object> {
-                ["SelectedSource"] = values[0],
-                ["SelectedItem"] = values[1],
-                ["DetailsViewModel"] = values[2]
-            };
-            return dic;
+            return new Tuple<string, object, DetailsUserControl>(values[0] as string, values[1], values[2] as DetailsUserControl);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-            if (value is Dictionary<string, object> dic) {
-                return new object[] { dic["SelectedSource"], dic["SelectedItem"], dic["DetailsViewModel"] };
-            }
-            return new object[3];
+            throw new NotImplementedException();
         }
     }
 }

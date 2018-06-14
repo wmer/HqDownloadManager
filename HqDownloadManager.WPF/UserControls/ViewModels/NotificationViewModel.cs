@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WPF.Tools.MVVM.ViewModel;
 
-namespace HqDownloadManager.WPF.ViewModels {
+namespace HqDownloadManager.WPF.UserControls.ViewModels {
     public class NotificationViewModel : ViewModelBase {
         private bool _visibility;
         private string _message;

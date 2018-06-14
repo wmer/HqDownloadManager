@@ -1,5 +1,4 @@
 ﻿using DependencyInjectionResolver;
-using HqDownloadManager.Download;
 using HqDownloadManager.WPF.Views;
 using System;
 using System.Collections.Generic;
@@ -24,6 +23,7 @@ namespace HqDownloadManager.WPF {
 
         protected override void OnStartup(StartupEventArgs e) {
             _rootFrame = new Frame();
+            _rootFrame.NavigationUIVisibility = NavigationUIVisibility.Hidden;
             _dependemcyInjection = new DependencyInjection();
             DefineConfigurations();
             _navigationManager = new NavigationManager(_dependemcyInjection);
@@ -35,13 +35,14 @@ namespace HqDownloadManager.WPF {
 
             NavigationEventHub.Navigated += OnNavigated;
             NavigationEventHub.Navigating += OnNavigating;
-            NavigationEventHub.NavigationFailed += OnNavigationFailed; ;
+            NavigationEventHub.NavigationFailed += OnNavigationFailed;
 
             if (_rootFrame.Content == null) {
-                _rootFrame.Navigate(_dependemcyInjection.Resolve<SourceUpdatesPage>());
+                var page = _dependemcyInjection.Resolve<SourceUpdatesPage>();
+                _rootFrame.Navigate(page);
                 NavigationEventHub.OnNavigated(this, new global::WPF.Tools.Navigation.Events.NavigationEventArgs("Updates", new object[] { }));
             }
-            
+
             window.Show();
         }
 

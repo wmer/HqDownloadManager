@@ -13,12 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace HqDownloadManager.WPF.Views {
+namespace HqDownloadManager.WPF.Views
+{
     /// <summary>
     /// Interação lógica para SourceLibraryPage.xam
     /// </summary>
-    public partial class SourceLibraryPage : Page {
-        public SourceLibraryPage() {
+    public partial class SourceLibraryPage : Page
+    {
+        public SourceLibraryPage()
+        {
             InitializeComponent();
         }
     }

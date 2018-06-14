@@ -1,8 +1,4 @@
-﻿using HqDownloadManager.WPF.Models;
-using HqDownloadManager.WPF.ViewModels;
-using HqDownloadManager.WPF.Views;
-using MahApps.Metro.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,14 +12,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WPF.Tools.Navigation;
-using WPF.Tools.Navigation.Events;
 
 namespace HqDownloadManager.WPF {
     /// <summary>
     /// Interação lógica para MainWindow.xam
     /// </summary>
-    public partial class MainWindow : MetroWindow {
+    public partial class MainWindow : Window {
         public MainWindow(Frame rootFrame) {
             InitializeComponent();
             Content.Children.Add(rootFrame);

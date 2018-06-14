@@ -1,4 +1,4 @@
-﻿using HqDownloadManager.WPF.ViewModels;
+﻿using HqDownloadManager.WPF.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,21 +7,12 @@ using System.Threading.Tasks;
 using WPF.Tools.MVVM.Commands;
 
 namespace HqDownloadManager.WPF.Commands {
-    public class OpenDetailsCommand : CommandBase<DetailsViewModel> {
+    public class OpenDetailsCommand : CommandBase<DetailsUserControl> {
 
-        public override bool CanExecute(DetailsViewModel viewModel) {
-            return viewModel != null && viewModel.Opened == false;
+        public override bool CanExecute(DetailsUserControl detailsControl) {
+            return detailsControl != null && detailsControl.Opened == false;
         }
 
-        public override void Execute(DetailsViewModel viewModel) => viewModel.Opened = true;
-    }
-
-    public class CloseDetailsCommand : CommandBase {
-        public override bool CanExecute(object parameter) {
-            return parameter is DetailsViewModel viewModel && viewModel.Opened == true;
-        }
-
-        public override void Execute(object parameter) =>
-                            (parameter as DetailsViewModel).Opened = false;
+        public override void Execute(DetailsUserControl detailsControl) => detailsControl.Opened = true;
     }
 }
