@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ADO.ORM" Version="1.0.1" />
-    <PackageReference Include="MangaScraping" Version="1.0.4" />
+    <PackageReference Include="ADO.ORM" Version="1.0.3" />
+    <PackageReference Include="MangaScraping" Version="1.0.5" />
   </ItemGroup>
 
 </Project>

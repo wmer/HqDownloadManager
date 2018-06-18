@@ -14,8 +14,9 @@ using WPF.Tools.Navigation;
 using WPF.Tools.Navigation.Events;
 
 namespace HqDownloadManager.WPF.ViewModels {
-    public class NavigationViewModel : ViewModelBase {
+    public class NavigationViewModel : ViewModelBase { 
         private PageNavigationCommand _pageNavigationCommand;
+        private GoBackCommand _goBackCommand;
         private ObservableCollection<MenuButton> _buttons;
         private MenuButton _selectedButton;
         private Thickness _marginContent;
@@ -24,8 +25,11 @@ namespace HqDownloadManager.WPF.ViewModels {
         private bool _canGoBack;
         private Brush _backgroundColor;
 
-        public NavigationViewModel(PageNavigationCommand pageNavigationCommand) {
+        public NavigationViewModel(
+                        PageNavigationCommand pageNavigationCommand,
+                        GoBackCommand goBackCommand) {
             _pageNavigationCommand = pageNavigationCommand;
+            _goBackCommand = goBackCommand;
 
             MarginContent = new Thickness(40, 40, 0, 0);
             BackgroundColor = new SolidColorBrush(Colors.Black);
@@ -108,9 +112,11 @@ namespace HqDownloadManager.WPF.ViewModels {
         }
 
         public DelegateCommand<NavigationViewModel> GoToPage { get => _pageNavigationCommand.Command; }
+        public GoBackCommand GoBack { get => _goBackCommand; }
 
         private void OnNavigated(object sender, global::WPF.Tools.Navigation.Events.NavigationEventArgs e) {
             CanGoBack = NavigationManager.CanGoBack();
+            GoBack.RaiseCanExecuteChanged();
         }
     }
 }

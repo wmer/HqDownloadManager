@@ -12,6 +12,7 @@ namespace HqDownloadManager.WPF.Extra {
             Register<MainWindowViewModel>("MainWindow");
             Register<NavigationViewModel>("NavigationView");
             Register<SourceUpdateViewModel>("Updates");
+            Register<SourceLibraryViewModel>("Libraries");
         }
     }
 }

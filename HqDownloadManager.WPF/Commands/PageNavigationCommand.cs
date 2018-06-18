@@ -30,12 +30,12 @@ namespace HqDownloadManager.WPF.Commands {
                 case "Atualizações":
                     _navigationManager.Navigate<SourceUpdatesPage>("Updates");
                     break;
-                //case "Biblioteca":
-                //    _navigationManager.Navigate<SourceLibraryPage>("Biblioteca");
-                //    break;
-                //case "Meus Downloads":
-                //    _navigationManager.Navigate<MyLibraryPage>("Meus Downloads");
-                //    break;
+                case "Biblioteca":
+                    _navigationManager.Navigate<SourceLibraryPage>("Biblioteca");
+                    break;
+                case "Meus Downloads":
+                   _navigationManager.Navigate<MyLibraryPage>("Meus Downloads");
+                   break;
                 //case "Histórico de Leitura":
                 //    _navigationManager.Navigate<ReaderHistoryPage>("Meu Histórico");
                 //    break;
@@ -50,5 +50,12 @@ namespace HqDownloadManager.WPF.Commands {
                 //    break;
             }
         }
+    }
+
+    public class GoBackCommand : CommandBase {
+        public override bool CanExecute(object parameter) => 
+                                        NavigationManager.CanGoBack();
+        public override void Execute(object parameter) => 
+                                        NavigationManager.GoBack();
     }
 }

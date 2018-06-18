@@ -27,14 +27,6 @@
             <viewModels:MainWindowViewModel x:Key="MainWindow" />
         </extra:CustomResourceDictionary>
     </Window.Resources>
-    <i:Interaction.Triggers>
-
-        <i:EventTrigger EventName="KeyDown">
-            <commands:EventToCommand
-                Command="{Binding FullScreen, Source={StaticResource MainWindow}}"
-                CommandParameter="{Binding EventArgs, RelativeSource={RelativeSource self}}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
 
     <Grid>
         <Grid 
@@ -61,7 +53,8 @@
                 BorderThickness="0"
                 FontSize="20"
                 Visibility="{Binding CanGoBack, Source={StaticResource NavigationView}, Converter={StaticResource BoolToVis}}"
-                FontFamily="{StaticResource FontAwesomeSolid}"/>
+                FontFamily="{StaticResource FontAwesomeSolid}"
+                Command="{Binding GoBack, Source={StaticResource NavigationView}}"/>
             <Label 
                 Margin="40,0,0,0"
                 HorizontalAlignment="Left"
