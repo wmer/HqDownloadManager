@@ -133,13 +133,17 @@
     <Compile Include="Commands\MainWindowCommands.cs" />
     <Compile Include="Commands\OpenDetailsCommand.cs" />
     <Compile Include="Commands\OpenDownloadDetailsCommand.cs" />
+    <Compile Include="Commands\OpenReaderCommand.cs" />
     <Compile Include="Commands\PageNavigationCommand.cs" />
     <Compile Include="Commands\ShowLetherCommand.cs" />
     <Compile Include="Converters\GetDetailsConverter.cs" />
     <Compile Include="Converters\InfiniteScrollParametersConverter.cs" />
     <Compile Include="Converters\WidthToColumnConverter.cs" />
+    <Compile Include="Databases\ReaderContext.cs" />
     <Compile Include="Extra\CustomResourceDictionary.cs" />
+    <Compile Include="Extra\ItemsDataTemplateSelector.cs" />
     <Compile Include="Helpers\DownloadHelper.cs" />
+    <Compile Include="Models\ChapterReadingProgress.cs" />
     <Compile Include="Models\MenuButton.cs" />
     <Compile Include="UserControls\Commands\AddToDownloadListCommand.cs" />
     <Compile Include="UserControls\Commands\AddToDownloadListSelectedChapters.cs" />
@@ -154,9 +158,11 @@
     </Compile>
     <Compile Include="UserControls\ViewModels\NotificationViewModel.cs" />
     <Compile Include="UserControls\ViewModels\DetailsViewModel.cs" />
+    <Compile Include="ViewModels\DownloadDetailsViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MyLibraryViewModel.cs" />
     <Compile Include="ViewModels\NavigationViewModel.cs" />
+    <Compile Include="ViewModels\ReaderViewModel.cs" />
     <Compile Include="ViewModels\SourceLibraryViewModel.cs" />
     <Compile Include="ViewModels\SourceUpdateViewModel.cs" />
     <Compile Include="Views\DownloadDetailsPage.xaml.cs">

@@ -14,6 +14,7 @@ namespace HqDownloadManager.WPF.Extra {
             Register<SourceUpdateViewModel>("Updates");
             Register<SourceLibraryViewModel>("Libraries");
             Register<MyLibraryViewModel>("MyLibrary");
+            Register<DownloadDetailsViewModel>("DownloadDetails");
         }
     }
 }

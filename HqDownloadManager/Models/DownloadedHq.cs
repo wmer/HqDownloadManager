@@ -9,5 +9,10 @@ namespace HqDownloadManager.Models {
         [Ignore]
         public Hq Hq { get; set; }
         public virtual List<DownloadedChapter> Chapters { get; set; }
+
+        public override bool Equals(object obj) {
+            return Equals(obj as DownloadedHq);
+        }
+
     }
 }

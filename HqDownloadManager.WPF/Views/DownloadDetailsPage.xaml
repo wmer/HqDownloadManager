@@ -4,11 +4,155 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HqDownloadManager.WPF.Views"
+      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+      xmlns:extra="clr-namespace:HqDownloadManager.WPF.Extra"
+      xmlns:converters="clr-namespace:HqDownloadManager.WPF.Converters"
+      xmlns:viewmodels="clr-namespace:HqDownloadManager.WPF.ViewModels"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
       Title="DownloadDetailsPage">
 
-    <Grid>
-        
+    <Page.Resources>
+        <extra:CustomResourceDictionary>
+            <converters:WidthToColumnConverter x:Key="WidthTiColumn" />
+            <viewmodels:DownloadDetailsViewModel x:Key="DownloadDetails" />
+
+            <!--List Item Template-->
+            <DataTemplate x:Key="FirstChapter">
+                <Grid>
+                    <Image 
+                    Name="ChapterImage"
+                    Width="240" 
+                    Height="300"
+                    Source="http://www.addcovers.com/covers/rhbm2vonzndxh.jpg" 
+                    Stretch="Fill"
+                    ToolTipService.ToolTip="ndjncjn"/>
+                    <Label                     
+                    Width="240" 
+                    Height="300"
+                    HorizontalAlignment="Stretch"
+                    BorderBrush="{x:Null}" 
+                    Foreground="White" 
+                    FontSize="30"
+                    Background="#66000000">
+                        <TextBlock 
+                        Text="{Binding Chapter.Title}"  
+                        TextWrapping="Wrap"
+                        VerticalAlignment="Stretch" />
+                    </Label>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="OtherChapters">
+                <Grid>
+                    <Label 
+                    Content="{Binding Date}"
+                    Margin="10,0,0,0"
+                    FontSize="16"
+                    VerticalAlignment="Top"/>
+                    <Label 
+                    Content="{Binding Reader.ActualChapter.Title}"
+                    Height="40"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    Margin="0,30,0,0"/>
+                </Grid>
+            </DataTemplate>
+        </extra:CustomResourceDictionary>
+    </Page.Resources>
+
+    <Grid 
+        x:Name="Principal"
+        Background="#B2FFFFFF">
+        <ListView
+            x:Name="ChaptersGrid"
+            ItemsSource="{Binding DownloadedHq.Chapters, Source={StaticResource DownloadDetails}}"
+            SelectedItem="{Binding SelectedChapter, Source={StaticResource DownloadDetails}, Mode=TwoWay}"
+            Background="Transparent"
+            ScrollViewer.VerticalScrollBarVisibility="Visible"
+            Grid.IsSharedSizeScope="True"
+            Margin="0,0,250,0"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate >
+                    <UniformGrid 
+                        Columns="{Binding ElementName=Principal, Path=ActualWidth, Converter={StaticResource WidthTiColumn}}"  />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="1"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Name="ChapterBase">
+                        <Image 
+                            Name="ChapterImage"
+                            Source="{Binding DownloadedHq.Hq.CoverSource, Source={StaticResource DownloadDetails}}" 
+                            Stretch="Fill"
+                            ToolTipService.ToolTip="{Binding Chapter.Title}"/>
+                        <Label 
+                            Height="{Binding RelativeSource={RelativeSource  
+                                       FindAncestor,
+                                       AncestorType={x:Type Grid}, 
+                                       AncestorLevel=1},Path=ActualHeight}"
+                            HorizontalAlignment="Stretch"
+                            BorderBrush="{x:Null}" 
+                            Foreground="White" 
+                            FontSize="25"
+                            Background="#B2000000">
+                            <TextBlock 
+                                Text="{Binding Chapter.Title}"  
+                                TextWrapping="Wrap"
+                                VerticalAlignment="Stretch" />
+                        </Label>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction 
+                        Command="{Binding OpenReader, Source={StaticResource DownloadDetails}}"
+                        CommandParameter="{Binding Source={StaticResource DownloadDetails}}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ListView>
+
+        <Grid
+           x:Name="DetailsManga"          
+           Width="250"
+           HorizontalAlignment="Right"
+           Background="#B2FFFFFF">
+            <Label 
+                Visibility="Visible" 
+                Content="Continue Lendo..." 
+                VerticalAlignment="Top"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="25" />
+            <ListView
+                x:Name="ChapterReading" 
+                ItemsSource="{Binding ChapterProgressHistory, Source={StaticResource DownloadDetails}}"
+                SelectedItem="{Binding SelectedHistpry, Source={StaticResource DownloadDetails}, Mode=TwoWay}"
+                Background="Transparent"
+                Margin="0,40,0,0"
+                FontSize="16" >
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="MaxHeight" Value="250"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplateSelector>
+                    <extra:ItemsDataTemplateSelector 
+                        FirstItem="{StaticResource FirstChapter}" 
+                        OtherItem="{StaticResource OtherChapters}" />
+                </ListView.ItemTemplateSelector>
+            </ListView>
+        </Grid>
     </Grid>
 </Page>

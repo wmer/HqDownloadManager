@@ -28,10 +28,11 @@
             x:Name="HqLibraryGrid"
             ItemsSource="{Binding DownloadedHqs, Source={StaticResource MyLibrary}}"
             SelectedItem="{Binding DownloadedHqSelected, Source={StaticResource MyLibrary}, Mode=TwoWay}"
+            Background="Transparent"
             ScrollViewer.VerticalScrollBarVisibility="Visible"
             Grid.IsSharedSizeScope="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            Margin="0,35,0,0">
+            Margin="0,0,0,0">
 
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate >

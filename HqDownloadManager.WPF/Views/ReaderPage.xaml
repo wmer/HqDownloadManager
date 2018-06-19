@@ -4,11 +4,49 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HqDownloadManager.WPF.Views"
+      xmlns:extra="clr-namespace:HqDownloadManager.WPF.Extra"
+      xmlns:viewmodels="clr-namespace:HqDownloadManager.WPF.ViewModels"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
       Title="ReaderPage">
 
-    <Grid>
-        
+    <Page.Resources>
+        <extra:CustomResourceDictionary>
+            <viewmodels:ReaderViewModel x:Key="ReaderViewModel" />
+        </extra:CustomResourceDictionary>
+    </Page.Resources>
+
+    <Grid
+        x:Name="Principal">
+        <ListView 
+            x:Name="FlipViewReader" 
+            ItemsSource="{Binding Pages, Source={StaticResource ReaderViewModel}}"
+            SelectedIndex="{Binding ActualPage, Source={StaticResource ReaderViewModel}, Mode=TwoWay}"            
+            ScrollViewer.CanContentScroll="True"
+            ScrollViewer.PanningMode="Both">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="1"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Image 
+                        x:Name="HqPage"   
+                        Stretch="Fill" 
+                        Width="{Binding ActualWidth, ElementName=FlipViewReader}"
+                        IsHitTestVisible="False"  
+                        Source="{Binding Source}" 
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Stretch"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="1"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
     </Grid>
 </Page>
