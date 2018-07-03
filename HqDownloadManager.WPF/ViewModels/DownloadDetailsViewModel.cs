@@ -70,14 +70,18 @@ namespace HqDownloadManager.WPF.ViewModels {
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e) {
-            var downloadedHq = e.ExtraContent;
-            if (downloadedHq[0] is DownloadedHq dw) {
+            if (e.ExtraContent != null &&
+                    e.ExtraContent.Count() == 1 &&
+                    e.ExtraContent[0] is DownloadedHq dw) {
                 DownloadedHq = dw;
-                //var chapterProgress = _readerContext.ChapterReadingProgress
-                //                                    .Find()
-                //                                    .Where(x => x.HqLocation == DownloadedHq.Location)
-                //                                    .Execute();
-                //ChapterProgressHistory = new ObservableCollection<ChapterReadingProgress>(chapterProgress);
+                var chapterProgress = _readerContext.ChapterReadingProgress
+                                                    .Find()
+                                                    .Where(x => x.HqLocation == DownloadedHq.Location)
+                                                    .Execute();
+                if (chapterProgress != null) {
+                    chapterProgress.Reverse();
+                    ChapterProgressHistory = new ObservableCollection<ChapterReadingProgress>(chapterProgress);
+                }
             }
         }
     }

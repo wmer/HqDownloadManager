@@ -142,8 +142,16 @@ namespace HqDownloadManager.Download {
                     }
                 }
                 hq.CoverSource = coverSource;
+                var chapters = hq.Chapters;
 
-                foreach (var chapter in hq.Chapters) {
+                var hqDownloaded = new DownloadedHq() {
+                    Hq = hq,
+                    Location = hqDirectory,
+                    Date = DateTime.Now
+                };
+                _downloadHelper.SaveDownloadedHq(hqDownloaded);
+
+                foreach (var chapter in chapters) {
                     downloadItem.ActualChapterIndex = chapAtual;
                     if (_stop) {
                         DownloadEventHub.OnDownloadStop(this, new DownloadEventArgs(downloadItem, (downloadItem.DownloadFinished - downloadItem.DownloadStarted), failedToDownload));
@@ -156,18 +164,12 @@ namespace HqDownloadManager.Download {
                         failedToDownload.Add(chapter.Link);
                     }
 
-                    var chapterDirectory = _directoryHelper.CreateHqDirectory(hqDirectory, chapter.Title);
                     chapAtual++;
                 }
                 downloadItem.DownloadFinished = DateTime.Now;
-                var hqDownloaded = new DownloadedHq() {
-                    Hq = hq,
-                    Location = hqDirectory,
-                    Date = DateTime.Now
-                };
+    
                 downloadItem.IsDownloaded = true;
                 //downloadItem.Hq = hq.ToBytes();
-                _downloadHelper.SaveDownloadedHq(hqDownloaded);
                 _downloadContext.DownloadList.Update(downloadItem);
                 DownloadEventHub.OnDownloadEnd(this, new DownloadEventArgs(downloadItem, (downloadItem.DownloadFinished - downloadItem.DownloadStarted), failedToDownload));
             }

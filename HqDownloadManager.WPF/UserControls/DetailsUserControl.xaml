@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HqDownloadManager.WPF.UserControls"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:extra="clr-namespace:HqDownloadManager.WPF.UserControls.Extra"
              xmlns:viewmodels="clr-namespace:HqDownloadManager.WPF.UserControls.ViewModels"
              mc:Ignorable="d" x:Name="UpdateDetails" >
@@ -13,7 +14,7 @@
             <viewmodels:DetailsViewModel x:Key="DetailsView" />
         </extra:UserControlsResourceDictionary>
     </UserControl.Resources>
-    
+
     <Grid
         x:Name="DetailsManga"
         Visibility="{Binding Opened, ElementName=UpdateDetails, Converter={StaticResource BoolToVis}}"            
@@ -148,7 +149,9 @@
                 <ContextMenu>
                     <MenuItem 
                         x:Name="ReadUpdate" 
-                        Header="Ler Agora" />
+                        Header="Ler Agora"
+                        CommandParameter="{Binding ElementName=UpdateDetails}"
+                        Command="{Binding OpenReader, Source={StaticResource DetailsView}}" />
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
@@ -179,7 +182,9 @@
                 <ContextMenu>
                     <MenuItem 
                         x:Name="ReadNow" 
-                        Header="Ler Agora" />
+                        Header="Ler Agora"
+                        CommandParameter="{Binding ElementName=UpdateDetails}"
+                        Command="{Binding OpenReader, Source={StaticResource DetailsView}}" />
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>

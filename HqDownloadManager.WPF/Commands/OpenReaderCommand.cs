@@ -13,25 +13,22 @@ using WPF.Tools.Navigation;
 
 namespace HqDownloadManager.WPF.Commands {
     public class OpenReaderCommand : CommandBase<DownloadDetailsViewModel> {
-        private readonly DownloadHelper _downloadHelper;
         private readonly NavigationManager _navigationManager;
-        private readonly ReaderContext _readerContext;
 
-        public OpenReaderCommand(
-                 DownloadHelper downloadHelper,
-                 NavigationManager navigationManager,
-                 ReaderContext readerContext) {
-            _downloadHelper = downloadHelper;
+        public OpenReaderCommand(NavigationManager navigationManager) {
             _navigationManager = navigationManager;
-            _readerContext = readerContext;
         }
 
-        public override void Execute(DownloadDetailsViewModel parameter) {
-            var pages = _downloadHelper.GetPages(parameter.SelectedChapter.Location);
-            _navigationManager.Navigate<ReaderPage>(parameter.SelectedChapter.Chapter.Title,
-                                                                        parameter.DownloadedHq,
-                                                                        parameter.SelectedChapter,
-                                                                        pages);
-        }
+        public override bool CanExecute(DownloadDetailsViewModel parameter) =>
+                                                    parameter is DownloadDetailsViewModel dwDetails &&
+                                                    dwDetails.SelectedChapter != null &&
+                                                    parameter.SelectedChapter.Chapter != null &&
+                                                    dwDetails.DownloadedHq != null &&
+                                                    dwDetails.DownloadedHq.Hq != null;
+
+        public override void Execute(DownloadDetailsViewModel parameter) =>
+                      _navigationManager.Navigate<ReaderPage>(parameter.SelectedChapter.Chapter.Title,
+                                                                                parameter.DownloadedHq,
+                                                                                parameter.SelectedChapter);
     }
 }

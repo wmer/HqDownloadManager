@@ -66,6 +66,7 @@ namespace HqDownloadManager.WPF.UserControls {
             get => (Hq)GetValue(HqProperty);
             set {
                 SetValue(HqProperty, value);
+                _detailsViewModel.OpenReader.RaiseCanExecuteChanged();
                 _detailsViewModel.AddToDownload.RaiseCanExecuteChanged();
             }
         }
@@ -78,14 +79,23 @@ namespace HqDownloadManager.WPF.UserControls {
             }
         }
 
-        public Chapter SelectedChapter { get; set; }
+        private Chapter _selectedChapter;
 
-        private List<Chapter> _selectedchapter;
+        public Chapter SelectedChapter {
+            get { return _selectedChapter; }
+            set {
+                _selectedChapter = value;
+                _detailsViewModel.OpenReader.RaiseCanExecuteChanged();
+            }
+        }
+
+
+        private List<Chapter> _selectedChapters;
 
         public List<Chapter> SelectedChapters {
-            get { return _selectedchapter; }
+            get { return _selectedChapters; }
             set {
-                _selectedchapter = value;
+                _selectedChapters = value;
                 _detailsViewModel.DownloadSelected.RaiseCanExecuteChanged();
             }
         }

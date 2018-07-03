@@ -20,18 +20,11 @@
         <behaviors:GlassEffectBehavior />
     </i:Interaction.Behaviors>
 
-    <Window.Resources>
-        <extra:CustomResourceDictionary>
-            <BooleanToVisibilityConverter x:Key="BoolToVis" />
-            <viewModels:NavigationViewModel x:Key="NavigationView" />
-            <viewModels:MainWindowViewModel x:Key="MainWindow" />
-        </extra:CustomResourceDictionary>
-    </Window.Resources>
-
     <Grid>
         <Grid 
             x:Name="TitleBar"
             Height="40"
+            Visibility="{Binding ShowDistractions, Source={StaticResource NavigationView}, Converter={StaticResource BoolToVis}}"
             VerticalAlignment="Top"  
             Background="#10000000">
             <i:Interaction.Triggers>
@@ -150,12 +143,14 @@
         <Grid
             x:Name="Content"
             Margin="{Binding MarginContent, Source={StaticResource NavigationView}}"/>
+        
         <ListView
             ItemsSource="{Binding Buttons, Source={StaticResource NavigationView}}"
             SelectedItem="{Binding SelectedButton, Source={StaticResource NavigationView}}"
             HorizontalAlignment="Left"
             BorderThickness="0"
             Margin="0,40,0,0"
+            Visibility="{Binding ShowDistractions, Source={StaticResource NavigationView}, Converter={StaticResource BoolToVis}}"
             Background="Transparent" >
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

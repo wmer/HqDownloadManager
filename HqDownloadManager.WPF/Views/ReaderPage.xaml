@@ -3,50 +3,202 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
       xmlns:local="clr-namespace:HqDownloadManager.WPF.Views"
       xmlns:extra="clr-namespace:HqDownloadManager.WPF.Extra"
       xmlns:viewmodels="clr-namespace:HqDownloadManager.WPF.ViewModels"
+      xmlns:usercontrols="clr-namespace:HqDownloadManager.WPF.UserControls"
+      xmlns:behaviors="clr-namespace:HqDownloadManager.WPF.Behaviors"
+      xmlns:commands="clr-namespace:WPF.Tools.MVVM.Commands;assembly=WPF.Tools"
+      xmlns:converters="clr-namespace:HqDownloadManager.WPF.Converters"
       mc:Ignorable="d" 
       Title="ReaderPage">
 
     <Page.Resources>
         <extra:CustomResourceDictionary>
-            <viewmodels:ReaderViewModel x:Key="ReaderViewModel" />
+            <converters:PageChangedParametersConverter x:Key="PageChangedParameters" />
+            <viewmodels:ReaderViewModel x:Key="Reader" />
         </extra:CustomResourceDictionary>
     </Page.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="KeyDown">
+            <i:InvokeCommandAction 
+                    CommandParameter="{Binding Source={StaticResource Reader}}"
+                    Command="{Binding Shortcuts, Source={StaticResource Reader}}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <Grid
         x:Name="Principal">
         <ListView 
             x:Name="FlipViewReader" 
-            ItemsSource="{Binding Pages, Source={StaticResource ReaderViewModel}}"
-            SelectedIndex="{Binding ActualPage, Source={StaticResource ReaderViewModel}, Mode=TwoWay}"            
+            ItemsSource="{Binding ActualChapter.Chapter.Pages, Source={StaticResource Reader}}"
+            SelectedItem="{Binding ActualPage, Source={StaticResource Reader}, Mode=TwoWay}"
+            SelectedIndex="{Binding ActualPageIndex, Source={StaticResource Reader}, Mode=TwoWay}"    
+            IsManipulationEnabled="True"
             ScrollViewer.CanContentScroll="True"
-            ScrollViewer.PanningMode="Both">
+            ScrollViewer.PanningMode="Both" >
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Padding" Value="0"/>
                     <Setter Property="Margin" Value="1"/>
                     <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="VerticalContentAlignment" Value="Top"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Image 
-                        x:Name="HqPage"   
-                        Stretch="Fill" 
+                        x:Name="HqPage" 
                         Width="{Binding ActualWidth, ElementName=FlipViewReader}"
                         IsHitTestVisible="False"  
                         Source="{Binding Source}" 
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Stretch"/>
+                        VerticalAlignment="Top"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="1"/>
+                    <WrapPanel 
+                        Background="Transparent" 
+                        Orientation="Horizontal"
+                        VerticalAlignment="Top"/>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
+
+            <i:Interaction.Triggers>
+                <commands:RoutedEventTrigger RoutedEvent="ScrollViewer.ScrollChanged">
+                    <commands:EventToCommand 
+                        Command="{Binding PageChanged, Source={StaticResource Reader}}">
+                        <commands:EventToCommand.CommandParameter>
+                            <MultiBinding Converter="{StaticResource PageChangedParameters}">
+                                <Binding Path="EventArgs" RelativeSource="{RelativeSource Self}" />
+                                <Binding ElementName="FlipViewReader" />
+                                <Binding Source="{StaticResource Reader}"/>
+                            </MultiBinding>
+                        </commands:EventToCommand.CommandParameter>
+                    </commands:EventToCommand>
+                </commands:RoutedEventTrigger>
+                <i:EventTrigger EventName="PreviewMouseWheel">
+                    <commands:EventToCommand 
+                        CommandParameter="{Binding EventArgs, RelativeSource={RelativeSource Self}}"
+                        Command="{Binding ScrollHorizontally, Source={StaticResource Reader}}">
+                    </commands:EventToCommand>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
         </ListView>
+
+        <Grid  
+            Visibility="{Binding ControlsVisibility, Source={StaticResource Reader}, Converter={StaticResource BoolToVis}}"            
+            VerticalAlignment="Bottom"
+            Background="#B2000000" >
+            <Grid>
+                
+            </Grid>
+            <Grid>
+                <Button
+                x:Name="BtnToPreviusChapter"
+                HorizontalAlignment="Left">
+                    <Image 
+                    Width="30"
+                    Height="40"
+                    Source="{Binding PreviousChapter.Chapter.Pages[0], Source={StaticResource Reader}}" />
+                </Button>
+                <ProgressBar
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Width="1200"
+                Height="10"
+                Maximum="{Binding ActualChapter.Chapter.Pages.Count, Source={StaticResource Reader}}"
+                Value="{Binding ActualPageIndex, Source={StaticResource Reader}, Mode=TwoWay}"/>
+                <Button
+                x:Name="BtnToNextChapter"
+                HorizontalAlignment="Right">
+                    <Image 
+                    Width="30"
+                    Height="40"
+                    Source="{Binding NextChapter.Chapter.Pages[0], Source={StaticResource Reader}}" />
+                </Button>
+            </Grid>
+        </Grid>
+
+        <Grid
+           x:Name="DetailsManga"
+           Visibility="{Binding DetailsVisibility, Source={StaticResource Reader}, Converter={StaticResource BoolToVis}}"  
+           Width="420"
+            Background="White"
+           HorizontalAlignment="Right">
+            <Image 
+                Source="{Binding DownloadedHq.Hq.CoverSource, Source={StaticResource Reader}}" 
+                Stretch="Fill"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left" 
+                Width="140" 
+                Height="200"
+                Margin="5"
+                ToolTipService.ToolTip="{Binding DownloadedHq.Hq.Title, Source={StaticResource Reader}}"/>
+            <Button               
+                x:Name="BtnCloseDetails"         
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Background="Gray"
+                Foreground="Black"
+                Content="&#xf061;"
+                Width="30"
+                Height="30"
+                FontFamily="{StaticResource FontAwesomeSolid}" />
+            <TextBox 
+                IsReadOnly="True" 
+                Text="{Binding DownloadedHq.Hq.Title, Source={StaticResource Reader}}" 
+                TextWrapping="Wrap" 
+                Height="65"
+                VerticalAlignment="Top"
+                Margin="145,5,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="19" />
+            <TextBox 
+                IsReadOnly="True" 
+                Text="{Binding DownloadedHq.Hq.Author, Source={StaticResource Reader}}" 
+                TextWrapping="Wrap" 
+                Height="26"
+                VerticalAlignment="Top"
+                Margin="145,70,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+            <TextBox 
+                IsReadOnly="True" 
+                Text="{Binding DownloadedHq.Hq.Synopsis, Source={StaticResource Reader}}" 
+                TextWrapping="Wrap"
+                Height="107"
+                VerticalAlignment="Top"
+                Margin="145,100,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" />
+            <TextBox 
+                IsReadOnly="True" 
+                Text="Capitulos:" 
+                TextWrapping="Wrap" 
+                Height="26"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="0,210,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="19" />
+            <ListView
+                x:Name="ChapterReading" 
+                ItemsSource="{Binding DownloadedHq.Chapters, Source={StaticResource Reader}}"
+                SelectedItem="{Binding ActualChapter, Source={StaticResource Reader}, Mode=TwoWay}"  
+                SelectedIndex="{Binding ActualChapterIndex, Source={StaticResource Reader}, Mode=TwoWay}"
+                DisplayMemberPath="Chapter.Title"
+                Margin="5,245,0,0">
+            </ListView>
+        </Grid>
+
+        
     </Grid>
 </Page>

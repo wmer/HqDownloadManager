@@ -15,7 +15,6 @@
       Title="SourceLibraryPage">
     <Page.Resources>
         <extra:CustomResourceDictionary>
-            <converters:WidthToColumnConverter x:Key="WidthTiColumn" />
             <converters:GetDetailsConverter x:Key="DetailsConverter" />
             <converters:InfiniteScrollParametersConverter x:Key="ParametersConverter" />
             <viewmodels:SourceLibraryViewModel x:Key="Libraries" />
@@ -50,8 +49,10 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="0"/>
+                    <Setter Property="Margin" Value="1"/>
                     <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="VerticalContentAlignment" Value="Top"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>

@@ -23,9 +23,11 @@ namespace HqDownloadManager.Helpers {
             lock (_lock1) {
                 downloadedHq.Hq.Chapters = null;
                 var fileLoc = $"{downloadedHq.Location}\\{downloadedHq.Hq.Title}.json";
-                using (StreamWriter file = File.CreateText(fileLoc)) {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Serialize(file, downloadedHq);
+                if (!File.Exists(fileLoc)) {
+                    using (StreamWriter file = File.CreateText(fileLoc)) {
+                        JsonSerializer serializer = new JsonSerializer();
+                        serializer.Serialize(file, downloadedHq);
+                    }
                 }
             }
         }
@@ -50,7 +52,7 @@ namespace HqDownloadManager.Helpers {
                                 downloadedHq = serializer.Deserialize(file, typeof(DownloadedHq)) as DownloadedHq;
                             }
                         }
-                        if (downloadedHq != null) {                 
+                        if (downloadedHq != null) {
                             list.Add(downloadedHq);
                         }
                     }
@@ -70,11 +72,22 @@ namespace HqDownloadManager.Helpers {
             CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Buscando Capitulos de {downloadedHq.Hq.Title}"));
             foreach (var path in paths) {
                 CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Adicioandn capitulo {path.Name}"));
-                var chap = new Chapter { Title = path.Name };
+                var title = path.Name;
+                var fisrt = false;
+                title = Regex.Replace(title, @"\b(\d+)", new MatchEvaluator((match) => {
+                    var m = match.Value;
+                    if (!fisrt) {
+                        m = m.PadLeft(3, '0');
+                        fisrt = true;
+                    }
+                    return m;
+                }));
+                var chap = new Chapter { Title = title };
                 var downlodeadChapter = new DownloadedChapter { Date = path.CreationTime, Location = path.FullName, Chapter = chap };
                 chapters.Add(downlodeadChapter);
             }
 
+            chapters = chapters.OrderBy(x => x.Chapter.Title).ToList<DownloadedChapter>();
             CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, "Tudo Pronto!"));
             CoreEventHub.OnProcessingEnd(this, null);
             return chapters;
@@ -84,14 +97,16 @@ namespace HqDownloadManager.Helpers {
             CoreEventHub.OnProcessingStart(this, null);
             CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, "Buscando Páginas"));
             var pages = new List<Page>();
-            var dir = new DirectoryInfo(location);
-            var images = dir.GetFiles();
-            foreach (var image in images) {
-                var resultString = Regex.Match(image.Name, @"\d+").Value;
-                var number = Int32.Parse(resultString);
-                CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Adicionando página {number}"));
-                var pg = new Page { Number = number, Source = image.FullName };
-                pages.Add(pg);
+            if (!string.IsNullOrEmpty(location)) {
+                var dir = new DirectoryInfo(location);
+                var images = dir.GetFiles();
+                foreach (var image in images) {
+                    var resultString = Regex.Match(image.Name, @"\d+").Value;
+                    var number = Int32.Parse(resultString);
+                    CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, $"Adicionando página {number}"));
+                    var pg = new Page { Number = number, Source = image.FullName };
+                    pages.Add(pg);
+                }
             }
 
             CoreEventHub.OnProcessingProgress(this, new ProcessingEventArgs(DateTime.Now, "Tudo Pronto!"));
@@ -99,7 +114,7 @@ namespace HqDownloadManager.Helpers {
             return pages;
         }
 
-        public void DeleteManga(DownloadedHq downloadedHq) => 
+        public void DeleteManga(DownloadedHq downloadedHq) =>
                                 Directory.Delete(downloadedHq.Location, true);
     }
 }

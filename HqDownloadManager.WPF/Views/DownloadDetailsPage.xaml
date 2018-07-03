@@ -8,34 +8,34 @@
       xmlns:extra="clr-namespace:HqDownloadManager.WPF.Extra"
       xmlns:converters="clr-namespace:HqDownloadManager.WPF.Converters"
       xmlns:viewmodels="clr-namespace:HqDownloadManager.WPF.ViewModels"
+      xmlns:usercontrols="clr-namespace:HqDownloadManager.WPF.UserControls"
       mc:Ignorable="d" 
       Title="DownloadDetailsPage">
 
     <Page.Resources>
         <extra:CustomResourceDictionary>
-            <converters:WidthToColumnConverter x:Key="WidthTiColumn" />
             <viewmodels:DownloadDetailsViewModel x:Key="DownloadDetails" />
 
             <!--List Item Template-->
             <DataTemplate x:Key="FirstChapter">
                 <Grid>
                     <Image 
-                    Name="ChapterImage"
-                    Width="240" 
-                    Height="300"
-                    Source="http://www.addcovers.com/covers/rhbm2vonzndxh.jpg" 
-                    Stretch="Fill"
-                    ToolTipService.ToolTip="ndjncjn"/>
+                        Name="ChapterImage"
+                        Width="240" 
+                        Height="300"
+                        Source="{Binding LastPageLocation}" 
+                        Stretch="Fill"
+                        ToolTipService.ToolTip="ndjncjn"/>
                     <Label                     
-                    Width="240" 
-                    Height="300"
-                    HorizontalAlignment="Stretch"
-                    BorderBrush="{x:Null}" 
-                    Foreground="White" 
-                    FontSize="30"
-                    Background="#66000000">
-                        <TextBlock 
-                        Text="{Binding Chapter.Title}"  
+                        Width="240" 
+                        Height="300"
+                        HorizontalAlignment="Stretch"
+                        BorderBrush="{x:Null}" 
+                        Foreground="White" 
+                        FontSize="30"
+                        Background="#66000000">
+                    <TextBlock
+                        Text="{Binding ChapterTitle}"  
                         TextWrapping="Wrap"
                         VerticalAlignment="Stretch" />
                     </Label>
@@ -44,16 +44,16 @@
             <DataTemplate x:Key="OtherChapters">
                 <Grid>
                     <Label 
-                    Content="{Binding Date}"
-                    Margin="10,0,0,0"
-                    FontSize="16"
-                    VerticalAlignment="Top"/>
+                        Content="{Binding Date}"
+                        Margin="10,0,0,0"
+                        FontSize="16"
+                        VerticalAlignment="Top"/>
                     <Label 
-                    Content="{Binding Reader.ActualChapter.Title}"
-                    Height="40"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Margin="0,30,0,0"/>
+                        Content="{Binding ChapterTitle}"
+                        Height="40"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left"
+                        Margin="0,30,0,0"/>
                 </Grid>
             </DataTemplate>
         </extra:CustomResourceDictionary>
@@ -83,6 +83,8 @@
                     <Setter Property="Padding" Value="0"/>
                     <Setter Property="Margin" Value="1"/>
                     <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="VerticalContentAlignment" Value="Top"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
@@ -141,10 +143,11 @@
                 FontSize="16" >
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="MaxHeight" Value="250"/>
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="Margin" Value="1"/>
                         <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="VerticalAlignment" Value="Top"/>
+                        <Setter Property="VerticalContentAlignment" Value="Top"/>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplateSelector>
@@ -154,5 +157,7 @@
                 </ListView.ItemTemplateSelector>
             </ListView>
         </Grid>
+
+        <usercontrols:NotificationUserControl />
     </Grid>
 </Page>

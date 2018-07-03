@@ -53,7 +53,7 @@ namespace HqDownloadManager.WPF.ViewModels {
                 "MangaLivre"
             };
             started = false;
-            SelectedSource = Sources[0];
+            SelectedSource = Sources[4];
             NavigationEventHub.Navigated += OnNavigated;
         }
         public Hq SelectedHq {
@@ -131,13 +131,20 @@ namespace HqDownloadManager.WPF.ViewModels {
 
         private void OnNavigated(object sender, NavigationEventArgs e) {
             started = true;
-            ShowMangas(SelectedSource);
+            if (HqLibrary == null) {
+                ShowMangas(SelectedSource);
+            }
         }
 
         private void ShowMangas(string source) {
             var hqSource = _hqsources[source];
             Task.Run(() => {
                 hqSource.GetLibrary(out List<Hq> library, out List<string> lethers);
+                if (library == null)
+                    library = new List<Hq>();
+                if (lethers == null)
+                    lethers = new List<string>();
+
                 HqLibrary = new ObservableCollection<Hq>(library);
                 Lethers = new ObservableCollection<string>(lethers);
             });

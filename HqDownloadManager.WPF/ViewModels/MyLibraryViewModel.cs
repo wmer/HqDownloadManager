@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WPF.Tools.MVVM.Commands;
 using WPF.Tools.MVVM.ViewModel;
+using WPF.Tools.Navigation.Events;
 
 namespace HqDownloadManager.WPF.ViewModels {
     public class MyLibraryViewModel : ViewModelBase {
@@ -24,12 +25,8 @@ namespace HqDownloadManager.WPF.ViewModels {
                         OpenDownloadDetailsCommand openDownloadDetailsCommand) {
             _downloadHelper = downloadHelper;
             _openDownloadDetailsCommand = openDownloadDetailsCommand;
-            Task.Run(() => {
-                var downloadedsHqs = _downloadHelper.GetDownloads();
-                DownloadedHqs = new ObservableCollection<DownloadedHq>(downloadedsHqs);
-            });
+            NavigationEventHub.Navigated += OnNavigated;
         }
-
         public int Columns {
             get => _columns;
             set {
@@ -56,6 +53,15 @@ namespace HqDownloadManager.WPF.ViewModels {
 
         public DelegateCommand<DownloadedHq> OpenDetails {
             get { return _openDownloadDetailsCommand.Command; }
+        }
+
+        private void OnNavigated(object sender, NavigationEventArgs e) {
+            Task.Run(() => {
+                if (DownloadedHqs == null || DownloadedHqs.Count() == 0) {
+                    var downloadedsHqs = _downloadHelper.GetDownloads();
+                    DownloadedHqs = new ObservableCollection<DownloadedHq>(downloadedsHqs);
+                }
+            });
         }
     }
 }

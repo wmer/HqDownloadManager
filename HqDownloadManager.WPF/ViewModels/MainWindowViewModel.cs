@@ -17,18 +17,21 @@ namespace HqDownloadManager.WPF.ViewModels {
         private MaximizeWindowCommand _maximizeWindowCommand;
         private FullScreenCommand _fullScreenCommand;
         private CloseWindowCommand _closeWindowCommand;
+        private NoDistractionsCommand _noDistractionsCommand;
 
         public MainWindowViewModel(
                     DragWindowCommand dragWindowCommand,
                     MinimizeWindowCommand minimizeWindowCommand,
                     MaximizeWindowCommand maximizeWindowCommand,
                     FullScreenCommand fullScreenCommand,
-                    CloseWindowCommand closeWindowCommand) {
+                    CloseWindowCommand closeWindowCommand,
+                    NoDistractionsCommand noDistractionsCommand) {
             _dragWindowCommand = dragWindowCommand;
             _minimizeWindowCommand = minimizeWindowCommand;
             _maximizeWindowCommand = maximizeWindowCommand;
             _fullScreenCommand = fullScreenCommand;
             _closeWindowCommand = closeWindowCommand;
+            _noDistractionsCommand = noDistractionsCommand;
 
             NavigationEventHub.Navigated += OnNavigated;
         }
@@ -49,6 +52,7 @@ namespace HqDownloadManager.WPF.ViewModels {
         public DelegateCommand<Window> MaximizeWindow { get => _maximizeWindowCommand.Command; }
         public DelegateCommand<Window> FullScreen { get => _fullScreenCommand.Command; }
         public DelegateCommand<Window> CloaseWindow { get => _closeWindowCommand.Command; }
+        public DelegateCommand<NavigationViewModel> NoDistractions { get => _noDistractionsCommand.Command; }
 
         private void OnNavigated(object sender, global::WPF.Tools.Navigation.Events.NavigationEventArgs e) {
             PageTitle = e.Title;

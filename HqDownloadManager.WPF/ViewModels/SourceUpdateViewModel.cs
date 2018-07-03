@@ -40,7 +40,7 @@ namespace HqDownloadManager.WPF.ViewModels {
                 "MangasProject", "MangaLivre"
             };
             started = false;
-            SelectedSource = Sources[0];
+            SelectedSource = Sources[3];
             NavigationEventHub.Navigated += OnNavigated;
         }
 
@@ -91,13 +91,18 @@ namespace HqDownloadManager.WPF.ViewModels {
 
         private void OnNavigated(object sender, NavigationEventArgs e) {
             started = true;
-            ShowMangas(SelectedSource);
+            if(Updates == null) {
+                ShowMangas(SelectedSource);
+            }
         }
 
         private void ShowMangas(string source) {
             var hqSource = _hqsources[SelectedSource];
             Task.Run(() => {
                 hqSource.GetUpdates(out List<Update> updates);
+                if (updates == null)
+                    updates = new List<Update>();
+
                 Updates = new ObservableCollection<Update>(updates);
             });
         }

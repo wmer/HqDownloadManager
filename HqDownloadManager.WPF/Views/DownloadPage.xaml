@@ -1,0 +1,204 @@
+﻿<Page x:Class="HqDownloadManager.WPF.Views.DownloadPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:HqDownloadManager.WPF.Views"
+      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+      xmlns:extra="clr-namespace:HqDownloadManager.WPF.Extra"
+      xmlns:download="clr-namespace:HqDownloadManager.WPF.ViewModels"
+      xmlns:converters="clr-namespace:HqDownloadManager.WPF.Converters"
+      xmlns:behaviors="clr-namespace:HqDownloadManager.WPF.Behaviors"
+      mc:Ignorable="d" 
+      Title="DownloadPage">
+
+    <Page.Resources>
+        <extra:CustomResourceDictionary>
+            <download:DownloadListViewModel x:Key="DownloadListView" />
+            <converters:DownloadItemHqConverter x:Key="ByteToHq" />
+        </extra:CustomResourceDictionary>
+    </Page.Resources>
+    <Grid>
+        <Button 
+            x:Name="BtnInitDownload" 
+            Content="Iniciar Download"
+            FontSize="16"
+            Width="150"
+            Height="30"
+            VerticalContentAlignment="Center"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            Command="{Binding StartDownload, Source={StaticResource DownloadListView}}"
+            CommandParameter="{StaticResource DownloadListView}"/>
+        <Button 
+            x:Name="BtnPauseDownload" 
+            Content="Pausar/Resumir Download"
+            FontSize="16"
+            Width="200"
+            Height="30"
+            VerticalContentAlignment="Center" 
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            Margin="155,0,0,0" />
+        <Button 
+            x:Name="BtnStopDownload" 
+            Content="Parar Download"
+            FontSize="16"
+            Width="150"
+            Height="30"
+            VerticalContentAlignment="Center"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            Margin="360,0,0,0"/>
+        <CheckBox 
+            x:Name="ChkShudown" 
+            Content="Desligar pc após download"
+            FontSize="16"
+            Width="210"
+            VerticalContentAlignment="Center"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            Margin="520,5,0,0"/>
+        
+        <ListView
+            x:Name="DownloadList"
+            ItemsSource="{Binding DownloadList, Source={StaticResource DownloadListView}}"
+            SelectedItem="{Binding ActualDownload, Source={StaticResource DownloadListView}, Mode=TwoWay}"
+            HorizontalAlignment="Left"
+            Width="770"
+            Margin="0,35,0,0">
+            <ListView.ItemTemplate>
+                <DataTemplate >
+                    <Grid>
+                        <Grid DataContext="{Binding Hq, Converter={StaticResource ByteToHq}}">
+                            <Image 
+                                Source="{Binding CoverSource}" 
+                                Stretch="Fill"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left"
+                                Width="100" 
+                                Height="140"
+                                Margin="3,0,0,5"
+                                ToolTipService.ToolTip="{Binding Title}"/>
+                            <TextBlock 
+                                Text="{Binding Title}" 
+                                TextWrapping="Wrap" 
+                                Width="600"
+                                Height="75"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left"
+                                Margin="105,0,0,0"
+                                Foreground="Black" 
+                                FontSize="19" />
+                        </Grid>
+                        <TextBlock 
+                            x:Name="Progress"
+                            Width="600"
+                            Height="35"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Left"
+                            Margin="105,75,0,0"
+                            Foreground="Black" 
+                            FontSize="19"/>
+                        <ProgressBar
+                            x:Name="ChapterProgress"
+                            Width="600"
+                            Height="15"
+                            Minimum="0"
+                            Maximum="{Binding NumChapters}"
+                            Value="{Binding ActualChapterIndex}"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Left"
+                            Margin="105,0,0,25"/>
+                        <ProgressBar
+                            x:Name="PageProgress"
+                            Width="600" 
+                            Height="15"
+                            Minimum="0"
+                            Maximum="{Binding NumPages}"
+                            Value="{Binding ActualPageIndex}"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Left"
+                            Margin="105,0,0,5" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem 
+                        x:Name="Deleteitem" 
+                        Header="Excluir da lista de downloads"
+                        CommandParameter="{Binding ActualDownload, Source={StaticResource DownloadListView}}"
+                        Command="{Binding DeleteItem, Source={StaticResource DownloadListView}}"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <i:Interaction.Behaviors>
+                <behaviors:SelectItemOnDownloadBehavior />
+            </i:Interaction.Behaviors>
+        </ListView>
+
+        <Grid
+           x:Name="DetailsManga"
+           Background="#CCCCCC"
+           Width="550"
+           HorizontalAlignment="Right"
+           DataContext="{Binding ActualDownload.Hq, Source={StaticResource DownloadListView}, Converter={StaticResource ByteToHq}}">
+            <Image 
+                Source="{Binding CoverSource}" 
+                Stretch="Fill"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Width="180" 
+                Height="240"
+                Margin="5"
+                ToolTipService.ToolTip="{Binding Title}"/>
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding Title}" 
+                TextWrapping="Wrap" 
+                Width="360"
+                Height="65"
+                VerticalAlignment="Top"
+                Margin="180,5,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="19" >
+            </TextBox>
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding Author}" 
+                TextWrapping="Wrap" 
+                Width="360"
+                Height="26"
+                VerticalAlignment="Top"
+                Margin="180,70,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" >
+            </TextBox>
+            <TextBox 
+                Visibility="Visible" 
+                IsReadOnly="True" 
+                Text="{Binding Synopsis}" 
+                TextWrapping="Wrap" 
+                Width="360"
+                Height="148"
+                VerticalAlignment="Top"
+                Margin="180,100,0,0"
+                BorderBrush="{x:Null}" 
+                Foreground="Black" 
+                FontSize="16" >
+            </TextBox>
+            <ListView
+                x:Name="HqChapters" 
+                ItemsSource="{Binding Chapters}"  
+                SelectedIndex="{Binding ActualDownload.ActualChapterIndex, Source={StaticResource DownloadListView}}"
+                DisplayMemberPath="Title"
+                Margin="5,270,0,0" />
+
+        </Grid>
+    </Grid>
+</Page>

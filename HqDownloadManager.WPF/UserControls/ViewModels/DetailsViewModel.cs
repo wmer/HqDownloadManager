@@ -1,4 +1,5 @@
-﻿using HqDownloadManager.WPF.UserControls.Commands;
+﻿using HqDownloadManager.Models;
+using HqDownloadManager.WPF.UserControls.Commands;
 using MangaScraping.Models;
 using System;
 using System.Collections.Generic;
@@ -18,16 +19,19 @@ namespace HqDownloadManager.WPF.UserControls.ViewModels {
         private AddToDownloadListCommand _addToDownloadList;
         private AddToDownloadListSelectedChapters _addToDownloadListSelectedChapters;
         private AddUpdatesToDownloadCommand _addUpdatesToDownloadCommand;
+        private OpenOnlineReaderCommand _openOnlineReaderCommand;
 
         public DetailsViewModel(
                    CloseDetailsCommand closeDetailsCommand,
                    AddToDownloadListCommand addToDownloadList,
                    AddToDownloadListSelectedChapters addToDownloadListSelectedChapters,
-                   AddUpdatesToDownloadCommand addUpdatesToDownloadCommand) {
+                   AddUpdatesToDownloadCommand addUpdatesToDownloadCommand,
+                   OpenOnlineReaderCommand openOnlineReaderCommand) {
             _closeDetailsCommand = closeDetailsCommand;
             _addToDownloadList = addToDownloadList;
             _addToDownloadListSelectedChapters = addToDownloadListSelectedChapters;
             _addUpdatesToDownloadCommand = addUpdatesToDownloadCommand;
+            _openOnlineReaderCommand = openOnlineReaderCommand;
         }
 
 
@@ -46,6 +50,10 @@ namespace HqDownloadManager.WPF.UserControls.ViewModels {
 
         public DelegateCommand<DetailsUserControl> DownloadUpdates {
             get => _addUpdatesToDownloadCommand.Command;
+        }
+
+        public DelegateCommand<DetailsUserControl> OpenReader {
+            get => _openOnlineReaderCommand.Command;
         }
     }
 }

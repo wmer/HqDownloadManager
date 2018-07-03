@@ -15,8 +15,6 @@
 
     <Page.Resources>
         <extra:CustomResourceDictionary>
-            <BooleanToVisibilityConverter x:Key="BoolToVis" />
-            <converters:WidthToColumnConverter x:Key="WidthTiColumn" />
             <viewmodels:MyLibraryViewModel x:Key="MyLibrary" />
         </extra:CustomResourceDictionary>
     </Page.Resources>
@@ -45,6 +43,8 @@
                     <Setter Property="Padding" Value="0"/>
                     <Setter Property="Margin" Value="1"/>
                     <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="VerticalContentAlignment" Value="Top"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>

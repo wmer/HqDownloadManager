@@ -34,28 +34,28 @@ namespace HqDownloadManager.WPF.Commands {
                     _navigationManager.Navigate<SourceLibraryPage>("Biblioteca");
                     break;
                 case "Meus Downloads":
-                   _navigationManager.Navigate<MyLibraryPage>("Meus Downloads");
-                   break;
+                    _navigationManager.Navigate<MyLibraryPage>("Meus Downloads");
+                    break;
                 //case "Histórico de Leitura":
                 //    _navigationManager.Navigate<ReaderHistoryPage>("Meu Histórico");
                 //    break;
                 //case "Minha Lista de Mangás":
                 //    _navigationManager.Navigate<HqListPage>("Lista de Hqs");
                 //    break;
-                //case "Gerenciador de Downloads":
-                //    _navigationManager.Navigate<DownloadPage>("Lista de Download");
-                //    break;
-                //case "Configurações":
-                //    _navigationManager.Navigate<ConfigurationPage>("Configurações");
-                //    break;
+                case "Gerenciador de Downloads":
+                    _navigationManager.Navigate<DownloadPage>("Lista de Download");
+                    break;
+                    //case "Configurações":
+                    //    _navigationManager.Navigate<ConfigurationPage>("Configurações");
+                    //    break;
             }
         }
     }
 
     public class GoBackCommand : CommandBase {
-        public override bool CanExecute(object parameter) => 
+        public override bool CanExecute(object parameter) =>
                                         NavigationManager.CanGoBack();
-        public override void Execute(object parameter) => 
+        public override void Execute(object parameter) =>
                                         NavigationManager.GoBack();
     }
 }

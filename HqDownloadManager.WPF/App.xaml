@@ -1,9 +1,17 @@
 ﻿<Application x:Class="HqDownloadManager.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:HqDownloadManager.WPF">
+             xmlns:local="clr-namespace:HqDownloadManager.WPF"
+             xmlns:extra="clr-namespace:HqDownloadManager.WPF.Extra"
+             xmlns:converters="clr-namespace:HqDownloadManager.WPF.Converters"
+             xmlns:viewModels="clr-namespace:HqDownloadManager.WPF.ViewModels">
     <Application.Resources>
-        <ResourceDictionary>
+        <extra:CustomResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <converters:WidthToColumnConverter x:Key="WidthTiColumn" />
+            <viewModels:NavigationViewModel x:Key="NavigationView" />
+            <viewModels:MainWindowViewModel x:Key="MainWindow" />
+
             <FontFamily x:Key="FontAwesomeBrands">/Fonts/fa-brands-400.ttf#Font Awesome 5 Brands</FontFamily>
             <FontFamily x:Key="FontAwesomeRegular">/Fonts/fa-regular-400.ttf#Font Awesome 5 Free</FontFamily>
             <FontFamily x:Key="FontAwesomeSolid">/Fonts/fa-solid-900.ttf#Font Awesome 5 Free Solid</FontFamily>
@@ -17,6 +25,6 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        </extra:CustomResourceDictionary>
     </Application.Resources>
 </Application>

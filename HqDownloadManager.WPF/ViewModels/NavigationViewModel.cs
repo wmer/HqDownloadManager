@@ -21,7 +21,7 @@ namespace HqDownloadManager.WPF.ViewModels {
         private MenuButton _selectedButton;
         private Thickness _marginContent;
         private bool _opened;
-        private bool _menuVisibility;
+        private bool _showDistractions;
         private bool _canGoBack;
         private Brush _backgroundColor;
 
@@ -31,6 +31,7 @@ namespace HqDownloadManager.WPF.ViewModels {
             _pageNavigationCommand = pageNavigationCommand;
             _goBackCommand = goBackCommand;
 
+            ShowDistractions = true;
             MarginContent = new Thickness(40, 40, 0, 0);
             BackgroundColor = new SolidColorBrush(Colors.Black);
             Buttons = new ObservableCollection<MenuButton> {
@@ -79,11 +80,15 @@ namespace HqDownloadManager.WPF.ViewModels {
             }
         }
 
-        public bool MenuVisibility {
-            get => _menuVisibility;
+        public bool ShowDistractions {
+            get => _showDistractions;
             set {
-                _menuVisibility = value;
-                OnPropertyChanged("MenuVisibility");
+                _showDistractions = value;
+                OnPropertyChanged("ShowDistractions");
+                Opened = false;
+                if (!_showDistractions) {
+                    MarginContent = new Thickness(0, 0, 0, 0);
+                }
             }
         }
 

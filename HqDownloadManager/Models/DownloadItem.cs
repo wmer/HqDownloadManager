@@ -96,6 +96,17 @@ namespace HqDownloadManager.Models {
             }
         }
 
+        private string _message;
+
+        [Ignore]
+        public string Message {
+            get { return _message; }
+            set { _message = value;
+                OnPropertyChanged("Message");
+            }
+        }
+            
+
         public DownloadItem() {
             ActualChapterIndex = -1;
             ActualPageIndex = -1;
